@@ -34,10 +34,6 @@
       "@commitlint/config-conventional"
     ]
   },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true
-  },
   "dependencies": {
     "core-js": "^2.6.5",
     "vue": "^2.6.10",
