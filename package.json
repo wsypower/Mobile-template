@@ -5,11 +5,17 @@
   "engines": {
     "node": ">=8.11.1"
   },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "precommit": "lint-staged",
+    "semantic-release": "semantic-release",
+    "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
     "commit": "git-cz"
   },
   "lint-staged": {
@@ -36,10 +42,8 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "lint-staged": "^8.0.0",
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
-    "cz-conventional-changelog": "^2.1.0",
     "@vue/cli-plugin-babel": "^3.0.5",
     "@vue/cli-plugin-eslint": "^3.0.5",
     "@vue/cli-plugin-typescript": "^3.0.5",
@@ -47,13 +51,22 @@
     "@vue/eslint-config-prettier": "^5.0.0",
     "@vue/eslint-config-typescript": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.16.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^5.0.0",
-    "husky": "^4.0.0-beta.5",
+    "git-cz": "^3.2.1",
+    "husky": "^3.0.9",
+    "lint-staged": "^8.0.0",
     "node-sass": "^4.12.0",
     "prettier": "^1.18.2",
     "sass-loader": "^8.0.0",
+    "semantic-release": "^15.9.16",
+    "shelljs": "^0.8.3",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "tslint-config-standard": "^8.0.1",
     "typescript": "^3.4.3",
     "vue-template-compiler": "^2.6.10"
   }
