@@ -2,8 +2,11 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-
-Vue.config.productionTip = false;
+import core from "@/plugin/core/index";
+// 核心插件
+Vue.use(core);
+// @ts-ignore
+// 引入fastclick
 
 new Vue({
   router,

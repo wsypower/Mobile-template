@@ -2,13 +2,14 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-10-23 17:05:51
+ * @Last Modified time: 2019-10-23 20:15:28
  */
 
 // 使用 uglifyjs-webpack-plugin 进行文件的压缩
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 // webpack实时打包进度
 const ProgressBarPlugin = require("progress-bar-webpack-plugin");
+const pxtorem = require("postcss-pxtorem");
 // 增加环境变量
 process.env.VUE_APP_VERSION = require("./package.json").version;
 process.env.VUE_APP_BUILD_TIME = require("dayjs")().format("YYYY-M-D HH:mm:ss");
@@ -46,6 +47,16 @@ module.exports = {
       // `scss` 语法会要求语句结尾必须有分号，`sass` 则要求必须没有分号，此处对 `scss` 语法进行单独配置
       scss: {
         prependData: `@import '~@/style/core/core.scss';`
+      },
+      postcss: {
+        plugins: [
+          require("postcss-pxtorem")({
+            rootValue: 100,
+            propWhiteList: [],
+            minPixelValue: 2
+          }),
+          require("autoprefixer")()
+        ]
       }
     }
   },

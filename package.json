@@ -40,7 +40,8 @@
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.3",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "fastclick": "^1.0.6"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
@@ -73,6 +74,7 @@
     "typedoc": "^0.15.0",
     "typescript": "^3.4.3",
     "uglifyjs-webpack-plugin": "^2.1.2",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "postcss-pxtorem": "^4.0.1"
   }
 }
