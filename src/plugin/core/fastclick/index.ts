@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-23 21:27:36
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-10-23 21:28:42
+ * @Last Modified time: 2019-10-24 20:22:56
  */
 // @ts-ignore
 import FastClick from "fastclick";
@@ -12,6 +12,9 @@ import FastClick from "fastclick";
  */
 
 (function(window: any, document: any): void {
+  if (!FastClick) {
+    throw new Error("you should npm install `fastclick` --save at first ");
+  }
   if ("addEventListener" in document && "ontouchstart" in window) {
     FastClick.prototype.focus = (targetElement: HTMLElement) => {
       targetElement.focus();

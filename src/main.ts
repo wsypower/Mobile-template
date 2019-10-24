@@ -2,9 +2,9 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import core from "@/plugin/core/index";
+import CoreModule from "@/plugin/core/index";
 // 核心插件
-Vue.use(core);
+Vue.use(CoreModule);
 // @ts-ignore
 // 引入fastclick
 

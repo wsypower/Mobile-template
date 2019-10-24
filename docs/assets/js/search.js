@@ -1,0 +1,3 @@
+var typedoc = typedoc || {};
+            typedoc.search = typedoc.search || {};
+            typedoc.search.data = {"kinds":{"64":"Function","2097152":"Object literal"},"rows":[{"id":0,"kind":2097152,"name":"CoreModule","url":"globals.html#coremodule","classes":"tsd-kind-object-literal"},{"id":1,"kind":64,"name":"install","url":"globals.html#coremodule.install","classes":"tsd-kind-function tsd-parent-kind-object-literal","parent":"CoreModule"}]};
