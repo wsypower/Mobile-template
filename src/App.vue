@@ -9,6 +9,10 @@
 </template>
 
 <style lang="scss">
+//初始化文件（新加入iphone-x的安全距离）
+@import "~@style/core/reset/reset";
+// flex.css（ie>=10,chrome>=38,Safari>=6.1,Android>=4.4）
+@import "~@style/core/fiexd/flex";
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

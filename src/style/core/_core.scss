@@ -1,7 +1,7 @@
 @charset "UTF-8";
 //-----------------------------------------------------	
 // core scss
-// 提供所有的基础功能包括：变量设置，flex布局，@media，基础mixin，animation，reset样式
+// 提供所有的基础功能包括：变量设置，flex.css，@media，基础mixin，animation，reset样式
 // 默认会输出reset样式一份
 //-----------------------------------------------------
 
@@ -12,7 +12,38 @@
 //-----------------------------------------------------
 
 
-// 导入core中的基础文件
-//-----------------------------------------------------
 
-@import 'fiexd/flex'
+//TODO:讲直接能编译出css的样式移入到app.vue中。css-loader + sass-loader将会直接编译
+//-------------------------------------------------------------------------------
+
+// flex.css（ie>=10,chrome>=38,Safari>=6.1,Android>=4.4）
+// @import 'fiexd/flex';
+
+// 在normalize的基础上，根据目前我们大家的使用习惯进行了一些归零行动
+// 及基础文字颜色，clearfix，box-sizing等。
+// @import './reset/reset';
+
+//--------------------------------------------------------------------------------
+
+// 提供了全局的常用变量，大概包括字体，颜色，圆角，z-index等，具体请查看源码
+@import './variables/variables';
+
+
+
+// _mixin.scss文件中除了定义了一些@mixin，还定义了一些%和@function，总的来说就是定义了一些平常可应用到的实际功能
+@import './mixin/mixin';
+
+// 移动端屏幕兼容
+@import './media-queries/media-queries';
+
+
+
+//提供6组简单实用动画：
+//fade-in/out, shrink-in/out
+// up-in/out, down-in/out
+//left-in/out，right-in/out
+@import './animation/animation';
+
+
+// family（nth-* 选择器 @see http://lukyvj.github.io/family.scss/）
+@import './util//family';
