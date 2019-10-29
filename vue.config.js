@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-10-25 15:35:36
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-10-29 17:03:48
  */
 
 /**
@@ -14,8 +14,16 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
  * webpack实时打包进度
  */
 const ProgressBarPlugin = require("progress-bar-webpack-plugin");
-const pxtorem = require("postcss-pxtorem");
 
+/**
+ * GZIP压缩
+ */
+const compressionPlugin = require("compression-webpack-plugin");
+
+/**
+ * lodash 按需引用
+ */
+const LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
 /**
  * 增加环境变量
  */
@@ -29,24 +37,26 @@ const resolve = dir => require("path").join(__dirname, dir);
 
 /**
  * 基础路径 注意发布之前要先修改这里
+ * `PUBLIC_PATH` 基础路径
+ * `PRODUCTION_SOURCE_MAP` 不需要生产环境的 source map(根据项目实际需求，能减少一半以上打包体积)
  */
-let publicPath = "/";
+const PUBLIC_PATH = "/";
+const PRODUCTION_SOURCE_MAP = false;
 
 /*=============================================
 =                vue-cli3配置                  =
 =============================================*/
 module.exports = {
   //根据你的实际情况更改这里
-  publicPath,
+  publicPath: PUBLIC_PATH,
   //仅在开发环境下使用
   lintOnSave: process.env.NODE_ENV === "development",
-  //不需要生产环境的 source map(根据项目实际需求，能减少一半以上打包体积)
-  productionSourceMap: false,
+  productionSourceMap: PRODUCTION_SOURCE_MAP,
   outputDir: "dist",
   assetsDir: "static",
   devServer: {
     //和 publicPath 保持一致
-    publicPath,
+    publicPath: PUBLIC_PATH,
     open: true
   },
   css: {
@@ -63,19 +73,50 @@ module.exports = {
       },
       postcss: {
         plugins: [
+          /**
+           * px转为rem
+           */
           require("postcss-pxtorem")({
             rootValue: 100,
             propWhiteList: [],
             minPixelValue: 2
           }),
+          /**
+           * 添加css前缀
+           */
           require("autoprefixer")()
         ]
       }
     }
   },
-  configureWebpack: {
-    plugins: [new ProgressBarPlugin()]
+  configureWebpack: config => {
+    if (process.env.NODE_ENV === "production") {
+      // 为生产环境修改配置
+      // plugins: [new ProgressBarPlugin()]
+      return {
+        plugins: [
+          /**
+           * 开始GZIP文件压缩
+           */
+          new compressionPlugin({
+            test: /\.js$|\.html$|\.css/, //匹配文件
+            threshold: 1024 * 100, //对超过100k的数据进行数据压缩
+            deleteOriginalAssets: false //是否删除源文件
+          }),
+          /**
+           * 打包进度条
+           */
+          new ProgressBarPlugin()
+        ]
+      };
+    } else {
+      // 为开发环境修改配置
+    }
   },
+  /**
+   * 基于webpack-chain的链式调用
+   * 默认设置: https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-service/lib/config/base.js
+   */
   chainWebpack: config => {
     //重新设置 alias
     config.resolve.alias
@@ -85,7 +126,42 @@ module.exports = {
       .set("@component", resolve("src/components"))
       .set("@views", resolve("src/views"))
       .set("@api", resolve("src/api"));
+    /**
+     * TODO:根据实际项目调整是否开启
+     * 删除懒加载模块的 prefetch preload，降低带宽压力
+     * https://cli.vuejs.org/zh/guide/html-and-static-assets.html#prefetch
+     * https://cli.vuejs.org/zh/guide/html-and-static-assets.html#preload
+     * 而且预渲染时生成的 prefetch 标签是 modern 版本的，低版本浏览器是不需要的
+     */
+    config.plugins.delete("prefetch").delete("preload");
+    // 解决 cli3 热更新失效 https://github.com/vuejs/vue-cli/issues/1559
+    config.resolve.symlinks(true);
+    // 开发环境
+    config
+      /**
+       * 如果productionSourceMap为true,修改下面source-map展示项
+       * https://www.webpackjs.com/configuration/devtool/#devtool
+       */
+      .when(
+        process.env.NODE_ENV === "development" && PRODUCTION_SOURCE_MAP,
+        // sourcemap不包含列信息
+        config => config.devtool("cheap-source-map")
+      )
+      // 非开发环境
+      .when(process.env.NODE_ENV !== "development", config => {
+        config.optimization.minimizer([
+          new UglifyJsPlugin({
+            uglifyOptions: {
+              // 移除 console
+              // 其它优化选项 https://segmentfault.com/a/1190000010874406
+              compress: {
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ["console.log"]
+              }
+            }
+          })
+        ]);
+      });
   }
 };
-
-/*=====  End of Section comment block  ======*/

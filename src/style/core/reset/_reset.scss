@@ -20,11 +20,10 @@ html {
 // 1. Remove default margin
 body {
     margin: 0; // 1
-    font-size: $fontSize;
-    font-family: $fontFamily;
-    line-height: $fontLineHeight;
-    color: $colorText;
-    background-color: $colorBg;
+    font-size: $font-caption-normal;
+    font-family: $font-family-normal;
+    color: $color-text-base;
+    background-color: $white;
     min-height: 100%;
     padding-top: env(safe-area-inset-top); //为导航栏+状态栏的高度 88px            
     padding-left: env(safe-area-inset-left); //如果未竖屏时为0                
@@ -89,10 +88,11 @@ template {
 
 a {
     background: transparent; // 1
-    -webkit-text-decoration-skip: objects; /* 2 */
+    -webkit-text-decoration-skip: objects;
+    /* 2 */
     text-decoration: none;
-    color: nth($colorLink, 1);
-    
+    color: nth($color-text-link, 1);
+
     &:active {
         outline: 0; // 3
     }
@@ -105,9 +105,12 @@ a {
 // 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
 
 abbr[title] {
-    border-bottom: none; /* 1 */
-    text-decoration: underline; /* 2 */
-    text-decoration: underline dotted; /* 2 */
+    border-bottom: none;
+    /* 1 */
+    text-decoration: underline;
+    /* 2 */
+    text-decoration: underline dotted;
+    /* 2 */
 }
 
 // Prevent the duplicate application of `bolder` by the next rule in Safari 6.
@@ -216,8 +219,10 @@ textarea {
 // 1. Show the overflow in Edge.
 // 2. Show the overflow in Edge, Firefox, and IE.
 button,
-input, // 1
-select { // 2
+input,
+// 1
+select {
+    // 2
     overflow: visible;
 }
 
@@ -236,7 +241,8 @@ select {
 // 3. Improve usability and consistency of cursor style between image-type
 //    `input` and others.
 button,
-html input[type="button"], // 1
+html input[type="button"],
+// 1
 input[type="reset"],
 input[type="submit"] {
     -webkit-appearance: button; // 2
@@ -308,12 +314,18 @@ fieldset {
 // 3. Remove the padding so developers are not caught out when they zero out
 //    `fieldset` elements in all browsers.
 legend {
-    box-sizing: border-box; /* 1 */
-    color: inherit; /* 2 */
-    display: table; /* 1 */
-    max-width: 100%; /* 1 */
-    padding: 0; /* 3 */
-    white-space: normal; /* 1 */
+    box-sizing: border-box;
+    /* 1 */
+    color: inherit;
+    /* 2 */
+    display: table;
+    /* 1 */
+    max-width: 100%;
+    /* 1 */
+    padding: 0;
+    /* 3 */
+    white-space: normal;
+    /* 1 */
 }
 
 // 1. Remove default vertical scrollbar in IE 8/9/10/11.
@@ -354,24 +366,24 @@ input::-ms-reveal {
 // Firefox 19+
 input::-moz-placeholder,
 textarea::-moz-placeholder {
-    color: $colorPlaceholder;
+    color: $color-text-placeholder;
 }
 
 // Internet Explorer 10+
 input:-ms-input-placeholder,
 textarea:-ms-input-placeholder {
-    color: $colorPlaceholder;
+    color: $color-text-placeholder;
 }
 
 // Safari and Chrome
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder {
-    color: $colorPlaceholder;
+    color: $color-text-placeholder;
 }
 
 // 如不支持placeholder添加class 或者 设置提示的placeholder
 .placeholder {
-    color: $colorPlaceholder;
+    color: $color-text-placeholder;
 }
 
 // Tables
@@ -390,22 +402,38 @@ th {
 // 根据使用习惯，对normalize上进行补充
 //-----------------------------------------------------
 
-h1, h2, h3, h4, h5, h6, p, figure, form, blockquote {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+form,
+blockquote {
     margin: 0;
 }
 
 // ul ol dl
-ul, ol, li, dl, dd {
+ul,
+ol,
+li,
+dl,
+dd {
     margin: 0;
     padding: 0;
 }
 
-ul, ol {
+ul,
+ol {
     list-style: none outside none;
 }
 
 // hn
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     line-height: 2;
     font-weight: normal;
 }

@@ -106,21 +106,7 @@
     @include word-break(false);
 }
 
-//禁用
-//添加！important
-@mixin disabled($colorText: map-get($colorDisabled, text), $colorBg: map-get($colorDisabled, bg), $colorBorder: false) {
-    background-color: $colorBg !important;
-    color: $colorText !important;
-    cursor: default !important;
-    pointer-events: none !important;
-    @if $colorBorder {
-        border: 1px solid map-get($colorDisabled, border);
-    }
-}
 
-%disabled {
-    @include disabled;
-}
 
 //图片替换文字
 @mixin ir($extend: true) {
@@ -190,7 +176,7 @@
 
 // linear-gradient实现
 // 安卓4.3- 不支持background-size的百分比
-@mixin retina-one-px-bg($direction: top, $color: $colorBorder) {
+@mixin retina-one-px-bg($direction: top, $color: $color-border-base ) {
     background-repeat: no-repeat;
     @if $direction == top {
         background-image: linear-gradient(to bottom, $color 50%, transparent 50%);
@@ -229,7 +215,7 @@
 
 // border和transform实现
 // 注意before和after的层级问题
-@mixin retina-one-px-border($direction: top, $color: $colorBorder) {
+@mixin retina-one-px-border($direction: top, $color: $color-border-base ) {
     position: absolute;
     left: 0;
     top: 0;
@@ -404,7 +390,7 @@
     overflow: hidden;
 }
 
-@mixin triangle($direction: top, $borderWidth: 6px, $borderColor: $colorC) {
+@mixin triangle($direction: top, $borderWidth: 6px, $borderColor: $color-border-base  ) {
     @extend %triangle-basic;
     @if $direction == top {
         border-bottom: $borderWidth solid $borderColor;
@@ -657,16 +643,16 @@
 
 // btn-color
 // 包括按钮背景色，文本色，是否有边框
-@mixin btn-color($colorText: #333, $colorBg: #666, $colorBorder: false) {
-    color: nth($colorText, 1);
+@mixin btn-color($color-text-base: #333, $colorBg: #666, $colorBorder: false) {
+    color: nth($color-text-base, 1);
     background-color: nth($colorBg, 1);
     @if $colorBorder {
         border-color: nth($colorBorder, 1);
     }
     &:hover,
     &:active {
-        @if length($colorText) == 2 {
-            color: nth($colorText, 2);
+        @if length($color-text-base) == 2 {
+            color: nth($color-text-base, 2);
         }
         @if length($colorBg) == 2 {
             background-color: nth($colorBg, 2);

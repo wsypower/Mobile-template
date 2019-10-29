@@ -8,11 +8,20 @@
   </div>
 </template>
 
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+@Component({
+  name: "app"
+})
+export default class extends Vue {
+  private mounted(): void {
+    console.log("这里是有console的");
+  }
+}
+</script>
 <style lang="scss">
-//初始化文件（新加入iphone-x的安全距离）
-@import "~@style/core/reset/reset";
-// flex.css（ie>=10,chrome>=38,Safari>=6.1,Android>=4.4）
-@import "~@style/core/fiexd/flex";
+//初始化文件（新加入iphone-x的安全布局） + flex布局
+@import "~@style/core/function";
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

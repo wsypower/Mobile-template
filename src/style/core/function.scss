@@ -1,0 +1,6 @@
+// flex.css（ie>=10,chrome>=38,Safari>=6.1,Android>=4.4）
+@import 'fiexd/flex';
+
+// 在normalize的基础上，根据目前我们大家的使用习惯进行了一些归零行动
+// 及基础文字颜色，clearfix，box-sizing等。
+@import './reset/reset';
