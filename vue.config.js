@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-10-29 17:03:48
+ * @Last Modified time: 2019-10-30 11:20:59
  */
 
 /**
@@ -24,6 +24,24 @@ const compressionPlugin = require("compression-webpack-plugin");
  * lodash 按需引用
  */
 const LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
+
+/**
+ * 添加js或者css资源到由html-webpack-plugin插件自动生成的文件中
+ */
+const AddAssetHtmlPlugin = require("add-asset-html-webpack-plugin");
+
+/**
+ * 打包结果分析
+ */
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
+  
+/**
+ * webpack
+ */
+const webpack = require("webpack");
+const path = require("path");
+
 /**
  * 增加环境变量
  */
@@ -92,7 +110,6 @@ module.exports = {
   configureWebpack: config => {
     if (process.env.NODE_ENV === "production") {
       // 为生产环境修改配置
-      // plugins: [new ProgressBarPlugin()]
       return {
         plugins: [
           /**
@@ -106,11 +123,14 @@ module.exports = {
           /**
            * 打包进度条
            */
-          new ProgressBarPlugin()
+          new ProgressBarPlugin(),
+          new LodashModuleReplacementPlugin(),
+          new BundleAnalyzerPlugin()
         ]
       };
     } else {
       // 为开发环境修改配置
+      new LodashModuleReplacementPlugin();
     }
   },
   /**
@@ -136,8 +156,38 @@ module.exports = {
     config.plugins.delete("prefetch").delete("preload");
     // 解决 cli3 热更新失效 https://github.com/vuejs/vue-cli/issues/1559
     config.resolve.symlinks(true);
-    // 开发环境
     config
+      // 开发环境
+      .when(
+        process.env.NODE_ENV === "development",
+        /**
+         * 将静态资源文件（运行依赖包）与源文件分开打包
+         * https://juejin.im/post/5d1c05e4f265da1b8333a89f
+         */
+        config => {
+          config.plugin("vendorDll").use(webpack.DllReferencePlugin, [
+            {
+              context: __dirname,
+              manifest: require("./dll/vendor.manifest.json")
+            }
+          ]);
+          config
+            .plugin("addAssetHtml")
+            .use(AddAssetHtmlPlugin, [
+              [
+                {
+                  filepath: require.resolve(
+                    path.resolve(__dirname, "dll/vendor.dll.js")
+                  ),
+                  outputPath: "dll",
+                  publicPath: "/dll"
+                }
+              ]
+            ])
+            .after("html");
+        }
+      )
+      //开发环境且productionSourceMap为true
       /**
        * 如果productionSourceMap为true,修改下面source-map展示项
        * https://www.webpackjs.com/configuration/devtool/#devtool
