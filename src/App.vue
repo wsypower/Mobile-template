@@ -10,15 +10,15 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import _add from "lodash/fp/add";
-import _map from "lodash/map";
+import _add from 'lodash/fp/add';
+
 @Component({
   name: "app"
 })
 export default class extends Vue {
   private mounted(): void {
     const addOne = _add(1);
-    console.log(_map([1, 2, 3]));
+    console.log(addOne);
     console.log("这里是有console的");
   }
 }

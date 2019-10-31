@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-    // 编译输出目标 ES 版本
     "target": "esnext",
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
-    //启动装饰器
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

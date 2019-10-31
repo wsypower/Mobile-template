@@ -1,8 +1,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
- * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-10-30 11:20:59
+ * @Last Modified by: wei.yafei
+ * @Last Modified time: 2019-10-31 16:12:35
  */
 
 /**
@@ -35,7 +35,7 @@ const AddAssetHtmlPlugin = require("add-asset-html-webpack-plugin");
  */
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
   .BundleAnalyzerPlugin;
-  
+
 /**
  * webpack
  */
@@ -107,32 +107,38 @@ module.exports = {
       }
     }
   },
-  configureWebpack: config => {
-    if (process.env.NODE_ENV === "production") {
-      // 为生产环境修改配置
-      return {
-        plugins: [
-          /**
-           * 开始GZIP文件压缩
-           */
-          new compressionPlugin({
-            test: /\.js$|\.html$|\.css/, //匹配文件
-            threshold: 1024 * 100, //对超过100k的数据进行数据压缩
-            deleteOriginalAssets: false //是否删除源文件
-          }),
-          /**
-           * 打包进度条
-           */
-          new ProgressBarPlugin(),
-          new LodashModuleReplacementPlugin(),
-          new BundleAnalyzerPlugin()
-        ]
-      };
-    } else {
-      // 为开发环境修改配置
-      new LodashModuleReplacementPlugin();
-    }
-  },
+  configureWebpack: config =>
+    process.env.NODE_ENV === "production"
+      ? {
+          plugins: [
+            /**
+             * 开始GZIP文件压缩
+             */
+            new compressionPlugin({
+              test: /\.js$|\.html$|\.css/,
+              threshold: 1024 * 100,
+              deleteOriginalAssets: false //是否删除源文件
+            }),
+            /**
+             * 打包进度条
+             */
+            new ProgressBarPlugin(),
+            new BundleAnalyzerPlugin()
+            //TODO ────────────────────────────────────────────────────────
+            // 按需引入lodash引入有问退
+            // new LodashModuleReplacementPlugin()
+          ]
+        }
+      : {
+          //TODO ────────────────────────────────────────────────────────
+          // 按需引入lodash引入有问退
+          // plugins: [
+          //   new LodashModuleReplacementPlugin({
+          //     collections: true,
+          //     paths: true
+          //   })
+          // ]
+        },
   /**
    * 基于webpack-chain的链式调用
    * 默认设置: https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-service/lib/config/base.js
@@ -146,6 +152,7 @@ module.exports = {
       .set("@component", resolve("src/components"))
       .set("@views", resolve("src/views"))
       .set("@api", resolve("src/api"));
+    // config.plugin("loadshReplace").use(new LodashModuleReplacementPlugin()); //优化lodash
     /**
      * TODO:根据实际项目调整是否开启
      * 删除懒加载模块的 prefetch preload，降低带宽压力
@@ -213,5 +220,35 @@ module.exports = {
           })
         ]);
       });
+    //
+    //TODO ────────────────────────────────────────────────────────
+    // 没有想好怎么使用code splitting
+    /**
+     * 提取模板
+     */
+    // config.optimization.runtimeChunk = {
+    //   name: "manifest"
+    // };
+    // /**
+    //  * code splitting
+    //  */
+    // config.optimization.splitChunks({
+    //   cacheGroups: {
+    //     elementUI: {
+    //       priority: 20,
+    //       name: "element-ui",
+    //       test: /element-ui/,
+    //       reuseExistingChunk: true
+    //     },
+    //     vendors: {
+    //       chunks: "all",
+    //       test: /[\\/]node_modules[\\/]/,
+    //       priority: 0,
+    //       minChunks: 2,
+    //       name: "vendors",
+    //       reuseExistingChunk: true
+    //     }
+    //   }
+    // });
   }
 };
