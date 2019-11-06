@@ -1,4 +1,4 @@
 module.exports = {
   presets: ['@vue/app'],
-  plugins: ['lodash'],
+  plugins: ['dynamic-import-node'],
 };

@@ -2,23 +2,25 @@
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
     <div class="shiw">
-      <div class="shishi" flex="main:center cross:center">111</div>
+      <div class="shishi" flex="main:center cross:center"></div>
     </div>
+    <md-button type="primary" loading>Loading</md-button>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
-
+import { Component, Vue } from 'vue-property-decorator';
+import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+import Button from 'mand-mobile/lib/button';
 @Component({
   components: {
-    HelloWorld
-  }
+    HelloWorld,
+    [Button.name]: Button,
+  },
 })
 export default class Home extends Vue {}
 </script>
-<style scoped lang="scss" type='text/scss'>
+<style scoped lang="scss" >
 $white: #fff;
 .shiw {
   width: 750px;
