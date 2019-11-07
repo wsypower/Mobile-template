@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-23 21:20:21
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-10-31 16:53:46
+ * @Last Modified time: 2019-11-06 20:53:43
  */
 
 /**
@@ -15,6 +15,10 @@ import './responsive/responsive';
  */
 import './fastclick/index';
 
+/**
+ * 自动导入
+ */
+import './svg/requireAllSvg';
 /**
  * 引入vue
  */

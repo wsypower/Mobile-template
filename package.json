@@ -93,6 +93,7 @@
     "semantic-release": "^15.9.16",
     "shelljs": "^0.8.3",
     "stylus-loader": "^3.0.2",
+    "svg-sprite-loader": "^4.1.6",
     "ts-import-plugin": "^1.6.1",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",

@@ -16,11 +16,17 @@ export default class extends Vue {}
 <style lang="scss">
 //初始化文件（新加入iphone-x的安全布局） + flex布局
 @import '~@style/core/function';
+body{
+  width: 100%;
+  height: 100%;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  width: 100%;
+  height: 100%;
 }
 </style>

@@ -1,9 +1,9 @@
-'use strict'
+'use strict';
 /*
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-11-06 15:58:06
+ * @Last Modified time: 2019-11-06 20:39:38
  */
 
 /**
@@ -99,6 +99,13 @@ const TS_IMPORT_PLUGINS = {
 =                vue-cli3配置                  =
 =============================================*/
 module.exports = {
+  /**
+   * 如果您打算在子路径下部署站点，则需要设置 publicPath，
+   * 例如GitHub Pages。如果您打算将网站部署到 https://foo.github.io/bar/，
+   * 然后publicPath应该设置为“ /bar /”。
+   * 在大多数情况下，请使用'/'！
+   * 详细信息：https://cli.vuejs.org/config/#publicpath
+   */
   //根据你的实际情况更改这里
   publicPath: PUBLIC_PATH,
   //仅在开发环境下使用
@@ -194,6 +201,22 @@ module.exports = {
      * 而且预渲染时生成的 prefetch 标签是 modern 版本的，低版本浏览器是不需要的
      */
     config.plugins.delete('prefetch').delete('preload');
+    // set svg-sprite-loader
+    config.module
+      .rule('svg')
+      .exclude.add(resolve('src/assets/svg'))
+      .end();
+    config.module
+      .rule('icons')
+      .test(/\.svg$/)
+      .include.add(resolve('src/assets/svg'))
+      .end()
+      .use('svg-sprite-loader')
+      .loader('svg-sprite-loader')
+      .options({
+        symbolId: '[name]',
+      })
+      .end();
     // 解决 cli3 热更新失效 https://github.com/vuejs/vue-cli/issues/1559
     config.resolve.symlinks(true);
     config
