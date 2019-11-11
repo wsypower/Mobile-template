@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-11-06 20:39:38
+ * @Last Modified time: 2019-11-08 21:57:39
  */
 
 /**
@@ -189,6 +189,7 @@ module.exports = {
       .set('@', resolve('src'))
       .set('types', resolve('types'))
       .set('@style', resolve('src/style'))
+      .set('@img', resolve('src/assets/image'))
       .set('@component', resolve('src/components'))
       .set('@views', resolve('src/views'))
       .set('@api', resolve('src/api'));
