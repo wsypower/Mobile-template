@@ -14,7 +14,12 @@
       <md-icon name="arrow-left" size="lg" color="#fff"></md-icon>
     </div>
     <!-- 中间title -->
-    <div class="page-features page-header-title" flex="main:center cross:center">{{ title }}</div>
+    <div
+      class="page-features page-header-title"
+      flex="main:center cross:center"
+    >
+      {{ title }}
+    </div>
     <!-- 右侧点击区域 -->
     <div
       class="page-features page-header-btn"
@@ -27,18 +32,15 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
-import { Icon } from 'mand-mobile';
+import { Vue, Component, Prop, Emit } from "vue-property-decorator";
+import { Icon } from "mand-mobile";
 @Component({
-  name: 'PageHeader',
+  name: "PageHeader",
   components: {
-    [Icon.name]: Icon,
-  },
+    [Icon.name]: Icon
+  }
 })
 export default class PageHeader extends Vue {
-  // ── ──────────────────────────────────────────────── I ──────────
-  // ──   :::::: Prop : :  :   :    :     :        :          :
-  // ── ──────────────────────────────────────────────────────────
   /**
    * title
    * @description 标题
@@ -46,39 +48,38 @@ export default class PageHeader extends Vue {
    */
   @Prop({
     type: String,
-    default: '',
+    default: ""
   })
   title!: String;
 
   /**
-   * transparent
+   * 头部栏的透明度
+   *
    * @description 头部栏的透明度
    * @param {Boolean} default: false
    */
   @Prop({
     type: Boolean,
-    default: false,
+    default: false
   })
   transparent!: Boolean;
 
-  // ── ──────────────────────────────────────────────── I ──────────
-  // ──   :::::: Emit : :  :   :    :     :        :          :
-  // ── ──────────────────────────────────────────────────────────
-
   /**
    * Emit传递左侧按钮点击事件
-   * @event backClickHandler
+   *
+   * @listens backClickHandler
+   * @event PageHeader#backClickHandler
    */
-
-  @Emit('backClickHandler')
+  @Emit("backClickHandler")
   private backClickHandler(): void {}
 
   /**
    * Emit传递右侧按钮点击事件
-   * @event rightBtnClickHandler
+   *
+   * @listens rightBtnClickHandler
+   * @event PageHeader#rightBtnClickHandler
    */
-
-  @Emit('rightBtnClickHandler')
+  @Emit("rightBtnClickHandler")
   private rightBtnClickHandler(): void {}
 }
 </script>

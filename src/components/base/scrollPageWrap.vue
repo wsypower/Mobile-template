@@ -12,7 +12,7 @@
         slot-scope="{ scrollTop, isRefreshActive, isRefreshing }"
         :scroll-top="scrollTop"
         :is-refreshing="isRefreshing"
-        :is-refresh-active="isRefreshActive"
+        roller-color="#fff"
       ></md-scroll-view-refresh>
       <slot></slot>
       <div v-for="index in list" class="scroll-view-item" :key="index" @click="onItemClick(i)">
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit, Ref } from 'vue-property-decorator';
 import { ScrollView, ScrollViewRefresh, ScrollViewMore } from 'mand-mobile';
 @Component({
   name: 'scrollPageWrap',
@@ -35,39 +35,39 @@ import { ScrollView, ScrollViewRefresh, ScrollViewMore } from 'mand-mobile';
   },
 })
 export default class ScrollPageWrap extends Vue {
-  // ── ──────────────────────────────────────────────── I ──────────
-  // ──   :::::: data : :  :   :    :     :        :          :
-  // ── ──────────────────────────────────────────────────────────
+  @Ref('scrollView') readonly scrollView!: { finishRefresh: () => void };
 
-  private list = 1;
-
-  // ── ──────────────────────────────────────────────── I ──────────
-  // ──   :::::: mounted : :  :   :    :     :        :          :
-  // ── ──────────────────────────────────────────────────────────
+  private list = 30;
 
   private mounted(): void {}
-
-  // ── ──────────────────────────────────────────────── I ──────────
-  // ──   :::::: methods : :  :   :    :     :        :          :
-  // ── ──────────────────────────────────────────────────────────
 
   private onItemClick(i: number): void {
     // Toast.info(`Click ${i}`)
   }
-  private onScroll({ scrollLeft, scrollTop }: any): void {
-    console.log(` scrollTop: ${scrollTop as number}`);
+
+  /**
+   *  抛出滚动点位 point
+   *  @param { scrollLeft, scrollTop }
+   *  @date 2019-11-11-19:57:20
+   */
+  @Emit('scrollTop')
+  private onScroll({ scrollLeft, scrollTop }: { scrollLeft: number; scrollTop: number }): void {
+    // console.log(` scrollTop: ${scrollTop as number}`);
   }
+
+  /**
+   *  下拉刷新触发事件
+   *  @prompt 需要 finishRefresh 触发刷新
+   *  @date 2019-11-11-19:57:20
+   */
   private onRefresh() {
     // async data
     setTimeout(() => {
-      this.list += 5;
-      this.$refs.scrollView.finishRefresh();
+      this.scrollView.finishRefresh();
     }, 2000);
   }
   addItems(): void {
     this.list += 5;
-    // 如果把autoReflow设置为false, 需调用reflowScroller
-    // this.$refs.scrollView.reflowScroller();
   }
 }
 </script>
@@ -76,8 +76,8 @@ export default class ScrollPageWrap extends Vue {
 .scroll-page-wrap {
   width: 100%;
   height: 100%;
-  background-color: #f5f5f5;
-  // background-image: linear-gradient(180deg, #2676e5 0%, #2676e5 30%, #f5f5f5 31%, #f5f5f5 100%);
+  // background-color: #f5f5f5;
+  background-image: linear-gradient(180deg, #2676e5 0%, #2676e5 30%, #f5f5f5 31%, #f5f5f5 100%);
   .image-esxperiment {
     width: 100%;
     height: 360px;
@@ -90,6 +90,11 @@ export default class ScrollPageWrap extends Vue {
     font-family: DINAlternate-Bold;
     background-color: #fff;
     border-bottom: 0.5px solid #efefef;
+  }
+  /deep/ .scroll-view-refresh {
+    .refresh-tip {
+      color: #fff;
+    }
   }
 }
 </style>
