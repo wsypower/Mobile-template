@@ -1,6 +1,6 @@
 <template>
   <div class="cg_preview">
-    <page-header @rightBtnClickHandler="rightBtnClickHandler()" transparent />
+    <page-header @rightBtnClickHandler="rightBtnClickHandler()" :transparent="headerTransparent" />
     <scroll-page-wrap @scrollTop="scrollTop">
       <!-- 头部 -->
       <Friends-preview-header ref="FriendsPreviewHeader" />
@@ -13,7 +13,8 @@ import { Component, Vue, Ref } from 'vue-property-decorator';
 import PageHeader from '@/components/base/PageHeader.vue';
 import scrollPageWrap from '@/components/base/scrollPageWrap.vue';
 import FriendsPreviewHeader from '@/components/views/friendsPreview/friendsPreviewHeader.vue';
-import { getElementStyle } from '@/util/util';
+import { getElementStyle } from '@/util/util.assist';
+import util from '@/util/util';
 @Component({
   name: 'FriPreview',
   components: {
@@ -23,15 +24,20 @@ import { getElementStyle } from '@/util/util';
   },
 })
 export default class FriPreview extends Vue {
-  // 头部图片 VNode 元素
+  /**
+   * 头部导航栏透明度
+   */
+  private headerTransparent: number = 0;
+  /**
+   * 头部图片 VNode 元素
+   */
   @Ref('FriendsPreviewHeader') readonly FriendsPreviewHeader!: {
     $el: HTMLElement;
   };
 
-  //滚动 scrollTop 点位
-  private scrollTopPoint: number = 0;
-
-  //头部图片的高度
+  /**
+   * 头部图片的高度
+   */
   private scrollImgHeight: number = 0;
 
   /**
@@ -43,12 +49,13 @@ export default class FriPreview extends Vue {
   }
 
   /**
-   * 监听滚动的点位
+   * 监听滚动的点位,修改头部背景色的透明度
    * @date 2019-11-11-19:55:22
    */
   private scrollTop({ scrollTop }: { scrollTop: number }): void {
-    this.scrollTopPoint = scrollTop;
-    console.log(this.scrollTopPoint);
+    const point = scrollTop / this.scrollImgHeight;
+    //修改头部颜色的透明度
+    this.headerTransparent = point > 1 ? 1 : point;
   }
 
   /**
@@ -65,6 +72,13 @@ export default class FriPreview extends Vue {
   private mounted(): void {
     //获取头部图片的高度
     this.scrollImgHeight = this.getEleStyle(this.FriendsPreviewHeader.$el, 'height');
+     util.log.danger(`
+    ===============================================
+    >>>>>>>              Error              >>>>>>>
+    ===============================================
+    `);
+    util.log.success(`>>>>>>> 连接成功： ${111}   >>>>>>>`);
+    util.log.capsule(`111`,`111`);
   }
 }
 </script>

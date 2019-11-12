@@ -5,8 +5,8 @@ import store from '@/store';
 import CoreModule from '@/plugin/core/index';
 // 核心插件
 Vue.use(CoreModule);
-// @ts-ignore
-// 引入fastclick
+
+import '@/mock';
 
 new Vue({
   router,

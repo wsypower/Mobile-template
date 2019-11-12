@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="page-header"
-    flex="cross:stretch box:justify"
-    :class="{ 'page-header-transparent': transparent }"
-  >
+  <div class="page-header" flex="cross:stretch box:justify" :style="cssTransparent">
     <!-- 左侧点击区域 -->
 
     <div
@@ -14,10 +10,7 @@
       <md-icon name="arrow-left" size="lg" color="#fff"></md-icon>
     </div>
     <!-- 中间title -->
-    <div
-      class="page-features page-header-title"
-      flex="main:center cross:center"
-    >
+    <div class="page-features page-header-title" flex="main:center cross:center">
       {{ title }}
     </div>
     <!-- 右侧点击区域 -->
@@ -32,13 +25,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from "vue-property-decorator";
-import { Icon } from "mand-mobile";
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
+import { Icon } from 'mand-mobile';
 @Component({
-  name: "PageHeader",
+  name: 'PageHeader',
   components: {
-    [Icon.name]: Icon
-  }
+    [Icon.name]: Icon,
+  },
 })
 export default class PageHeader extends Vue {
   /**
@@ -46,12 +39,21 @@ export default class PageHeader extends Vue {
    * @description 标题
    * @param {String} default: ''
    */
+
   @Prop({
     type: String,
-    default: ""
+    default: '',
   })
   title!: String;
 
+  /**
+   * 头部背景色透明度
+   */
+  @Prop({
+    type: Number,
+    default: 0,
+  })
+  transparent!: number;
   /**
    * 头部栏的透明度
    *
@@ -60,9 +62,8 @@ export default class PageHeader extends Vue {
    */
   @Prop({
     type: Boolean,
-    default: false
+    default: false,
   })
-  transparent!: Boolean;
 
   /**
    * Emit传递左侧按钮点击事件
@@ -70,7 +71,7 @@ export default class PageHeader extends Vue {
    * @listens backClickHandler
    * @event PageHeader#backClickHandler
    */
-  @Emit("backClickHandler")
+  @Emit('backClickHandler')
   private backClickHandler(): void {}
 
   /**
@@ -79,8 +80,15 @@ export default class PageHeader extends Vue {
    * @listens rightBtnClickHandler
    * @event PageHeader#rightBtnClickHandler
    */
-  @Emit("rightBtnClickHandler")
+  @Emit('rightBtnClickHandler')
   private rightBtnClickHandler(): void {}
+
+  /**
+   * scss 和 js 共享变量
+   */
+  private get cssTransparent(): object {
+    return { '--transparent': this.transparent };
+  }
 }
 </script>
 
@@ -89,10 +97,19 @@ export default class PageHeader extends Vue {
 .page-header {
   width: 100%;
   height: 87px;
-  background-color: $color-primary;
   position: fixed;
   top: 0;
   z-index: 10;
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    background-color: $color-primary;
+    opacity: var(--transparent);
+  }
   /* 左右按钮 */
   .page-features {
     height: 100%;
