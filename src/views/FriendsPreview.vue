@@ -15,6 +15,7 @@ import scrollPageWrap from '@/components/base/scrollPageWrap.vue';
 import FriendsPreviewHeader from '@/components/views/friendsPreview/friendsPreviewHeader.vue';
 import { getElementStyle } from '@/util/util.assist';
 import util from '@/util/util';
+import { GetUser } from '@/api/modules.ts/friend/list';
 @Component({
   name: 'FriPreview',
   components: {
@@ -42,7 +43,6 @@ export default class FriPreview extends Vue {
 
   /**
    * 监听点击头部左侧功能按钮
-   * @date 2019-11-11-19:55:22
    */
   private rightBtnClickHandler(): void {
     console.log('shoudaole');
@@ -50,17 +50,15 @@ export default class FriPreview extends Vue {
 
   /**
    * 监听滚动的点位,修改头部背景色的透明度
-   * @date 2019-11-11-19:55:22
    */
   private scrollTop({ scrollTop }: { scrollTop: number }): void {
     const point = scrollTop / this.scrollImgHeight;
-    //修改头部颜色的透明度
-    this.headerTransparent = point > 1 ? 1 : point;
+    // 修改头部颜色的透明度
+    this.headerTransparent = point > 1 ? 1 : point < 0 ? 0 : point;
   }
 
   /**
    * 获取元素属性
-   * @date 2019-11-11-22:08:32
    */
   private getEleStyle(el: HTMLElement, style: string): number {
     return parseFloat(getElementStyle(el, style));
@@ -72,13 +70,9 @@ export default class FriPreview extends Vue {
   private mounted(): void {
     //获取头部图片的高度
     this.scrollImgHeight = this.getEleStyle(this.FriendsPreviewHeader.$el, 'height');
-     util.log.danger(`
-    ===============================================
-    >>>>>>>              Error              >>>>>>>
-    ===============================================
-    `);
-    util.log.success(`>>>>>>> 连接成功： ${111}   >>>>>>>`);
-    util.log.capsule(`111`,`111`);
+    GetUser({ userId: 123 }).then(res => {
+      console.log(res);
+    });
   }
 }
 </script>

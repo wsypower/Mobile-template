@@ -4,7 +4,7 @@
  * @Author: wei.yafei
  * @Date: 2019-11-12 19:52:50
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-12 22:42:40
+ * @Last Modified time: 2019-11-13 17:13:45
  */
 
 /**
@@ -27,7 +27,7 @@ export type TypeColor = 'default' | 'primary' | 'success' | 'warning' | 'danger'
  * @param { TypeColor } type 样式名称 [ default | primary | success | warning | danger ]
  */
 interface Capsule {
-  (title: string, info: string, type: TypeColor): void;
+  (title: string, info: string, type?: TypeColor): void;
 }
 
 /**

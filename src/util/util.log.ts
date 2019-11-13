@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-12 02:44:03
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-12 22:42:10
+ * @Last Modified time: 2019-11-13 17:28:09
  */
 
 import { TypeColor, LogType, Colorful } from './type/util.log';
@@ -68,8 +68,10 @@ const log: LogType = {
   capsule: (title: string, info: string, type: TypeColor = 'primary'): void => {
     console.log(
       `%c ${title} %c ${info} %c`,
-      'background:#35495E; padding: 6px; border-radius: 5px 0 0 5px; color: #fff;',
-      `background:${typeColor(type)}; padding: 6px; border-radius: 0 5px 5px 0;  color: #fff;`,
+      'background:#35495E; padding: 6px; border-radius: 5px 0 0 5px; color: #fff;font-weight:600',
+      `background:${typeColor(
+        type,
+      )}; padding: 6px; border-radius: 0 5px 5px 0;  color: #fff;font-weight:600`,
       'background:transparent',
     );
   },
