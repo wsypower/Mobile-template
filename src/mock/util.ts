@@ -2,11 +2,12 @@
  * @Author: wei.yafei
  * @Date: 2019-06-08 23:39:35
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-13 21:04:11
+ * @Last Modified time: 2019-11-13 21:20:06
  */
 import Qs from 'qs';
+import { ResponseBody } from './types';
 
-const responseBody = {
+const responseBody: ResponseBody = {
   // 后台返回请求状态信息
   msg: '',
   timestamp: 0,
@@ -26,9 +27,16 @@ const responseBody = {
  * @param {Object} headers
  */
 
-export const builder = (data, msg, code = 0, headers = {}) => {
+export const builder = (
+  data: any,
+  msg: string,
+  code: number = 0,
+  headers: any = {},
+): ResponseBody => {
   responseBody.result = data;
+  // tslint:disable-next-line: strict-type-predicates
   if (msg !== undefined && msg !== null) responseBody.msg = msg;
+  // tslint:disable-next-line: strict-type-predicates
   if (code !== undefined && code !== 0) {
     responseBody.code = code;
     responseBody._status = code;
@@ -45,7 +53,7 @@ export const builder = (data, msg, code = 0, headers = {}) => {
  * @author weiyafei
  * @date 2019-06-13-10:25:18
  */
-export const getQueryParameters = options => {
+export const getQueryParameters = (options: any) => {
   const url = options.url;
   const search = url.split('?')[1];
   if (!search) {
@@ -66,4 +74,4 @@ export const getQueryParameters = options => {
  * @date 2019-06-13-14:32:15
  * @param {Object} options axios上传的参数对象
  */
-export const getBody = options => options.body && Qs.parse(options.body);
+export const getBody = (options: any) => options.body && Qs.parse(options.body);
