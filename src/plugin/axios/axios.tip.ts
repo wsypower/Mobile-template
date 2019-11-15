@@ -1,5 +1,7 @@
 'use strict';
 /*
+ * 成功以及错误提示
+ *
  * @Author: wei.yafei
  * @Date: 2019-11-13 20:41:33
  * @Last Modified by: wei.yafei
@@ -18,8 +20,8 @@ import util from '@/util/util';
  * @author weiyafei
  * @param {string} msg提示错误
  */
-export const errorCreate = (msg: string) => {
-  const error = new Error(msg);
+export const errorCreate = (msg: string): void => {
+  const error: Error = new Error(msg);
   errorLog(error);
   throw error;
 };
@@ -30,7 +32,7 @@ export const errorCreate = (msg: string) => {
  * @author weiyafei
  * @param {error} catch捕获的错误
  */
-export const errorLog = (error: { message: string }) => {
+export const errorLog = (error: { message: string }): void => {
   // 打印到控制台
   if (process.env.NODE_ENV === 'development') {
     util.log.capsule('Error', error.message, 'danger');
@@ -39,6 +41,7 @@ export const errorLog = (error: { message: string }) => {
   // 显示提示
   Toast.failed(`${error.message}`);
 };
+
 /*=============================================
  =                axios-成功提示                =
  =============================================*/
@@ -47,7 +50,7 @@ export const errorLog = (error: { message: string }) => {
  * @author weiyafei
  * @date 2019-06-16-17:57:43
  */
-export const success = (success: string) => {
+export const success = (success: string): void => {
   // 打印到控制台
   if (process.env.NODE_ENV === 'development') {
     util.log.capsule('YES', success, 'success');

@@ -1,8 +1,9 @@
 import request from '@/plugin/axios/axios';
+import { AxiosRequestConfig, AxiosStatic, AxiosPromise } from 'axios';
 
-export const GetUser = (data: any) => {
+export const AsyncGetUser = (data?: any): AxiosPromise => {
   return request({
-    url: `@test/login`,
+    url: `@test/getuser`,
     method: 'post',
     data,
   });

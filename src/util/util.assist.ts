@@ -9,5 +9,3 @@ interface GetElementStyle {
 
 export const getElementStyle: GetElementStyle = (dom: HTMLElement, styleClass: string): string =>
   window.getComputedStyle(dom).getPropertyValue(styleClass);
-
-//assist

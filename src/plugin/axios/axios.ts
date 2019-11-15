@@ -4,19 +4,19 @@
  * @Author: wei.yafei
  * @Date: 2019-06-12 15:19:30
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-13 20:55:19
+ * @Last Modified time: 2019-11-15 17:02:28
  */
 
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
-import config from './axios.config';
+import axiosRequestConfig from './axios.config';
 import { success, errorCreate, errorLog } from './axios.tip';
 
 /*=============================================
 =                创建axios实例                 =
 =============================================*/
 
-const request = axios.create(config);
+const request = axios.create(axiosRequestConfig);
 
 /*=============================================
 =                   请求拦截器                  =
@@ -29,6 +29,7 @@ request.interceptors.request.use(
   error => {
     // 执行请求错误后的操作
     // 发送失败
+    errorCreate(`服务器异常，请联系管理员！`);
     return Promise.reject(error);
   },
 );
@@ -63,7 +64,7 @@ request.interceptors.response.use(
         /**
          * [ 示例 ] code === 401 代表没有权限
          */
-        errorCreate(`${dataAxios.msg}`);
+        errorCreate(`${dataAxios.msg} | 报错接口: ${url}`);
         break;
       case 111:
         /**
@@ -75,12 +76,12 @@ request.interceptors.response.use(
         /**
          * 不是正确的 code
          */
-        errorCreate(`${dataAxios.msg}: ${url}`);
+        errorCreate(`${dataAxios.msg} | 报错接口: ${url}`);
         break;
     }
   },
   /* 对错误响应数据的操作 => error */
-  error => {
+  (error: AxiosError) => {
     if (error && error.response) {
       switch (error.response.status) {
         case 400:

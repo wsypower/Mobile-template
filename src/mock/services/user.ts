@@ -24,4 +24,4 @@ const login = options => {
     { 'Custom-Header': Mock.mock('@id') },
   );
 };
-Mock.mock(/\/@test\/login/, 'post', login);
+Mock.mock(/\/@test\/getuser/, 'post', login);

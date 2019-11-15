@@ -1,5 +1,9 @@
 <template>
-  <div class="page-header" flex="cross:stretch box:justify" :style="cssTransparent">
+  <div
+    class="page-header"
+    flex="cross:stretch box:justify"
+    :style="cssTransparent"
+  >
     <!-- 左侧点击区域 -->
 
     <div
@@ -7,10 +11,17 @@
       flex="main:center cross:center"
       @click="backClickHandler()"
     >
-      <md-icon name="arrow-left" size="lg" color="#fff"></md-icon>
+      <md-icon
+        name="arrow-left"
+        size="lg"
+        color="#fff"
+      ></md-icon>
     </div>
     <!-- 中间title -->
-    <div class="page-features page-header-title" flex="main:center cross:center">
+    <div
+      class="page-features page-header-title"
+      flex="main:center cross:center"
+    >
       {{ title }}
     </div>
     <!-- 右侧点击区域 -->
@@ -19,7 +30,12 @@
       flex="main:center cross:center"
       @click="rightBtnClickHandler()"
     >
-      <md-icon name="camera" svg size="lg"></md-icon>
+      <md-icon
+        name="camera"
+        svg
+        size="lg"
+        color="#ffffff"
+      ></md-icon>
     </div>
   </div>
 </template>
@@ -72,7 +88,7 @@ export default class PageHeader extends Vue {
    * @event PageHeader#backClickHandler
    */
   @Emit('backClickHandler')
-  private backClickHandler(): void {}
+  private backClickHandler(): void {} // tslint:disable-line
 
   /**
    * Emit传递右侧按钮点击事件
@@ -81,7 +97,7 @@ export default class PageHeader extends Vue {
    * @event PageHeader#rightBtnClickHandler
    */
   @Emit('rightBtnClickHandler')
-  private rightBtnClickHandler(): void {}
+  private rightBtnClickHandler(): void {} // tslint:disable-line
 
   /**
    * scss 和 js 共享变量

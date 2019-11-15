@@ -1,7 +1,13 @@
 <template>
-  <div class="cg_preview_header" flex="dir:right cross:bottom">
+  <div
+    class="cg_preview_header"
+    flex="dir:right cross:bottom"
+  >
     <div class="user_avatar"></div>
-    <div class="user_name" flex="cross:center main:right">高圆圆</div>
+    <div
+      class="user_name"
+      flex="cross:center main:right"
+    >{{realname}}</div>
   </div>
 </template>
 
@@ -10,7 +16,19 @@ import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 @Component({
   name: 'friendsPreviewHeader',
 })
-export default class FriendsPreviewHeader extends Vue {}
+export default class FriendsPreviewHeader extends Vue {
+  /**
+   * title
+   * @description 名字
+   * @param {String} default: '高圆圆'
+   */
+
+  @Prop({
+    type: String,
+    default: '',
+  })
+  realname!: String;
+}
 </script>
 
 <style scoped lang="scss">

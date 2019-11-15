@@ -1,10 +1,19 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
+    <img
+      alt="Vue logo"
+      src="../assets/logo.png"
+    />
     <div class="shiw">
-      <div class="shishi" flex="main:center cross:center"></div>
+      <div
+        class="shishi"
+        flex="main:center cross:center"
+      ></div>
     </div>
-    <md-button type="primary" loading>Loading</md-button>
+    <md-button
+      type="primary"
+      loading
+    >Loading</md-button>
   </div>
 </template>
 
@@ -20,7 +29,7 @@ import Button from 'mand-mobile/lib/button';
 })
 export default class Home extends Vue {}
 </script>
-<style scoped lang="scss" >
+<style scoped lang="scss">
 $white: #fff;
 .shiw {
   width: 750px;
