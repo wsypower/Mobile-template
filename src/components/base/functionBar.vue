@@ -19,13 +19,14 @@
           <!-- 赞 start-->
           <div
             class="thumbs-up border-right-1px tabindex"
-            flex='cross:center main:justify'
+            flex='cross:center main:justify dir:left'
             tabindex
             @click="thumbsUp"
           >
-            <vue-star
+            <ty-star
               animate="animated bounceIn"
               color="#409EFF"
+              :active='starActive'
             >
               <md-icon
                 slot="icon"
@@ -34,9 +35,13 @@
                 size="md"
                 @click="startHandleClick"
               ></md-icon>
-            </vue-star>
-            <span>
-              赞
+            </ty-star>
+            <span
+              class="thumbs-up-text"
+              flex="main:right"
+              :style='{color:ColorValue}'
+            >
+              {{starText}}
             </span>
           </div>
           <!-- 赞 end-->
@@ -75,40 +80,74 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 import { Icon, Button } from 'mand-mobile';
-import VueStar from 'vue-star';
+import TyStar from '@/components/base/star/TyStar.vue';
 @Component({
   name: 'functionBar',
   components: {
-    VueStar,
+    TyStar,
     [Icon.name]: Icon,
     [Button.name]: Button,
   },
 })
 export default class FunctionBar extends Vue {
   /*=============================================
-  =                    Star                     =
+  =                     Data                    =
   =============================================*/
+  /* -------- Star  ------- */
+
+  /**
+   * 点赞状态
+   *
+   * @date 2019-11-18 18:33:58
+   */
+  private starActive: boolean = true;
+
+  /*=============================================
+  =                   Computed                  =
+  =============================================*/
+
+  /* -------- Star  ------- */
+  /**
+   * 点亮动画
+   *
+   */
+  private get ColorValue(): string {
+    return this.starActive ? `#409EFF` : `#999999`;
+  }
+
+  /**
+   * 点击后 icon 颜色
+   *
+   * @param {String} color
+   */
+  private get starText(): string {
+    return this.starActive ? `取消` : `赞`;
+  }
+
+  /*=============================================
+  =                    Method                   =
+  =============================================*/
+  /* -------- Star  ------- */
 
   /**
    * 点赞按钮点击事件
+   * 异步上传点赞切换
    *
    * @author weiyafei
    * @date 2019-11-15-22:26:56
    */
   private thumbsUp() {
-    console.log('dianji');
-    this.startHandleClick();
+    console.log('点击了');
+    this.starActive = !this.starActive;
+    console.log(this.starActive);
   }
+
   /**
    * 点赞icon点击事件
    *
    * @author weiyafei
    * @date 2019-11-15-22:25:15
    */
-  private startHandleClick(): void {
-    console.log('点击了');
-  }
-
   /*=====  End of Star comment block  ======*/
 }
 </script>
@@ -132,7 +171,7 @@ export default class FunctionBar extends Vue {
       }
       /* 点赞 */
       .operating {
-        width: 289px;
+        width: 320px;
         height: 100%;
         font-size: 28px;
         color: #999999;
@@ -140,6 +179,13 @@ export default class FunctionBar extends Vue {
           padding-left: 20px;
           padding-right: 10px;
           position: relative;
+          // background-color: rgb(210, 133, 133);
+          /* 点赞文字 */
+          .thumbs-up-text {
+            width: 60%;
+            @include center-translate(x);
+            left: 90px;
+          }
         }
         .evaluation-btn {
           height: 100%;
@@ -172,7 +218,13 @@ export default class FunctionBar extends Vue {
     }
   }
 }
-// /* 点赞组件 */
+/* 点赞组件 */
+/deep/.TyStar {
+  @include center-translate();
+  left: 30px;
+  top: 47px;
+}
+
 // .VueStar {
 //   width: 100%;
 //   height: 100%;
@@ -180,26 +232,17 @@ export default class FunctionBar extends Vue {
 //   /deep/.VueStar__ground {
 //     width: 100%;
 //     height: 100%;
-//     justify-content: left;
-//     padding-left: 15px;
-//     /deep/.VueStar__decoration {
-//       left: -34px;
-//       top: -27px;
-//     }
 //     .VueStar__icon {
-//       // width: 100%;
-//       // height: 100%;
-
-//       // .md-icon {
-//       //   position: absolute;
-//       //   @include center-translate(y);
-//       //   left: 10px;
-//       // }
+//       width: 100%;
+//       height: 100%;
+//       .md-icon {
+//         position: absolute;
+//         @include center-translate();
+//       }
 //     }
-//     // /deep/.VueStar__decoration{
-//     //     width: 100%;
-//     //     height: 100%;
-//     // }
+//     /deep/.VueStar__decoration {
+//       @include center-translate();
+//     }
 //   }
 // }
 </style>

@@ -2,8 +2,8 @@
 /*
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
- * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-12 19:38:35
+ * @Last Modified by: wei.yafei 
+ * @Last Modified time: 2019-11-18 20:33:08
  */
 
 /**
@@ -24,7 +24,7 @@ const compressionPlugin = require('compression-webpack-plugin');
 /**
  * lodash 按需引用
  */
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+// const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 /**
  * 添加js或者css资源到由html-webpack-plugin插件自动生成的文件中
@@ -260,22 +260,22 @@ module.exports = {
         // sourcemap不包含列信息
         config => config.devtool('cheap-source-map'),
       )
-      // 非开发环境
-      .when(process.env.NODE_ENV !== 'development', config => {
-        config.optimization.minimizer([
-          new UglifyJsPlugin({
-            uglifyOptions: {
-              // 移除 console
-              // 其它优化选项 https://segmentfault.com/a/1190000010874406
-              compress: {
-                drop_console: true,
-                drop_debugger: true,
-                pure_funcs: ['console.log'],
-              },
-            },
-          }),
-        ]);
-      });
+      // // 非开发环境
+      // .when(process.env.NODE_ENV !== 'development', config => {
+      //   config.optimization.minimizer([
+      //     new UglifyJsPlugin({
+      //       uglifyOptions: {
+      //         // 移除 console
+      //         // 其它优化选项 https://segmentfault.com/a/1190000010874406
+      //         compress: {
+      //           drop_console: true,
+      //           drop_debugger: true,
+      //           pure_funcs: ['console.log'],
+      //         },
+      //       },
+      //     }),
+      //   ]);
+      // });
   },
   transpileDependencies: ['mand-mobile'],
 };
