@@ -123,8 +123,7 @@ export default class PageHeader extends Vue {
     height: 100%;
     top: 0px;
     left: 0px;
-    background-color: $color-primary;
-    opacity: var(--transparent);
+    background-color: rgba($color: $color-primary, $alpha: var(--transparent));
   }
   /* 左右按钮 */
   .page-features {
@@ -139,6 +138,8 @@ export default class PageHeader extends Vue {
     color: #ffffff;
     font-size: 32px;
     user-select: none;
+    z-index: 10;
+    opacity: var(--transparent);
   }
   /* 右侧功能栏 */
   .page-header-btn {

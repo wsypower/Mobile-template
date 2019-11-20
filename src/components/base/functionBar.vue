@@ -8,7 +8,7 @@
       >
         <!-- 时间 start-->
         <div class="tiemer">
-          {{ 1574212320000 | RelativeTime }}
+          {{ time | RelativeTime }}
         </div>
         <!-- 时间 end-->
         <!-- 按钮 start-->
@@ -26,7 +26,7 @@
             <ty-star
               animate="animated bounceIn"
               color="#409EFF"
-              :active='starActive'
+              :active='star'
             >
               <md-icon
                 slot="icon"
@@ -91,17 +91,25 @@ import TyStar from '@/components/base/star/TyStar.vue';
 })
 export default class FunctionBar extends Vue {
   /*=============================================
-  =                     Data                    =
+  =                     Prop                    =
   =============================================*/
-  /* -------- Star  ------- */
-
   /**
    * 点赞状态
-   *
-   * @date 2019-11-18 18:33:58
+   * @description 名字
    */
-  private starActive: boolean = true;
+  @Prop({
+    type: Boolean,
+  })
+  star!: boolean;
 
+  /**
+   * 时间戳
+   * @description 名字
+   */
+  @Prop({
+    type: String,
+  })
+  time!: string;
   /*=============================================
   =                   Computed                  =
   =============================================*/
@@ -112,7 +120,7 @@ export default class FunctionBar extends Vue {
    *
    */
   private get ColorValue(): string {
-    return this.starActive ? `#409EFF` : `#999999`;
+    return this.star ? `#409EFF` : `#999999`;
   }
 
   /**
@@ -121,7 +129,7 @@ export default class FunctionBar extends Vue {
    * @param {String} color
    */
   private get starText(): string {
-    return this.starActive ? `取消` : `赞`;
+    return this.star ? `取消` : `赞`;
   }
 
   /*=============================================
@@ -138,8 +146,8 @@ export default class FunctionBar extends Vue {
    */
   private thumbsUp() {
     console.log('点击了');
-    this.starActive = !this.starActive;
-    console.log(this.starActive);
+    this.star = !this.star;
+    console.log(this.star);
   }
 
   /**
@@ -174,7 +182,7 @@ export default class FunctionBar extends Vue {
         font-size: 28px;
         color: #999999;
       }
-      /* 点赞 */
+      /* 点赞按钮 */
       .operating {
         width: 320px;
         height: 100%;
@@ -184,7 +192,6 @@ export default class FunctionBar extends Vue {
           padding-left: 20px;
           padding-right: 10px;
           position: relative;
-          // background-color: rgb(210, 133, 133);
           /* 点赞文字 */
           .thumbs-up-text {
             width: 60%;
@@ -201,11 +208,15 @@ export default class FunctionBar extends Vue {
     }
     /* 评价栏 */
     .evaluation {
+      width: 100%;
+      background-color: #fff;
       /* 点赞的人数 */
       .like {
+        width: 100%;
       }
       /* 评价 */
       .evaluation {
+        width: 100%;
       }
     }
   }

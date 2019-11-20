@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view />
+    <router-view v-wechat-title="$route.meta.title" />
   </div>
 </template>
 
@@ -16,7 +16,7 @@ export default class extends Vue {}
 <style lang="scss">
 //初始化文件（新加入iphone-x的安全布局） + flex布局
 @import '~@style/core/function';
-body{
+body {
   width: 100%;
   height: 100%;
 }

@@ -13,7 +13,7 @@
           flex
         >
           <span>
-            白云支队
+            {{name}}
           </span>
         </div>
         <!-- 6行显示省略号 -->
@@ -23,22 +23,16 @@
         >
           <!-- 8 行显示省略号 -->
           <span>
-            标题字体会加重突出显示标题字体
-            会加重突出显示标题字体会加重突出显示标题字
-            体会加重突出显示标题字体会加重突出显示标题字体会加重突出显示标
-            题字体会加重突出显示标题字体会加重突出显示标题字体会加重
-            突出显示标题字体会加重突出显示
-            标题字体会加重突出显示标题字体
-            会加重突出显示标题字体会加重突出显示标题字
-            体会加重突出显示标题字体会加重突出显示标题字体会加重突出显示标
-            题字体会加重突出显示标题字体会加重突出显示标题字体会加重
-            突出显示标题字体会加重突出显示
+            {{text}}
           </span>
         </div>
       </header>
       <main></main>
       <!-- 功能栏 -->
-      <function-bar />
+      <function-bar
+        :star='star'
+        :time='time'
+      />
     </div>
   </div>
 </template>
@@ -52,7 +46,47 @@ import FunctionBar from '../../base/functionBar.vue';
     FunctionBar,
   },
 })
-export default class FriendsItem extends Vue {}
+export default class FriendsItem extends Vue {
+  /*=============================================
+  =                     Prop                    =
+  =============================================*/
+  /**
+   * 空白按钮
+   * @date 2019-11-12 19:55:20
+   */
+  @Prop({
+    type: String,
+    default: '',
+  })
+  text!: string;
+
+  /**
+   * 是否激活点赞标记
+   */
+  @Prop({
+    type: Boolean,
+    default: '',
+  })
+  star!: boolean;
+
+  /**
+   * 时间戳
+   * @description 名字
+   */
+  @Prop({
+    type: String,
+  })
+  time!: string;
+
+  /**
+   * 发布者名字
+   * @description 名字
+   */
+  @Prop({
+    type: String,
+  })
+  name!: string;
+}
 </script>
 
 <style scoped lang="scss">

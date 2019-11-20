@@ -15,7 +15,7 @@ const Friends: RouteConfig = {
   component: () => import(/* webpackChunkName: "friends" */ '@views/FriendsPreview.vue'),
   name: 'Friends',
   meta: {
-    title: 'Friends',
+    title: '朋友圈',
     icon: 'Friends',
   },
 };

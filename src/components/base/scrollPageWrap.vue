@@ -6,6 +6,7 @@
       :scrolling-x="false"
       @scroll="onScroll"
       @refreshing="onRefresh"
+      auto-reflow
     >
       <!-- 下拉刷新 start-->
       <md-scroll-view-refresh
@@ -39,6 +40,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Ref } from 'vue-property-decorator';
 import { ScrollView, ScrollViewRefresh, ScrollViewMore, ResultPage } from 'mand-mobile';
+
 @Component({
   name: 'scrollPageWrap',
   components: {
@@ -65,7 +67,7 @@ export default class ScrollPageWrap extends Vue {
     default: '',
   })
   scrollButton!: any[];
- 
+
   /*==========       空白页面 End     *==========*/
 
   /*=============================================
@@ -83,7 +85,7 @@ export default class ScrollPageWrap extends Vue {
    *  @date 2019-11-11 19:57:20
    */
   @Emit('scrollTop')
-  private onScroll({ scrollLeft, scrollTop }: { scrollLeft: number; scrollTop: number }): void {
+  private onScroll({ scrollLeft, scrollTop }: { scrollLeft: number; scrollTop: number }) {
     // console.log(` scrollTop: ${scrollTop as number}`);
   }
 
@@ -93,10 +95,22 @@ export default class ScrollPageWrap extends Vue {
    *  @date 2019-11-11 19:57:20
    */
   private onRefresh() {
-    // async data
+    //async data
     setTimeout(() => {
       this.scrollView.finishRefresh();
     }, 2000);
+  }
+  /**
+   *  下拉刷新触发事件
+   *  @prompt 需要 finishRefresh 触发刷新
+   *  @date 2019-11-11 19:57:20
+   */
+  private reflow() {
+    // this.scrollView.reflowScroller();
+    // async data
+    // setTimeout(() => {
+    //   this.scrollView.finishRefresh();
+    // }, 2000);
   }
 
   /*==========      滚动条事件end    *==========*/

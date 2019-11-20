@@ -4,6 +4,7 @@
     <page-header
       @rightBtnClickHandler="rightBtnClickHandler()"
       :transparent="headerTransparent"
+      title='朋友圈'
     />
     <!-- header end -->
     <!-- 滚动页面 start-->
@@ -21,11 +22,17 @@
       <!-- 头部 start-->
       <!-- 内容  start-->
       <template #body>
-        <!-- <div v-for="index in list" class="scroll-view-item" :key="index" @click="onItemClick(i)">
-          {{ index }}
-        </div> -->
-        <div class="preview_item">
-          <Friends-item></Friends-item>
+        <div
+          class="preview_item"
+          v-for="(item, index) in list"
+          :key="index"
+        >
+          <Friends-item
+            :text='item.text'
+            :star='item.star'
+            :time='item.time'
+            :name='item.name'
+          ></Friends-item>
         </div>
       </template>
       <!-- 内容  start-->
@@ -43,6 +50,8 @@ import { getElementStyle } from '@/util/util.assist';
 import util from '@/util/util';
 import { AsyncGetUser } from '@/api/modules.ts/friend/list';
 import FriendsItem from '../components/views/friendsPreview/feirendsItem.vue';
+import { AsyncGetList } from '../api/modules.ts/friend/list';
+import { ceil, throttle, debounce } from 'lodash';
 
 /*=============================================
 =                  Component                  =
@@ -61,7 +70,12 @@ export default class FriPreview extends Vue {
   /*=============================================
   =                     Data                    =
   =============================================*/
-  private list = 30;
+  /**
+   *
+   * 列表信息
+   */
+  private list: any[] = [];
+  private point: number = 0;
   /* -------- FriendsItem ------- */
 
   /* -------- PageHeader ------- */
@@ -138,11 +152,13 @@ export default class FriPreview extends Vue {
    *
    * @memberof scrollPageWrap
    */
-  private scrollTop({ scrollTop }: { scrollTop: number }): void {
-    const point = scrollTop / this.scrollImgHeight;
+  private scrollTop({ scrollTop }: { scrollTop: number }) {
+    //保留一位小数
+    const point = ceil(scrollTop / this.scrollImgHeight, 1);
     // 修改头部颜色的透明度
     this.headerTransparent = point > 1 ? 1 : point < 0 ? 0 : point;
   }
+
   /* -------- async ------- */
   /**
    * 获取user数据
@@ -159,6 +175,24 @@ export default class FriPreview extends Vue {
         throw new Error(err);
       });
   }
+
+  /**
+   * 获取user数据
+   *
+   * @promise
+   */
+  private GetListData(): void {
+    AsyncGetList()
+      .then((res: any) => {
+        console.log(res);
+        const { list } = res;
+        this.list = this.list = list;
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  }
+
   /* -------- public ------- */
   /**
    * 获取元素属性
@@ -182,6 +216,8 @@ export default class FriPreview extends Vue {
   =============================================*/
   private created(): void {
     this.GetUserData();
+    // 获取列表项
+    this.GetListData();
   }
 }
 </script>
