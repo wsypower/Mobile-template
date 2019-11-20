@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-11-18 20:33:08
+ * @Last Modified time: 2019-11-19 20:56:54
  */
 
 /**
@@ -163,20 +163,9 @@ module.exports = {
              */
             new ProgressBarPlugin(),
             new BundleAnalyzerPlugin(),
-            //TODO ────────────────────────────────────────────────────────
-            // 按需引入lodash引入有问退
-            // new LodashModuleReplacementPlugin()
           ],
         }
       : {
-          //TODO ────────────────────────────────────────────────────────
-          // 按需引入lodash引入有问退
-          // plugins: [
-          //   new LodashModuleReplacementPlugin({
-          //     collections: true,
-          //     paths: true
-          //   })
-          // ]
           module: TS_IMPORT_PLUGINS.module,
         },
   /**
@@ -255,27 +244,27 @@ module.exports = {
        * 如果productionSourceMap为true,修改下面source-map展示项
        * https://www.webpackjs.com/configuration/devtool/#devtool
        */
-      .when(
-        process.env.NODE_ENV === 'development' && PRODUCTION_SOURCE_MAP,
-        // sourcemap不包含列信息
-        config => config.devtool('cheap-source-map'),
-      )
-      // // 非开发环境
-      // .when(process.env.NODE_ENV !== 'development', config => {
-      //   config.optimization.minimizer([
-      //     new UglifyJsPlugin({
-      //       uglifyOptions: {
-      //         // 移除 console
-      //         // 其它优化选项 https://segmentfault.com/a/1190000010874406
-      //         compress: {
-      //           drop_console: true,
-      //           drop_debugger: true,
-      //           pure_funcs: ['console.log'],
-      //         },
-      //       },
-      //     }),
-      //   ]);
-      // });
+      // .when(
+      //   process.env.NODE_ENV === 'development' && PRODUCTION_SOURCE_MAP,
+      //   // sourcemap不包含列信息
+      //   config => config.devtool('cheap-source-map'),
+      // );
+    // // 非开发环境
+    // .when(process.env.NODE_ENV !== 'development', config => {
+    //   config.optimization.minimizer([
+    //     new UglifyJsPlugin({
+    //       uglifyOptions: {
+    //         // 移除 console
+    //         // 其它优化选项 https://segmentfault.com/a/1190000010874406
+    //         compress: {
+    //           drop_console: true,
+    //           drop_debugger: true,
+    //           pure_funcs: ['console.log'],
+    //         },
+    //       },
+    //     }),
+    //   ]);
+    // });
   },
   transpileDependencies: ['mand-mobile'],
 };

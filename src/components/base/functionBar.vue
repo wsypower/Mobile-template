@@ -8,7 +8,7 @@
       >
         <!-- 时间 start-->
         <div class="tiemer">
-          2小时前
+          {{ 1574212320000 | RelativeTime }}
         </div>
         <!-- 时间 end-->
         <!-- 按钮 start-->
@@ -149,6 +149,11 @@ export default class FunctionBar extends Vue {
    * @date 2019-11-15-22:25:15
    */
   /*=====  End of Star comment block  ======*/
+  /*=============================================
+  =                    Mounted                   =
+  =============================================*/
+  // private mounted() {
+  // }
 }
 </script>
 
