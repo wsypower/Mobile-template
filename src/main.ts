@@ -4,7 +4,7 @@ import router from '@/router';
 import store from '@/store';
 import CoreModule from '@/plugin/core/index';
 import vueFiltersDate from './plugin/filter/moment';
-
+import { UserModule } from './store/modules/user';
 // 核心插件
 Vue.use(CoreModule);
 
@@ -22,9 +22,17 @@ Vue.use(require('vue-wechat-title'));
 
 // TODO: 正式环境移除
 import '@/mock';
+import Mock from 'mockjs';
 
 new Vue({
   router,
   store,
   render: h => h(App),
+  mounted() {
+    // 获取用户信息
+    UserModule.SET_USER({
+      userId: Mock.mock('@id'),
+      realname: Mock.mock('@cname'),
+    });
+  },
 }).$mount('#app');

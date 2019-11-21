@@ -11,6 +11,10 @@
     <scroll-page-wrap
       @scrollTop="scrollTop"
       :scrollButton="scrollButton"
+      :isFinished='isFinished'
+      @onRefresh='onRefresh'
+      @onEndReached='onEndReached'
+      ref='scroll'
     >
       <!-- 头部 start-->
       <template #header>
@@ -32,8 +36,10 @@
             :star='item.star'
             :time='item.time'
             :name='item.name'
+            :likes='item.likes'
           ></Friends-item>
         </div>
+
       </template>
       <!-- 内容  start-->
     </scroll-page-wrap>
@@ -42,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Ref } from 'vue-property-decorator';
+import { Component, Vue, Ref, Watch } from 'vue-property-decorator';
 import PageHeader from '@/components/base/PageHeader.vue';
 import scrollPageWrap from '@/components/base/scrollPageWrap.vue';
 import FriendsPreviewHeader from '@/components/views/friendsPreview/friendsPreviewHeader.vue';
@@ -52,7 +58,8 @@ import { AsyncGetUser } from '@/api/modules.ts/friend/list';
 import FriendsItem from '../components/views/friendsPreview/feirendsItem.vue';
 import { AsyncGetList } from '../api/modules.ts/friend/list';
 import { ceil, throttle, debounce } from 'lodash';
-
+import { UserModule } from '@/store/modules/user';
+import { ActionSheet,Dialog } from 'mand-mobile';
 /*=============================================
 =                  Component                  =
 =============================================*/
@@ -64,6 +71,8 @@ import { ceil, throttle, debounce } from 'lodash';
     PageHeader,
     scrollPageWrap,
     FriendsItem,
+    [ActionSheet.name]: ActionSheet,
+    [ActionSheet.name]: ActionSheet,
   },
 })
 export default class FriPreview extends Vue {
@@ -96,6 +105,12 @@ export default class FriPreview extends Vue {
   private scrollImgHeight: number = 0;
 
   /**
+   * 是否已经加载所有数据
+   *
+   * @private
+   */
+  private isFinished: boolean = false;
+  /**
    * 空白按钮
    *
    * @memberof scrollPageWrap
@@ -117,7 +132,36 @@ export default class FriPreview extends Vue {
    *
    * @memberof FriendsPreviewHeader
    */
-  private realname: string = '';
+  private get realname() {
+    return UserModule.getRelName;
+  }
+
+  /**
+   * 姓名
+   *
+   * @memberof FriendsPreviewHeader
+   */
+  private get userId() {
+    return UserModule.userId;
+  }
+  /* -------- list ------- */
+  /**
+   * 数据长度
+   */
+  private get listLength(): number {
+    return this.list.length;
+  }
+  /*=============================================
+  =                     Watch                   =
+  =============================================*/
+  /* -------- list 判断是否已经加载全部 ------- */
+  /**
+   * 检测数据长度
+   */
+  @Watch('listLength')
+  onChildChanged(val: number, oldVal: number) {
+    val > 20 ? (this.isFinished = true) : (this.isFinished = false);
+  }
 
   /*=============================================
   =                     Ref                     =
@@ -132,7 +176,13 @@ export default class FriPreview extends Vue {
   @Ref('FriendsPreviewHeader') readonly FriendsPreviewHeader!: {
     $el: HTMLElement;
   };
-
+  /* -------- scrollPageWrap ------- */
+  /**
+   * Ref scrollPageWrap
+   *
+   * @memberof scrollPageWrap
+   */
+  @Ref('scroll') readonly scroll!: scrollPageWrap;
   /*=============================================
   =                    Method                   =
   =============================================*/
@@ -146,6 +196,7 @@ export default class FriPreview extends Vue {
   private rightBtnClickHandler(): void {
     console.log('shoudaole');
   }
+  
   /* -------- scrollPageWrap ------- */
   /**
    * 监听滚动的点位,修改头部背景色的透明度
@@ -153,40 +204,63 @@ export default class FriPreview extends Vue {
    * @memberof scrollPageWrap
    */
   private scrollTop({ scrollTop }: { scrollTop: number }) {
-    //保留一位小数
+    // 保留一位小数
     const point = ceil(scrollTop / this.scrollImgHeight, 1);
     // 修改头部颜色的透明度
     this.headerTransparent = point > 1 ? 1 : point < 0 ? 0 : point;
   }
 
+  /**
+   * 下拉刷新
+   *
+   * @memberof scrollPageWrap
+   */
+  private onRefresh() {
+    this.GetListData(this.scroll.scrollView.finishRefresh);
+    // 重置“上拉加载”的状态
+    this.scroll.scrollView.finishLoadMore();
+  }
+
+  /**
+   * 上拉加载
+   *
+   * @memberof scrollPageWrap
+   */
+  private onEndReached() {
+    if (this.isFinished) {
+      return;
+    }
+    AsyncGetList({
+      // 参数列表
+      userId: this.userId,
+    })
+      .then((res: any) => {
+        const { list } = res;
+        this.list.push(...list);
+        this.scroll.scrollView.finishLoadMore();
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  }
   /* -------- async ------- */
   /**
    * 获取user数据
    *
    * @promise
    */
-  private GetUserData(): void {
-    AsyncGetUser({ userId: 123 })
-      .then((res: any) => {
-        const { realname } = res;
-        this.realname = realname;
-      })
-      .catch(err => {
-        throw new Error(err);
-      });
-  }
-
-  /**
-   * 获取user数据
-   *
-   * @promise
-   */
-  private GetListData(): void {
-    AsyncGetList()
+  private GetListData(fn?: Function): void {
+    AsyncGetList({
+      // 参数列表
+      userId: this.userId,
+    })
       .then((res: any) => {
         console.log(res);
         const { list } = res;
-        this.list = this.list = list;
+        this.list = list;
+        if (fn) {
+          fn();
+        }
       })
       .catch(err => {
         throw new Error(err);
@@ -208,17 +282,22 @@ export default class FriPreview extends Vue {
   =============================================*/
 
   private mounted(): void {
-    // 获取头部图片的高度
+    /**
+     * 获取头部图片的高度
+     */
     this.scrollImgHeight = this.getEleStyle(this.FriendsPreviewHeader.$el, 'height');
+    /**
+     * 初始化滚动条 加载list数据
+     */
+    this.GetListData(this.scroll.scrollView.init);
   }
   /*=============================================
   =                    Created                  =
   =============================================*/
-  private created(): void {
-    this.GetUserData();
-    // 获取列表项
-    this.GetListData();
-  }
+  // private created(): void {
+  //   // 获取列表项
+  //   // this.GetListData();
+  // }
 }
 </script>
 
@@ -226,7 +305,6 @@ export default class FriPreview extends Vue {
 .cg_preview {
   width: 100%;
   height: 100%;
-  background-color: red;
   // background-color: #f5f5f5;
   /*=============================================
   =                scroll item                  =

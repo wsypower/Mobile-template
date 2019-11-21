@@ -6,7 +6,9 @@
       :scrolling-x="false"
       @scroll="onScroll"
       @refreshing="onRefresh"
+      @end-reached="onEndReached"
       auto-reflow
+      :manual-init='true'
     >
       <!-- 下拉刷新 start-->
       <md-scroll-view-refresh
@@ -31,6 +33,14 @@
 
       <!-- 尾部插槽 start-->
       <slot name="footer"></slot>
+      <!-- 上拉加载 start -->
+      <md-scroll-view-more
+        slot="more"
+        :is-finished="isFinished"
+      >
+      </md-scroll-view-more>
+      <!-- 上拉加载 end -->
+
       <!-- 尾部插槽 end-->
     </md-scroll-view>
     <!-- 滚动组件 end-->
@@ -38,8 +48,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit, Ref } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit, Ref, Watch } from 'vue-property-decorator';
 import { ScrollView, ScrollViewRefresh, ScrollViewMore, ResultPage } from 'mand-mobile';
+import { MandComponent } from 'mand-mobile/types/component';
 
 @Component({
   name: 'scrollPageWrap',
@@ -68,6 +79,15 @@ export default class ScrollPageWrap extends Vue {
   })
   scrollButton!: any[];
 
+  /**
+   * 上拉加载
+   * 全部已加载
+   */
+  @Prop({
+    type: Boolean,
+  })
+  isFinished!: boolean;
+
   /*==========       空白页面 End     *==========*/
 
   /*=============================================
@@ -78,7 +98,9 @@ export default class ScrollPageWrap extends Vue {
    *
    *  @date 2019-11-11 19:57:20
    */
-  @Ref('scrollView') readonly scrollView!: { finishRefresh: () => void };
+
+  @Ref('scrollView') readonly scrollView!: { [propName: string]: () => void };
+
   /**
    *  抛出滚动点位 point
    *  @param { scrollLeft, scrollTop }
@@ -94,23 +116,18 @@ export default class ScrollPageWrap extends Vue {
    *  @prompt 需要 finishRefresh 触发刷新
    *  @date 2019-11-11 19:57:20
    */
+  @Emit('onRefresh')
   private onRefresh() {
-    //async data
-    setTimeout(() => {
-      this.scrollView.finishRefresh();
-    }, 2000);
+    console.log(`下拉读取数据事件`);
   }
   /**
-   *  下拉刷新触发事件
+   *  上拉加载
    *  @prompt 需要 finishRefresh 触发刷新
    *  @date 2019-11-11 19:57:20
    */
-  private reflow() {
-    // this.scrollView.reflowScroller();
-    // async data
-    // setTimeout(() => {
-    //   this.scrollView.finishRefresh();
-    // }, 2000);
+  @Emit('onEndReached')
+  private onEndReached() {
+    console.log('上拉读取数据事件');
   }
 
   /*==========      滚动条事件end    *==========*/
@@ -122,7 +139,7 @@ export default class ScrollPageWrap extends Vue {
 .scroll-page-wrap {
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(180deg, #2676e5 0%, #2676e5 30%, #ffffff 31%, #ffffff 100%);
+  background-image: linear-gradient(180deg, #2676e5 0%, #2676e5 50%, #ffffff 51%, #ffffff 100%);
   /*=============================================
   =                    滚动组件                  =
   =============================================*/

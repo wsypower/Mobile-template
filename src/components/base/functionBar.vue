@@ -18,7 +18,7 @@
         >
           <!-- 赞 start-->
           <div
-            class="thumbs-up border-right-1px tabindex"
+            class="thumbs-up  verticalLine"
             flex='cross:center main:justify dir:left'
             tabindex
             @click="thumbsUp"
@@ -47,7 +47,7 @@
           <!-- 赞 end-->
           <!-- 评论 start-->
           <div
-            class="evaluation-btn tabindex"
+            class="evaluation-btn "
             flex='cross:center main:justify'
             tabindex
           >
@@ -69,7 +69,27 @@
       <!-- 评价点赞 -->
       <div class="evaluation">
         <!-- 点赞 -->
-        <div class="like"></div>
+        <!-- <md-transition name='md-fade-up'> -->
+        <div
+          transition="md-slide-down"
+          class="like"
+          v-if='likes.length>0 || star'
+        >
+          <!-- 心 -->
+          <md-icon
+            slot="icon"
+            svg
+            name="heart"
+            size="md"
+            color='#576B95'
+          ></md-icon>
+          <!-- 点赞的人 -->
+          <span class="like_people">
+            {{ likeString }}
+            <!-- 李渊，李康，李航，李渊，李康，李航，李渊，李康，李航，李渊，李康，李航， -->
+          </span>
+        </div>
+        <!-- </md-transition> -->
         <!-- 评价 -->
         <div class="evaluation"></div>
       </div>
@@ -79,14 +99,16 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
-import { Icon, Button } from 'mand-mobile';
+import { Icon, Button, Transition } from 'mand-mobile';
 import TyStar from '@/components/base/star/TyStar.vue';
+import { UserModule } from '@/store/modules/user';
 @Component({
   name: 'functionBar',
   components: {
     TyStar,
     [Icon.name]: Icon,
     [Button.name]: Button,
+    [Transition.name]: Transition,
   },
 })
 export default class FunctionBar extends Vue {
@@ -95,7 +117,7 @@ export default class FunctionBar extends Vue {
   =============================================*/
   /**
    * 点赞状态
-   * @description 名字
+   * @description
    */
   @Prop({
     type: Boolean,
@@ -110,6 +132,16 @@ export default class FunctionBar extends Vue {
     type: String,
   })
   time!: string;
+
+  /**
+   * 点赞的人
+   * @description 名字
+   */
+  @Prop({
+    type: Array,
+    default: ['李渊', '李康', '李航'],
+  })
+  likes!: string[];
   /*=============================================
   =                   Computed                  =
   =============================================*/
@@ -132,9 +164,32 @@ export default class FunctionBar extends Vue {
     return this.star ? `取消` : `赞`;
   }
 
+  /**
+   * 用户名字
+   *
+   * @param {String} color
+   */
+  private get realName(): string {
+    return UserModule.getRelName;
+  }
+  /* -------- 点赞人数  ------- */
+  /**
+   * 数组转为字符串
+   * @description
+   * 添加或者取消自己姓名
+   */
+  private get likeString(): string {
+    return !this.star
+      ? this.likes.join(`, `)
+      : this.likes.length === 0
+      ? `${this.realName}`
+      : `${this.realName}, ${this.likes.join(`, `)}`;
+  }
+
   /*=============================================
   =                    Method                   =
   =============================================*/
+
   /* -------- Star  ------- */
 
   /**
@@ -144,19 +199,11 @@ export default class FunctionBar extends Vue {
    * @author weiyafei
    * @date 2019-11-15-22:26:56
    */
-  private thumbsUp() {
-    console.log('点击了');
+  @Emit('thumbs-up')
+  private thumbsUp(): boolean {
     this.star = !this.star;
-    console.log(this.star);
+    return this.star;
   }
-
-  /**
-   * 点赞icon点击事件
-   *
-   * @author weiyafei
-   * @date 2019-11-15-22:25:15
-   */
-  /*=====  End of Star comment block  ======*/
   /*=============================================
   =                    Mounted                   =
   =============================================*/
@@ -209,10 +256,41 @@ export default class FunctionBar extends Vue {
     /* 评价栏 */
     .evaluation {
       width: 100%;
+      height: auto;
       background-color: #fff;
+      &.border-bottom-1px {
+        &::after {
+          border-color: #dddddd;
+        }
+      }
       /* 点赞的人数 */
       .like {
         width: 100%;
+        min-height: 68px;
+        background-color: #f5f5f5;
+        margin-bottom: 30px;
+        position: relative;
+        padding: 10px 20px;
+        color: #576b95;
+        text-align: left;
+        &::before {
+          content: '';
+          position: absolute;
+          top: -14px;
+          left: 35px;
+          @include triangle(top, 15px, #f5f5f5);
+        }
+        /deep/.md-icon {
+          position: relative;
+          top: 6px;
+          left: 5px;
+        }
+        .like_people {
+          color: #576b95;
+          padding-left: 20px;
+          font-size: 28px;
+          font-weight: 600;
+        }
       }
       /* 评价 */
       .evaluation {
@@ -240,7 +318,18 @@ export default class FunctionBar extends Vue {
   left: 30px;
   top: 47px;
 }
-
+/* 竖线 */
+.verticalLine {
+  position: relative;
+  &::after {
+    content: '';
+    width: 1px;
+    height: 30px;
+    background-color: #dddddd;
+    position: absolute;
+    right: 0px;
+  }
+}
 // .VueStar {
 //   width: 100%;
 //   height: 100%;

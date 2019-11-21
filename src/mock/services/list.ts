@@ -2,7 +2,12 @@ import { builder, getBody } from '../util';
 import Mock, { Random } from 'mockjs';
 // 返回的数据
 let list = [];
+
 for (let i = 0; i < 10; i++) {
+  // 点赞的人
+  let likePeople = Mock.mock({
+    'array|0-1': [Mock.mock('@cname'), Mock.mock('@cname'), Mock.mock('@cname')],
+  });
   let Data = {
     // 朋友圈ID
     id: Mock.mock('@id'),
@@ -16,13 +21,15 @@ for (let i = 0; i < 10; i++) {
     // 图片
     image: [],
     // 点赞的人
-    likePeople: Mock.mock('@boolean'),
+    likes: likePeople.array,
+    // likes: likePeople.array,
     // 本人有没有点赞
     star: Mock.mock('@boolean'),
     // 评论栏内容
     comment: Mock.mock('@boolean'),
   };
   list.push(Data);
+  likePeople = [];
 }
 
 const listData = (options: any) => {

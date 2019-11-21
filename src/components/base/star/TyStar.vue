@@ -118,6 +118,7 @@ export default class TyStar extends Vue {
 @import 'CoreBase64.scss';
 .TyStar {
   position: absolute;
+  z-index: 15;
 }
 .TyStar__ground {
   width: 100Px;

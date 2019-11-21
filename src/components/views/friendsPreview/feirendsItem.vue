@@ -32,6 +32,8 @@
       <function-bar
         :star='star'
         :time='time'
+        :likes='likes'
+        @thumbs-up='starThumbsUp'
       />
     </div>
   </div>
@@ -47,6 +49,10 @@ import FunctionBar from '../../base/functionBar.vue';
   },
 })
 export default class FriendsItem extends Vue {
+  /*=============================================
+  =                     data                    =
+  =============================================*/
+  private likesData: string[] = [];
   /*=============================================
   =                     Prop                    =
   =============================================*/
@@ -86,6 +92,37 @@ export default class FriendsItem extends Vue {
     type: String,
   })
   name!: string;
+
+  /**
+   * 点赞的人
+   * @description 名字
+   */
+  @Prop({
+    type: Array,
+    default: [],
+  })
+  likes!: string[];
+  /*=============================================
+  =                   Computed                  =
+  =============================================*/
+
+  /*=============================================
+  =                     Method                  =
+  =============================================*/
+  /* -------- Star  ------- */
+  /**
+   * 点亮-取消 赞
+   *
+   */
+  private starThumbsUp(star: boolean) {}
+  /*=============================================
+  =                    Mounted                  =
+  =============================================*/
+
+  private mounted(): void {
+    //   // 复制likes
+    // this.likesData = this.likes;
+  }
 }
 </script>
 
