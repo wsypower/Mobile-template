@@ -129,8 +129,7 @@ export default class ScrollPageWrap extends Vue {
   private onEndReached() {
     console.log('上拉读取数据事件');
   }
-  mounted() {
-  }
+  mounted() {}
   /*==========      滚动条事件end    *==========*/
 }
 </script>

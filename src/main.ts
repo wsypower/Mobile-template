@@ -5,25 +5,18 @@ import store from '@/store';
 import CoreModule from '@/plugin/core/index';
 import vueFiltersDate from './plugin/filter/moment';
 import { UserModule } from './store/modules/user';
+import LongTap from '@/plugin/core/LongTap';
+import Clipboard from 'v-clipboard';
+// 移动端复制
+Vue.use(Clipboard);
+
 // 核心插件
 Vue.use(CoreModule);
 
 // 时间滤镜
 Vue.use(vueFiltersDate);
 
-// In main.js
-import VueScrollReveal from 'vue-scroll-reveal';
-
-// Using ScrollReveal's default configuration
-Vue.use(VueScrollReveal, {
-  class: 'v-scroll-reveal', // A CSS class applied to elements with the v-scroll-reveal directive; useful for animation overrides.
-  duration: 800,
-  scale: 1,
-  distance: '10px',
-});
-
-// OR specifying custom default options for all uses of the directive
-
+Vue.use(LongTap);
 // 引入animate.css
 import 'animate.css';
 

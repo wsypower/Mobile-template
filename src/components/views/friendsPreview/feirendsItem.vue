@@ -2,7 +2,6 @@
   <div
     class="frends_item"
     flex="dir:left box:first"
-
   >
     <div class="frends_item—left">
       <div class="avatar"></div>
@@ -18,7 +17,22 @@
           </span>
         </div>
         <!-- 文本外包围 -->
-        <div class="status">
+        <div
+          class="status"
+          v-longtap:[arg]='longTouch'
+          ref='textArea'
+          :class="{ 'text_active': longTouchShow}"
+        >
+          <div
+            class="tip-btn"
+            tabindex
+            v-if="longTouchShow"
+            v-clipboard="text"
+            v-clipboard:success="clipboardSuccessHandler"
+            v-clipboard:error="clipboardErrorHandler"
+          >
+            复制
+          </div>
           <ellipsis-plus
             :text="text"
             :line="5"
@@ -30,7 +44,7 @@
           <!-- 显示全文按钮 -->
           <div
             class="expand-btn"
-            @click.stop="expandHandler"
+            @click.stop.prevent="expandHandler"
             v-if='!show'
           >{{btnTxt}}</div>
         </div>
@@ -48,9 +62,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit, Ref } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit, Ref, Watch, Model } from 'vue-property-decorator';
 import FunctionBar from '../../base/functionBar.vue';
 import Ellipsis from 'ellipsis-plus';
+import { Toast } from 'mand-mobile';
 
 @Component({
   name: 'friendsItem',
@@ -66,6 +81,7 @@ export default class FriendsItem extends Vue {
   private likesData: string[] = [];
   private btnTxt: string = '全文';
   private show: boolean = false;
+  private longTouchShow: boolean = false;
   /*=============================================
   =                     Prop                    =
   =============================================*/
@@ -116,6 +132,24 @@ export default class FriendsItem extends Vue {
   })
   likes!: string[];
 
+  /**
+   * 滚动条位置
+   */
+  @Model('change', { type: Number }) readonly point!: number;
+
+  /*=============================================
+  =                    Watch                     =
+  =============================================*/
+
+  /**
+   * 滚动条
+   *
+   */
+  @Watch('point')
+  onPointChanged(val: number, oldVal: number): void {
+    this.longTouchShow = false;
+  }
+
   /*=============================================
   =                      Ref                    =
   =============================================*/
@@ -129,6 +163,10 @@ export default class FriendsItem extends Vue {
 
   @Ref('ellipsis') readonly ellipsis!: any;
 
+  /**
+   *  文本区域
+   */
+  @Ref('textArea') readonly textArea!: any;
   /*=============================================
   =                     Method                  =
   =============================================*/
@@ -137,13 +175,17 @@ export default class FriendsItem extends Vue {
    * 点亮-取消 赞
    *
    */
-  private starThumbsUp(star: boolean) {}
+  @Emit('starThumbsUp')
+  private starThumbsUp(star: boolean): boolean {
+    return star;
+  }
 
   /* -------- ellipsis-plus  ------- */
   /**
    * 点击展开全文
    */
   private expandHandler() {
+    console.log(this.star);
     if (this.ellipsis.show) {
       this.ellipsis.collapse();
       this.btnTxt = '全文';
@@ -152,6 +194,39 @@ export default class FriendsItem extends Vue {
       this.btnTxt = '收起';
     }
   }
+  /**
+   * 开启复制按钮
+   */
+  private longTouch() {
+    this.longTouchShow = true;
+  }
+  /**
+   * 关闭复制按钮
+   */
+  private closeLongTouch(e: Event) {
+    // console.log(Boolean(this.textArea.contains(e.target)));
+    // if (this.textArea) {
+    //   if (!this.textArea.contains(e.target)) {
+    //     this.longTouchShow = false;
+    //   }
+    // }
+  }
+  /**
+   * 复制文本 成功
+   */
+  private clipboardSuccessHandler() {
+    this.longTouchShow = false;
+    Toast.succeed('复制成功', 1000);
+  }
+
+  /**
+   * 复制文本 失败
+   */
+  private clipboardErrorHandler() {
+    this.longTouchShow = false;
+    Toast.failed('系统不支持', 1000);
+  }
+
   /*=============================================
   =                    Mounted                  =
   =============================================*/
@@ -193,6 +268,7 @@ export default class FriendsItem extends Vue {
         }
       }
       /* 发布的日志 */
+
       .status {
         padding-top: 10px;
         // height: 320px;
@@ -201,12 +277,46 @@ export default class FriendsItem extends Vue {
         font-size: 30px;
         color: #333333;
         text-align: left;
-        z-index: 16;
+        z-index: 20;
+        position: relative;
+
+        .tip-btn {
+          position: absolute;
+          width: 150px;
+          height: 70px;
+          background-color: #41485d;
+          font-size: 28px;
+          border-radius: 18px;
+          @include center-translate(x);
+          top: -90px;
+          color: #fff;
+          text-align: center;
+          line-height: 75px;
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -18px; //inherit
+            @include triangle(bottom, 20px, #41485d);
+            @include center-translate(x);
+          }
+          &:active {
+            background-color: rgb(116, 118, 119);
+            &::after {
+              @include triangle(bottom, 20px, rgb(116, 118, 119));
+            }
+          }
+        }
         .expand-btn {
           color: #576b95;
           font-size: 30px;
           margin-top: 10px;
           width: 100px;
+          display: inline-block;
+        }
+      }
+      .text_active {
+        /deep/.ellipsis-plus {
+          background-color: rgb(227, 226, 226);
         }
       }
       .fullText {

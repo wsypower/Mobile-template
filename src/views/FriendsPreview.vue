@@ -38,6 +38,8 @@
             :time='item.time'
             :name='item.name'
             :likes='item.likes'
+            v-model='point'
+            @starThumbsUp='starThumbsUp(index)'
           ></Friends-item>
         </div>
 
@@ -188,6 +190,11 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /*=============================================
   =                    Method                   =
   =============================================*/
+  /* -------- start ------- */
+  private starThumbsUp(index: number) {
+    // 取反数据，否则会重刷，以后用v-model设计传值
+    this.list[index].star = !this.list[index].star;
+  }
 
   /* -------- PageHeader ------- */
   /**
@@ -223,6 +230,8 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   private scrollTop({ scrollTop }: { scrollTop: number }) {
     // 保留一位小数
     const point = ceil(scrollTop / this.scrollImgHeight, 1);
+
+    this.point = point;
     // 修改头部颜色的透明度
     this.headerTransparent = point > 1 ? 1 : point < 0 ? 0 : point;
   }
