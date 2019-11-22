@@ -38,7 +38,6 @@
     ]
   },
   "dependencies": {
-    "vuex-class": "^0.3.2",
     "@types/fastclick": "^1.0.28",
     "@types/mockjs": "^1.0.2",
     "@types/qs": "^6.9.0",
@@ -55,8 +54,10 @@
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.3",
+    "vue-scroll-reveal": "^1.0.11",
     "vue-wechat-title": "^2.0.5",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "vuex-class": "^0.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
@@ -83,6 +84,7 @@
     "dayjs": "^1.8.12",
     "docz": "^1.2.0",
     "docz-theme-default": "^1.2.0",
+    "ellipsis-plus": "^1.0.1",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-prettier": "^3.1.1",
@@ -113,6 +115,7 @@
     "typedoc": "^0.15.0",
     "typescript": "^3.4.3",
     "uglifyjs-webpack-plugin": "^2.1.2",
+    "vue-ellipsis-text": "^1.0.1",
     "vue-template-compiler": "^2.6.10",
     "vuex-module-decorators": "^0.11.0",
     "webpack": "^4.41.2",

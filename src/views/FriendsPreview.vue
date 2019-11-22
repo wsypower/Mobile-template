@@ -25,6 +25,7 @@
       </template>
       <!-- 头部 start-->
       <!-- 内容  start-->
+      <!-- v-scroll-reveal.reset -->
       <template #body>
         <div
           class="preview_item"
@@ -48,6 +49,7 @@
 </template>
 
 <script lang="ts">
+import { mixins } from 'vue-class-component';
 import { Component, Vue, Ref, Watch } from 'vue-property-decorator';
 import PageHeader from '@/components/base/PageHeader.vue';
 import scrollPageWrap from '@/components/base/scrollPageWrap.vue';
@@ -59,7 +61,8 @@ import FriendsItem from '../components/views/friendsPreview/feirendsItem.vue';
 import { AsyncGetList } from '../api/modules.ts/friend/list';
 import { ceil, throttle, debounce } from 'lodash';
 import { UserModule } from '@/store/modules/user';
-import { ActionSheet,Dialog } from 'mand-mobile';
+import { ActionSheet, Dialog } from 'mand-mobile';
+import ActionSheetMixin from '@/mixin/ActionSheet';
 /*=============================================
 =                  Component                  =
 =============================================*/
@@ -72,10 +75,9 @@ import { ActionSheet,Dialog } from 'mand-mobile';
     scrollPageWrap,
     FriendsItem,
     [ActionSheet.name]: ActionSheet,
-    [ActionSheet.name]: ActionSheet,
   },
 })
-export default class FriPreview extends Vue {
+export default class FriPreview extends mixins(ActionSheetMixin) {
   /*=============================================
   =                     Data                    =
   =============================================*/
@@ -195,8 +197,23 @@ export default class FriPreview extends Vue {
    */
   private rightBtnClickHandler(): void {
     console.log('shoudaole');
+    this.showActionSheet({
+      value: true,
+      options: [
+        {
+          text: '拍摄',
+          value: '0',
+        },
+        {
+          text: '从手机相册选择',
+          value: '1',
+        },
+      ],
+      cancelText: '取消',
+      onSelected: this.selected,
+    });
   }
-  
+
   /* -------- scrollPageWrap ------- */
   /**
    * 监听滚动的点位,修改头部背景色的透明度

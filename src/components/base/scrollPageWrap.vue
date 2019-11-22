@@ -129,7 +129,8 @@ export default class ScrollPageWrap extends Vue {
   private onEndReached() {
     console.log('上拉读取数据事件');
   }
-
+  mounted() {
+  }
   /*==========      滚动条事件end    *==========*/
 }
 </script>
@@ -139,7 +140,7 @@ export default class ScrollPageWrap extends Vue {
 .scroll-page-wrap {
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(180deg, #2676e5 0%, #2676e5 50%, #ffffff 51%, #ffffff 100%);
+  background-image: linear-gradient(180deg, #2676e5 0%, #2676e5 45%, #ffffff 46%, #ffffff 100%);
   /*=============================================
   =                    滚动组件                  =
   =============================================*/

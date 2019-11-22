@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 15:36:18
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-15 21:30:43
+ * @Last Modified time: 2019-11-22 11:36:19
  */
 
 /**
@@ -26,3 +26,12 @@ declare module 'mand-mobile/lib/*';
 
 // TODO: remove this part after vue-star has its typescript file
 declare module 'vue-star';
+
+// TODO: remove this part after ellipsis-plus has its typescript file
+declare module 'ellipsis-plus';
+
+// TODO: remove this part after vue-ellipsis-text has its typescript file
+declare module 'vue-ellipsis-text';
+
+// TODO: remove this part after scrollreveal has its typescript file
+declare module 'scrollreveal';

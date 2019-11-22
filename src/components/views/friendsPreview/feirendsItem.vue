@@ -2,6 +2,7 @@
   <div
     class="frends_item"
     flex="dir:left box:first"
+
   >
     <div class="frends_item—left">
       <div class="avatar"></div>
@@ -16,15 +17,22 @@
             {{name}}
           </span>
         </div>
-        <!-- 6行显示省略号 -->
-        <div
-          class="status"
-          flex
-        >
-          <!-- 8 行显示省略号 -->
-          <span>
-            {{text}}
-          </span>
+        <!-- 文本外包围 -->
+        <div class="status">
+          <ellipsis-plus
+            :text="text"
+            :line="5"
+            expandText=''
+            ref="ellipsis"
+            :show-button="false"
+          >
+          </ellipsis-plus>
+          <!-- 显示全文按钮 -->
+          <div
+            class="expand-btn"
+            @click.stop="expandHandler"
+            v-if='!show'
+          >{{btnTxt}}</div>
         </div>
       </header>
       <main></main>
@@ -40,12 +48,15 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit, Ref } from 'vue-property-decorator';
 import FunctionBar from '../../base/functionBar.vue';
+import Ellipsis from 'ellipsis-plus';
+
 @Component({
   name: 'friendsItem',
   components: {
     FunctionBar,
+    [Ellipsis.name]: Ellipsis,
   },
 })
 export default class FriendsItem extends Vue {
@@ -53,6 +64,8 @@ export default class FriendsItem extends Vue {
   =                     data                    =
   =============================================*/
   private likesData: string[] = [];
+  private btnTxt: string = '全文';
+  private show: boolean = false;
   /*=============================================
   =                     Prop                    =
   =============================================*/
@@ -102,9 +115,19 @@ export default class FriendsItem extends Vue {
     default: [],
   })
   likes!: string[];
+
   /*=============================================
-  =                   Computed                  =
+  =                      Ref                    =
   =============================================*/
+
+  /* -------- ellipsis-plus  ------- */
+  /**
+   *  滚动条Ref
+   *
+   *  @date 2019-11-11 19:57:20
+   */
+
+  @Ref('ellipsis') readonly ellipsis!: any;
 
   /*=============================================
   =                     Method                  =
@@ -115,13 +138,27 @@ export default class FriendsItem extends Vue {
    *
    */
   private starThumbsUp(star: boolean) {}
+
+  /* -------- ellipsis-plus  ------- */
+  /**
+   * 点击展开全文
+   */
+  private expandHandler() {
+    if (this.ellipsis.show) {
+      this.ellipsis.collapse();
+      this.btnTxt = '全文';
+    } else {
+      this.ellipsis.expand();
+      this.btnTxt = '收起';
+    }
+  }
   /*=============================================
   =                    Mounted                  =
   =============================================*/
 
   private mounted(): void {
-    //   // 复制likes
-    // this.likesData = this.likes;
+    // 判断是否显示隐藏展开全文功能那个
+    this.show = this.ellipsis.show;
   }
 }
 </script>
@@ -158,13 +195,25 @@ export default class FriendsItem extends Vue {
       /* 发布的日志 */
       .status {
         padding-top: 10px;
-        span {
+        // height: 320px;
+        // overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 30px;
+        color: #333333;
+        text-align: left;
+        z-index: 16;
+        .expand-btn {
+          color: #576b95;
           font-size: 30px;
-          color: #333333;
-          text-align: left;
-          //8 行显示省略号
-          @include ellipsis-lines(8);
+          margin-top: 10px;
+          width: 100px;
         }
+      }
+      .fullText {
+        width: 100%;
+        height: 50px;
+        color: #000;
+        background-color: sandybrown;
       }
     }
     main {

@@ -142,6 +142,7 @@ export default class FunctionBar extends Vue {
     default: ['李渊', '李康', '李航'],
   })
   likes!: string[];
+
   /*=============================================
   =                   Computed                  =
   =============================================*/
