@@ -35,7 +35,7 @@
           </div>
           <ellipsis-plus
             :text="text"
-            :line="5"
+            :line="6"
             expandText=''
             ref="ellipsis"
             :show-button="false"
@@ -49,7 +49,8 @@
           >{{btnTxt}}</div>
         </div>
       </header>
-      <main></main>
+      <!-- 图片视屏插看 -->
+      <viewer :images='images' />
       <!-- 功能栏 -->
       <function-bar
         :star='star'
@@ -66,12 +67,14 @@ import { Vue, Component, Prop, Emit, Ref, Watch, Model } from 'vue-property-deco
 import FunctionBar from '../../base/functionBar.vue';
 import Ellipsis from 'ellipsis-plus';
 import { Toast } from 'mand-mobile';
+import Viewer from '../../base/viewer/viewer.vue';
 
 @Component({
   name: 'friendsItem',
   components: {
     FunctionBar,
     [Ellipsis.name]: Ellipsis,
+    Viewer,
   },
 })
 export default class FriendsItem extends Vue {
@@ -113,6 +116,14 @@ export default class FriendsItem extends Vue {
   })
   time!: string;
 
+  /**
+   * 图片
+   * @description 名字
+   */
+  @Prop({
+    type: Array,
+  })
+  images!: string[];
   /**
    * 发布者名字
    * @description 名字

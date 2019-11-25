@@ -7,6 +7,9 @@ import vueFiltersDate from './plugin/filter/moment';
 import { UserModule } from './store/modules/user';
 import LongTap from '@/plugin/core/LongTap';
 import Clipboard from 'v-clipboard';
+
+import VuePreview from '@/components/base/preview/index';
+Vue.use(VuePreview);
 // 移动端复制
 Vue.use(Clipboard);
 

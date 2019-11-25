@@ -38,6 +38,7 @@
             :time='item.time'
             :name='item.name'
             :likes='item.likes'
+            :images='item.images'
             v-model='point'
             @starThumbsUp='starThumbsUp(index)'
           ></Friends-item>
