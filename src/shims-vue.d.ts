@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 15:36:18
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-25 22:22:11
+ * @Last Modified time: 2019-11-26 15:29:14
  */
 
 /**
@@ -36,11 +36,14 @@ declare module '@/plugin/core/LongTap';
 // TODO: remove this part after clipboard has its typescript file
 declare module 'clipboard';
 
-// TODO: remove this part after vue-picture-preview has its typescript file
-declare module 'vue-picture-preview';
+// TODO: remove this part after vue-preview has its typescript file
+declare module 'vue-preview';
 
 // TODO: remove this part after vue2-preview has its typescript file
 declare module 'vue2-preview';
 
 // TODO: remove this part after v-photoswipe has its typescript file
 declare module 'v-photoswipe';
+
+// TODO: remove this part after vue-image-swipe has its typescript file
+declare module 'vue-image-swipe';

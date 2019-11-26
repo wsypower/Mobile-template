@@ -9,10 +9,16 @@
       v-if='[1].includes(images.length)'
       flex='corss:left'
     >
-      <img
-        :src="images[0].src"
+      <!-- <img
+        preview
+        :src="images[0]"
         alt="1"
-      >
+        @click="showPhotoSwipe(index,$event)"
+      > -->
+      <vue-preview
+        :slides="images"
+        @close="handleClose"
+      ></vue-preview>
     </div>
     <!-- 2 4 数量的布局 -->
     <div
@@ -24,17 +30,23 @@
         :slides="images"
         @close="handleClose"
       ></vue-preview>
+      <!-- <picture-viewer
+        :slides="images"
+        @close="handleClose"
+      ></picture-viewer> -->
       <!-- <div
         class="layout_img_warpper"
         v-for="(item,index) in images"
         :key="index"
-        v-preview="item.src"
+        v-preview="item"
       >
 
         <img
+          preview
           class="previewer-demo-img"
-          :src="item.src"
+          :src="item"
           :alt="index+1"
+          @click="showPhotoSwipe(index,$event)"
         >
       </div> -->
 
@@ -45,33 +57,44 @@
       v-else
       flex="dir:left"
     >
-      <div
+      <!-- <picture-viewer
+        :slides="images"
+        @close="handleClose"
+      ></picture-viewer> -->
+
+      <vue-preview
+        :slides="images"
+        @close="handleClose"
+      ></vue-preview>
+      <!-- <div
         class="layout_img_warpper"
         v-for="(item,index) in images"
         :key="index"
       >
         <img
           class="previewer-demo-img"
-          :src="item.src"
-          alt=""
+          :src="item"
+          :alt="index+1"
+          @click="showPhotoSwipe(index,$event)"
         >
 
-      </div>
+      </div> -->
     </div>
     <!-- 图片查看器 -->
+    <!-- <picture :slides='images'></picture> -->
 
   </div>
 </template>
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Model, Ref } from 'vue-property-decorator';
-// import VuePreview from 'vue-preview';
-// import vuePicturePreview from 'vue-picture-preview';
+// import PictureViewer from '@/components/base/picture/picture.vue';
+// import VuePreview from '@/components/base/preview/index';
 
 @Component({
   name: 'Viewer',
   components: {
     // VuePreview,
-    // Previewer: vuePicturePreview,
+    // PictureViewer,
   },
 })
 export default class Viewer extends Vue {
@@ -79,7 +102,12 @@ export default class Viewer extends Vue {
   =                      Data                   =
   =============================================*/
   private oddOrEven: boolean = false;
-
+  private isOpen = false;
+  private isOpenGallery = false;
+  private options = {
+    index: 0,
+  };
+  private optionsGallery = {};
   /*=============================================
   =                      Model                  =
   =============================================*/
@@ -107,6 +135,27 @@ export default class Viewer extends Vue {
   handleClose() {
     console.log('close event');
   }
+  // showPhotoSwipe(index: number, event: Event) {
+  //   this.$imagePreview({
+  //     images: this.images,
+  //     index: index,
+  //     // defaultOpt: {
+  //     //   getThumbBoundsFn: function(index: number) {
+  //     //     let thumbnail = event.path[0];
+  //     //     let pageYScroll = window.pageYOffset || document.documentElement.scrollTop;
+  //     //     let rect = thumbnail.getBoundingClientRect();
+  //     //     return {
+  //     //       x: rect.left,
+  //     //       y: rect.top + pageYScroll,
+  //     //       w: rect.width,
+  //     //     };
+  //     //   },
+  //     // },
+  //   });
+  // }
+  // hidePhotoSwipe() {
+  //   this.isOpen = false;
+  // }
   /*=============================================
   =                    Mounted                  =
   =============================================*/
@@ -170,6 +219,5 @@ export default class Viewer extends Vue {
       }
     }
   }
-
 }
 </style>

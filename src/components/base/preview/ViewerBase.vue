@@ -14,8 +14,11 @@
       </div>
       <div class="pswp__ui pswp__ui--hidden">
         <div class="pswp__top-bar">
-          <div class="pswp__counter"></div>
-          <button
+          <div
+            class="pswp__counter"
+            style='opacity: 0'
+          ></div>
+          <!-- <button
             class="pswp__button pswp__button--close"
             title="Close (Esc)"
           ></button>
@@ -30,7 +33,7 @@
           <button
             class="pswp__button pswp__button--zoom"
             title="Zoom in/out"
-          ></button>
+          ></button> -->
           <div class="pswp__preloader">
             <div class="pswp__preloader__icn">
               <div class="pswp__preloader__cut">
@@ -42,14 +45,14 @@
         <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
           <div class="pswp__share-tooltip"></div>
         </div>
-        <button
+        <!-- <button
           class="pswp__button pswp__button--arrow--left"
           title="Previous (arrow left)"
         ></button>
         <button
           class="pswp__button pswp__button--arrow--right"
           title="Next (arrow right)"
-        ></button>
+        ></button> -->
         <div class="pswp__caption">
           <div class="pswp__caption__center"></div>
         </div>

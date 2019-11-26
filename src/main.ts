@@ -9,7 +9,19 @@ import LongTap from '@/plugin/core/LongTap';
 import Clipboard from 'v-clipboard';
 
 import VuePreview from '@/components/base/preview/index';
-Vue.use(VuePreview);
+Vue.use(VuePreview, {
+  mainClass: 'pswp--minimal--dark',
+  barsSize: { top: 0, bottom: 0 },
+  closeEl: false,
+  captionEl: false,
+  fullscreenEl: false,
+  shareEl: false,
+  bgOpacity: 1,
+  tapToClose: true,
+  tapToToggleControls: false,
+  showHideOpacity: true,
+  loop: true,
+});
 // 移动端复制
 Vue.use(Clipboard);
 
@@ -22,6 +34,10 @@ Vue.use(vueFiltersDate);
 Vue.use(LongTap);
 // 引入animate.css
 import 'animate.css';
+
+// import VueImageSwipe from '@/components/base/previewImage/index'
+// import 'vue-image-swipe/dist/vue-image-swipe.css';
+// Vue.use(VueImageSwipe);
 
 /**
  * Vuejs 单页应用在iOS系统下部分APP的webview中

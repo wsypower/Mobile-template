@@ -159,7 +159,7 @@ const VuePreview = {
             // 将数据传递到PhotoSwipe并对其进行初始化
             gallery = new PhotoSwipe(pswpElement, PhotoSwipeUIDefault, items, photoSwipeOptions);
             gallery.init();
-            // Gallery starts closing
+            // 画廊开始关闭
             gallery.listen('close', function() {
               self.$emit('close');
             });

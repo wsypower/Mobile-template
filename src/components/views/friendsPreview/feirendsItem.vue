@@ -50,7 +50,7 @@
         </div>
       </header>
       <!-- 图片视屏插看 -->
-      <viewer :images='images' />
+      <viewer v-if='images.length!==0' :images='images' />
       <!-- 功能栏 -->
       <function-bar
         :star='star'

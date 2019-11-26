@@ -10,7 +10,7 @@ for (let i = 0; i < 10; i++) {
   });
   // 图片
   let image = Mock.mock({
-    'images|2': [
+    'images|0-3': [
       {
         src: 'https://farm6.staticflickr.com/5591/15008867125_68a8ed88cc_b.jpg',
         msrc: 'https://farm6.staticflickr.com/5591/15008867125_68a8ed88cc_m.jpg',
