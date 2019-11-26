@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 15:36:18
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-25 21:20:27
+ * @Last Modified time: 2019-11-25 22:22:11
  */
 
 /**
@@ -41,3 +41,6 @@ declare module 'vue-picture-preview';
 
 // TODO: remove this part after vue2-preview has its typescript file
 declare module 'vue2-preview';
+
+// TODO: remove this part after v-photoswipe has its typescript file
+declare module 'v-photoswipe';
