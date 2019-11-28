@@ -5,6 +5,13 @@
     role="dialog"
     aria-hidden="true"
   >
+    <!-- 新建 -->
+    <div class="indexbar" flex='cross:center main:center'>
+      <div class="indexbar-item"></div>
+      <div class="indexbar-item"></div>
+      <div class="indexbar-item"></div>
+      <div class="indexbar-item"></div>
+    </div>
     <div class="pswp__bg"></div>
     <div class="pswp__scroll-wrap">
       <div class="pswp__container">
@@ -87,4 +94,15 @@ export default class ViewerBase extends Vue {
 @import '~photoswipe/dist/photoswipe.css';
 @import '~photoswipe/dist/default-skin/default-skin.css';
 </style>
+<style lang="scss" scoped>
+// .indexbar {
+//   width: 100%;
+//   height: 75px;
+//   background-color: red;
+//   position: absolute;
+//   bottom: 100px;
+//   z-index: 10000;
+// }
+</style>>
+
 

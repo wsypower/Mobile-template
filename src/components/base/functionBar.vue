@@ -50,6 +50,7 @@
             class="evaluation-btn "
             flex='cross:center main:justify'
             tabindex
+            @click='commentHandler'
           >
             <md-icon
               svg
@@ -69,7 +70,6 @@
       <!-- 评价点赞 -->
       <div class="evaluation">
         <!-- 点赞 -->
-        <!-- <md-transition name='md-fade-up'> -->
         <div
           transition="md-slide-down"
           class="like"
@@ -86,22 +86,62 @@
           <!-- 点赞的人 -->
           <span class="like_people">
             {{ likeString }}
-            <!-- 李渊，李康，李航，李渊，李康，李航，李渊，李康，李航，李渊，李康，李航， -->
           </span>
         </div>
-        <!-- </md-transition> -->
-        <!-- 评价 -->
-        <div class="evaluation"></div>
+        <!-- 评价 star-->
+        <div
+          class="comment"
+          v-if='comment.length!==0'
+        >
+          <div
+            class="comment-items "
+            :class="{'border-top-1px':borderActive}"
+          >
+            <div
+              class="comment-item"
+              v-for="(item,index) in comment"
+              :key='index'
+              :class="{'clipboard-success':longTouchShow === index}"
+              tabindex
+              v-longtap:[index]='longTouch'
+            >
+              <sapn v-if='item.label.length>1'>
+                <span class="item-label">{{`${item.label[0]}`}}</span>
+                回复
+                <span class="item-label">{{`${item.label[1]}：`}}</span>
+              </sapn>
+
+              <sapn
+                class="item-label"
+                v-else
+              >{{`${item.label[0]}：`}}</sapn>
+              <sapn class="item-value">{{item.value}}</sapn>
+              <!-- 长按复制 -->
+              <div
+                class="tip-btn"
+                tabindex
+                v-if="longTouchShow === index"
+                v-clipboard="item.value"
+                v-clipboard:success="clipboardSuccessHandler"
+                v-clipboard:error="clipboardErrorHandler"
+              >
+                复制
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit, Model, Watch } from 'vue-property-decorator';
 import { Icon, Button, Transition } from 'mand-mobile';
 import TyStar from '@/components/base/star/TyStar.vue';
 import { UserModule } from '@/store/modules/user';
+import Ellipsis from 'ellipsis-plus';
+import { Toast } from 'mand-mobile';
 @Component({
   name: 'functionBar',
   components: {
@@ -109,9 +149,18 @@ import { UserModule } from '@/store/modules/user';
     [Icon.name]: Icon,
     [Button.name]: Button,
     [Transition.name]: Transition,
+    [Ellipsis.name]: Ellipsis,
   },
 })
 export default class FunctionBar extends Vue {
+  /*=============================================
+  =                     Data                    =
+  =============================================*/
+  /**
+   * 评论条目复制
+   */
+  private longTouchShow: number = -1;
+  private clipboardSuccess: boolean = false;
   /*=============================================
   =                     Prop                    =
   =============================================*/
@@ -143,6 +192,31 @@ export default class FunctionBar extends Vue {
   })
   likes!: string[];
 
+  /**
+   * 评论
+   */
+  @Prop({
+    type: Array,
+  })
+  comment!: any[];
+
+  /**
+   * 滚动条位置
+   */
+  @Model('change', { type: Number }) readonly point!: number;
+
+  /*=============================================
+  =                    Watch                     =
+  =============================================*/
+
+  /**
+   * 滚动条
+   *
+   */
+  @Watch('point')
+  onPointChanged(val: number, oldVal: number): void {
+    this.longTouchShow = -1;
+  }
   /*=============================================
   =                   Computed                  =
   =============================================*/
@@ -187,10 +261,35 @@ export default class FunctionBar extends Vue {
       : `${this.realName}, ${this.likes.join(`, `)}`;
   }
 
+  private get borderActive(): boolean {
+    return this.likes.length > 0 || this.star;
+  }
   /*=============================================
   =                    Method                   =
   =============================================*/
 
+  /**
+   * 开启复制按钮
+   */
+  private longTouch(event: Event, index: number) {
+    this.longTouchShow = index;
+  }
+
+  /**
+   * 复制文本 成功
+   */
+  private clipboardSuccessHandler() {
+    this.longTouchShow = -1;
+    Toast.succeed('复制成功', 1000);
+  }
+
+  /**
+   * 复制文本 失败
+   */
+  private clipboardErrorHandler() {
+    this.longTouchShow = -1;
+    Toast.failed('系统不支持', 1000);
+  }
   /* -------- Star  ------- */
 
   /**
@@ -205,6 +304,14 @@ export default class FunctionBar extends Vue {
     this.star = !this.star;
     return this.star;
   }
+  /**
+   * 评论按钮被点击
+   */
+  @Emit('comment-handler')
+  private commentHandler(e) {
+    console.log(e)
+    return e
+  }
   /*=============================================
   =                    Mounted                   =
   =============================================*/
@@ -218,6 +325,7 @@ export default class FunctionBar extends Vue {
 .function-bar__layout {
   width: 100%;
   min-height: 88px;
+  margin-bottom: 30px;
   main {
     /* 功能栏 */
     .function-bar {
@@ -269,7 +377,7 @@ export default class FunctionBar extends Vue {
         width: 100%;
         min-height: 68px;
         background-color: #f5f5f5;
-        margin-bottom: 30px;
+        // margin-bottom: 30px;
         position: relative;
         padding: 10px 20px;
         color: #576b95;
@@ -290,7 +398,7 @@ export default class FunctionBar extends Vue {
           color: #576b95;
           padding-left: 20px;
           font-size: 28px;
-          font-weight: 600;
+          font-weight: bold;
         }
       }
       /* 评价 */
@@ -351,4 +459,86 @@ export default class FunctionBar extends Vue {
 //     }
 //   }
 // }
+// 评论
+.comment {
+  width: 100%;
+  background-color: #f7f5f5;
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 35px;
+    @include triangle(top, 15px, #f5f5f5);
+  }
+  .comment-items {
+    width: 100%;
+    min-height: 68px;
+    &.border-top-1px {
+      &::before {
+        border-color: #dddddd;
+      }
+    }
+    .comment-item {
+      padding: 5px 20px 5px 20px;
+      width: 100%;
+      min-height: 50px;
+      text-align: left;
+      color: #333333;
+      font-size: 28px;
+      position: relative;
+      span{
+        font-size: 28px
+      }
+      &.clipboard-success {
+        background-color: #dcdada;
+      }
+      .item-label {
+        color: #576b95;
+        font-weight: bold;
+        font-size: 28px;
+      }
+      .item-value {
+        color: #333333;
+        font-size: 28px;
+      }
+      &:active {
+        background-color: #dcdada;
+      }
+      @include first(1) {
+        padding-top: 15px;
+      }
+      @include last(1) {
+        padding-bottom: 15px;
+      }
+      .tip-btn {
+        position: absolute;
+        width: 150px;
+        height: 70px;
+        background-color: #41485d;
+        font-size: 28px;
+        border-radius: 18px;
+        @include center-translate(x);
+        top: -90px;
+        color: #fff;
+        text-align: center;
+        line-height: 75px;
+        z-index: 15;
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -18px; //inherit
+          @include triangle(bottom, 20px, #41485d);
+          @include center-translate(x);
+        }
+        &:active {
+          background-color: rgb(116, 118, 119);
+          &::after {
+            @include triangle(bottom, 20px, rgb(116, 118, 119));
+          }
+        }
+      }
+    }
+  }
+}
 </style>

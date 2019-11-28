@@ -49,7 +49,7 @@ export default class FriendsPreviewHeader extends Vue {
     min-width: 120px;
     height: 120px;
     font-size: 32px;
-    font-weight: 600;
+    font-weight: bold;
     color: #ffffff;
     margin-right: 30px;
   }

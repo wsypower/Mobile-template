@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-06-12 02:44:03
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-13 17:28:09
+ * @Last Modified time: 2019-11-27 15:02:18
  */
 
 import { TypeColor, LogType, Colorful } from './type/util.log';

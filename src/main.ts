@@ -7,8 +7,9 @@ import vueFiltersDate from './plugin/filter/moment';
 import { UserModule } from './store/modules/user';
 import LongTap from '@/plugin/core/LongTap';
 import Clipboard from 'v-clipboard';
-
 import VuePreview from '@/components/base/preview/index';
+import Layzr from 'layzr.js';
+Vue.use(Layzr);
 Vue.use(VuePreview, {
   mainClass: 'pswp--minimal--dark',
   barsSize: { top: 0, bottom: 0 },
@@ -22,6 +23,8 @@ Vue.use(VuePreview, {
   showHideOpacity: true,
   loop: true,
 });
+// 兼容滚动事件
+import 'default-passive-events';
 // 移动端复制
 Vue.use(Clipboard);
 

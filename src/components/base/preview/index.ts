@@ -1,7 +1,6 @@
 import PreviewComponent from './preview.vue';
 import PhotoSwipe from 'photoswipe/dist/photoswipe';
 import PhotoSwipeUIDefault from 'photoswipe/dist/photoswipe-ui-default';
-
 const VuePreview = {
   install(Vue, options) {
     Vue.component('VuePreview', {
@@ -163,6 +162,11 @@ const VuePreview = {
             gallery.listen('close', function() {
               self.$emit('close');
             });
+
+            // // 画廊开始奇幻
+            // gallery.listen('close', function() {
+            //   self.$emit('close');
+            // });
           };
           // 遍历所有图库元素并绑定事件
           const galleryElements = document.querySelectorAll(gallerySelector);
@@ -189,3 +193,4 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 export default VuePreview;
+/* tslint:enable */

@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 15:36:18
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-26 15:29:14
+ * @Last Modified time: 2019-11-27 22:44:40
  */
 
 /**
@@ -47,3 +47,15 @@ declare module 'v-photoswipe';
 
 // TODO: remove this part after vue-image-swipe has its typescript file
 declare module 'vue-image-swipe';
+
+// TODO: remove this part after vue-video-player has its typescript file
+declare module 'vue-video-player';
+
+// TODO: remove this part after move-video has its typescript file
+declare module 'move-video';
+
+// TODO: remove this part after vue-progressive-image has its typescript file
+declare module 'vue-progressive-image';
+
+// TODO: remove this part after vue-lazy-image-loading has its typescript file
+declare module 'layzr.js';

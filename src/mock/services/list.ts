@@ -30,6 +30,19 @@ for (let i = 0; i < 10; i++) {
     ],
     // 'images|1-6': ['http://192.168.71.33:50000//upload/file/2019/11/12/20191112171532422153.jpg'],
   });
+  // 评论栏
+  let comment = Mock.mock({
+    'array|0-2': [
+      {
+        label: [Mock.mock('@cname'), Mock.mock('@cname')],
+        value: Mock.mock('@cparagraph(1, 3)'),
+      },
+      {
+        label: [Mock.mock('@cname')],
+        value: Mock.mock('@cparagraph(1, 3)'),
+      },
+    ],
+  });
   let Data = {
     // 朋友圈ID
     id: Mock.mock('@id'),
@@ -41,14 +54,18 @@ for (let i = 0; i < 10; i++) {
     // 说说文字
     text: Mock.mock('@cparagraph(1, 10)'),
     // 图片
+    // images: [],
     images: image.images,
+    // 视屏
+    // video: 'http://192.168.71.33:50000//upload/file/test.mp4',
+    video: null,
     // 点赞的人
     likes: likePeople.array,
     // likes: likePeople.array,
     // 本人有没有点赞
     star: Mock.mock('@boolean'),
     // 评论栏内容
-    comment: Mock.mock('@boolean'),
+    comment: comment.array,
   };
   list.push(Data);
   likePeople = [];

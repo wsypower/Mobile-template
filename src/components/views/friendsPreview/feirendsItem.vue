@@ -49,14 +49,22 @@
           >{{btnTxt}}</div>
         </div>
       </header>
-      <!-- 图片视屏插看 -->
-      <viewer v-if='images.length!==0' :images='images' />
+      <!-- 图片插看 -->
+      <viewer
+        v-if='images.length!==0'
+        :images='images'
+      />
+      <!-- 视屏 -->
+      <video-basic v-if="video!==null"></video-basic>
       <!-- 功能栏 -->
       <function-bar
         :star='star'
         :time='time'
         :likes='likes'
         @thumbs-up='starThumbsUp'
+        :comment=comment
+        v-model='point'
+        @comment-handler='commentHandler'
       />
     </div>
   </div>
@@ -68,13 +76,16 @@ import FunctionBar from '../../base/functionBar.vue';
 import Ellipsis from 'ellipsis-plus';
 import { Toast } from 'mand-mobile';
 import Viewer from '../../base/viewer/viewer.vue';
+import VideoBasic from '../../base/video/video.vue';
 
 @Component({
   name: 'friendsItem',
   components: {
     FunctionBar,
     [Ellipsis.name]: Ellipsis,
+
     Viewer,
+    VideoBasic,
   },
 })
 export default class FriendsItem extends Vue {
@@ -118,12 +129,19 @@ export default class FriendsItem extends Vue {
 
   /**
    * 图片
-   * @description 名字
    */
   @Prop({
     type: Array,
   })
-  images!: string[];
+  images!: any[];
+
+  /**
+   * 视屏
+   */
+  @Prop({
+    type: String,
+  })
+  video!: string | null;
   /**
    * 发布者名字
    * @description 名字
@@ -143,6 +161,13 @@ export default class FriendsItem extends Vue {
   })
   likes!: string[];
 
+  /**
+   * 评论
+   */
+  @Prop({
+    type: Array,
+  })
+  comment!: any[];
   /**
    * 滚动条位置
    */
@@ -190,13 +215,19 @@ export default class FriendsItem extends Vue {
   private starThumbsUp(star: boolean): boolean {
     return star;
   }
-
+  /**
+   * 评论按钮被点击
+   */
+  @Emit('comment-handler')
+  private commentHandler(e) {
+    console.log(2);
+    return e;
+  }
   /* -------- ellipsis-plus  ------- */
   /**
    * 点击展开全文
    */
   private expandHandler() {
-    console.log(this.star);
     if (this.ellipsis.show) {
       this.ellipsis.collapse();
       this.btnTxt = '全文';
@@ -274,7 +305,7 @@ export default class FriendsItem extends Vue {
         span {
           font-size: 32px;
           color: #576b95;
-          font-weight: 600;
+          font-weight: bold;
           text-align: left;
         }
       }
