@@ -2,6 +2,7 @@
   <div class="cg_preview">
     <!-- header start -->
     <page-header
+      ref='header'
       @rightBtnClickHandler="rightBtnClickHandler()"
       :transparent="headerTransparent"
       title='朋友圈'
@@ -55,9 +56,11 @@
             :images='item.images'
             :video='item.video'
             :comment='item.comment'
+            :index='index'
             v-model='point'
             @starThumbsUp='starThumbsUp(index)'
             @comment-handler='commentHandler'
+            @comment-reply='commentReply'
           ></Friends-item>
         </div>
       </template>
@@ -69,29 +72,45 @@
       v-model="isPopupShow.bottom"
       position="bottom"
     >
-      <div class="comment-popup">
-        <md-field>
-          <md-textarea-item
-            ref="textarea"
-            class="demo2"
-            v-model="value"
-            :max-length="100"
-            :max-height="200"
-            placeholder="回复信息在100字以内"
-            clearable
-          >
-            <!-- <template slot="footer">
-              <p class="demo2-footer">
-                <span
-                  class="demo2-footer-left"
-                  v-if="value.length"
-                >{{ value.length }}/100</span>
-                <span v-else></span>
-                <span class="demo2-footer-right">页脚文案</span>
-              </p>
-            </template> -->
-          </md-textarea-item>
-        </md-field>
+      <div
+        class="comment-popup"
+        ref='popupTextarea'
+      >
+        <form>
+          <md-field>
+            <md-textarea-item
+              ref="textarea"
+              class="demo2"
+              v-model="value"
+              :max-length="100"
+              :max-height="350"
+              row="3"
+              :placeholder="textareaPlaceholder"
+              clearable
+              @keyup='textareaKeyUp()'
+            >
+              <template slot="footer">
+                <div
+                  class="footer-content"
+                  flex="main:center cross:center"
+                >
+                  <span
+                    class="footer-text"
+                    v-if="value.length"
+                  >{{ value.length }}</span>
+                  <span
+                    v-else
+                    class="footer-text"
+                  >0</span>
+                  <span class="footer-text">/100</span>
+                </div>
+                <div class="textarea-btn">
+                  <md-action-bar :actions="TextareaAction"></md-action-bar>
+                </div>
+              </template>
+            </md-textarea-item>
+          </md-field>
+        </form>
       </div>
     </md-popup>
     <!-- 输入评论 end -->
@@ -120,6 +139,8 @@ import {
   TextareaItem,
   Field,
   InputItem,
+  ActionBar,
+  Toast,
 } from 'mand-mobile';
 import ActionSheetMixin from '@/mixin/ActionSheet';
 import { Skeleton } from 'mand-mobile';
@@ -141,6 +162,8 @@ import { Skeleton } from 'mand-mobile';
     [Field.name]: Field,
     [TextareaItem.name]: TextareaItem,
     [InputItem.name]: InputItem,
+    [ActionBar.name]: ActionBar,
+    // [Toast.name]: Toast
   },
 })
 export default class FriPreview extends mixins(ActionSheetMixin) {
@@ -160,11 +183,47 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   private skeleton: boolean = true;
 
   /**
+   * 滚动条位置信息
+   */
+  private scrollTopNumber: number = 0;
+  /**
    * 输入框
    */
   private isPopupShow = {};
 
   private value: string = '';
+
+  private popupTextareaHeight: number = 0;
+
+  /**
+   * textarea ——p laceholder
+   */
+  private textareaPlaceholder: string = '回复信息在100字以内';
+  /**
+   * 是否是长按复制来的
+   */
+  private label: string = '';
+
+  /**
+   * 点击评论的索引
+   */
+  private commentIndex: number | null = null;
+  /**
+   * 输入按钮
+   */
+  private TextareaAction = [
+    // {
+    //   text: '关闭',
+    //   onClick: this.subHandleClick,
+    //   round: true,
+    // },
+    {
+      text: '提交',
+      onClick: this.subHandleClick,
+      round: true,
+      loading: false,
+    },
+  ];
   /* -------- FriendsItem ------- */
 
   /* -------- PageHeader ------- */
@@ -175,6 +234,13 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * @memberof PageHeader
    */
   private headerTransparent: number = 0;
+
+  /**
+   * 头部导航栏自适应的高度
+   *
+   * @memberof PageHeader
+   */
+  private headerHeight: number = 0;
 
   /* -------- scrollPageWrap ------- */
   /**
@@ -190,6 +256,11 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * @private
    */
   private isFinished: boolean = false;
+
+  /**
+   * 单击评价的索引
+   */
+  private index: number | null = null;
   /**
    * 空白按钮
    *
@@ -256,6 +327,12 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   @Ref('FriendsPreviewHeader') readonly FriendsPreviewHeader!: {
     $el: HTMLElement;
   };
+  // 头部菜单栏的高度
+  @Ref('header') readonly header!: {
+    $el: HTMLElement;
+  };
+  // 输入弹出框的高度
+  @Ref('popupTextarea') readonly popupTextarea!: HTMLElement;
   /* -------- scrollPageWrap ------- */
   /**
    * Ref scrollPageWrap
@@ -308,6 +385,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * @memberof scrollPageWrap
    */
   private scrollTop({ scrollTop }: { scrollTop: number }) {
+    this.scrollTopNumber = scrollTop;
     // 保留一位小数
     const point = ceil(scrollTop / this.scrollImgHeight, 1);
 
@@ -377,29 +455,139 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /**
    * 评论按钮被点击
    */
-  private commentHandler(e) {
-    console.log(e);
-    console.log(3);
-    const { pageX, pageY } = e;
+  private commentHandler({ e, comment, index }: { e: any; comment: number; index: number }) {
+    this.index = index;
     this.showPopUp('bottom');
-    // this.scroll.scrollView.scrollTo(pageX, pageY, true)
+    // const { clientY, pageY, layerY, offsetY, screenY } = e;
+    // console.log('screenY', screenY);
+    // console.log('offsetY', offsetY);
+    // console.log('layerY', layerY);
+    // console.log('pageY', pageY);
+    // console.log('clientY', clientY);
+    // 点击区域按钮距离显示区域顶部的距离
+    // const PointButton = clientY - offsetY;
+    // 评论栏的高度
+    // const commentHeight = comment;
+    // 弹出框的高度
+    // const popupHeight = 155; //（执行时间太慢，写死一个数据吧）
+    // 可视区域高度
+    // const clientHeight = document.body.clientHeight;
+    // 要移动的距离
+    // const RollingDistance = this.scrollTopNumber + PointButton - commentHeight - comment;
+    // this.scroll.scrollView.scrollTo(null, RollingDistance, true);
+    // this.scroll.scrollView.scrollTo(null, this.scrollImgHeight-this.headerHeight, true);
+  }
+  /**
+   * 删除自己的评论弹出层
+   */
+  private removeSelfComment(): void {
+    this.showActionSheet({
+      value: true,
+      options: [
+        {
+          text: '删除',
+          value: '0',
+        },
+      ],
+      defaultIndex: 0,
+      cancelText: '取消',
+      onSelected: this.removeSelfCommentHandler,
+    });
+  }
+
+  /**
+   * 删除评论
+   */
+  private removeSelfCommentHandler() {
+    const index = this.commentIndex;
+    this.list[this.index as number].comment.splice(index, 1);
+    Toast.succeed('删除成功', 1000);
+  }
+  /**
+   * 评论区长按回复
+   */
+  private commentReply({
+    label,
+    index,
+    commentIndex,
+  }: {
+    label: string;
+    index: number;
+    commentIndex: number;
+  }) {
+    this.index = index;
+    this.commentIndex = commentIndex;
+    if (label === '') {
+      return;
+    }
+
+    if (this.realname === label) {
+      this.removeSelfComment();
+      return;
+    }
+    this.showPopUp('bottom', label);
+  }
+  /**
+   * 答复的键盘事件
+   */
+  private textareaKeyUp(name: string) {
+    console.log(name);
   }
   /**
    * 显示输入弹窗
    */
-  private showPopUp(type) {
-    //显示输入弹窗
+  private showPopUp(type: string, label: string = '') {
+    // 清空输入框
+    this.value = '';
+    // 显示输入弹窗
+    // 复制给label
+    this.label = label;
+    // 判断 placeholder 显示的数据
+    const Placeholder = this.label === '' ? '回复信息在100字以内' : `回复@${this.label}`;
+    this.textareaPlaceholder = Placeholder;
+
     this.$set(this.isPopupShow, type, true);
-    this.$nextTick(() => {
-      this.textarea.focus();
-    });
-    // setTimeout(() => {
-    // }, 200);
-    // console.log(this.textarea);
+
+    setTimeout(() => {
+      this.$nextTick(() => {
+        this.textarea.focus();
+      });
+    }, 200);
   }
   private focus(name) {
-    console.log(name);
     console.log('fouce');
+  }
+  /**
+   * 提交
+   */
+  private subHandleClick() {
+    if (this.value.length === 0) {
+      Toast.failed('回复内容不能为空', 1000);
+      return;
+    }
+    // 开启提交加载
+    this.TextareaAction[0].loading = true;
+    setTimeout(() => {
+      // 关闭提交加载
+      this.TextareaAction[0].loading = false;
+      // 关闭弹窗
+      this.$set(this.isPopupShow, 'bottom', false);
+      Toast.succeed('答复成功', 1000);
+      // 判断是不是回复谁，还是自己回复的 textareaPlaceholder
+      const Resultlabel = this.label === '' ? [this.realname] : [this.realname, this.label];
+      console.log(this.textareaPlaceholder);
+      const result = {
+        label: Resultlabel,
+        value: this.value,
+      };
+      this.list[this.index as number].comment.push(result);
+    }, 1000);
+  }
+  /**
+   * 取消提交
+   */
+  private cancelHdndleClick() {
+    this.$set(this.isPopupShow, 'bottom', false);
   }
   /* -------- public ------- */
   /**
@@ -420,6 +608,10 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
      * 获取头部图片的高度
      */
     this.scrollImgHeight = this.getEleStyle(this.FriendsPreviewHeader.$el, 'height');
+    /**
+     * 获取导航栏的高度
+     */
+    this.headerHeight = this.getEleStyle(this.header.$el, 'height');
     /**
      * 初始化滚动条 加载list数据
      */
@@ -443,6 +635,9 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
 .cg_preview {
   width: 100%;
   height: 100%;
+  // min-height: 100%;
+  // position: fixed;
+
   // background-color: #f5f5f5;
   /*=============================================
   =                scroll item                  =
@@ -469,6 +664,14 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     background-color: #fff;
     box-shadow: 1px -7px 12px #9c9c9c;
     border-radius: 25px 25px 0px 0px;
+
+    .footer-content {
+      padding-left: 35px;
+      // height: 50px;
+      width: 100%;
+      color: #c5cad5;
+      font-weight: 400;
+    }
   }
 }
 </style>

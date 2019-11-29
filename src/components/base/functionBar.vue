@@ -1,5 +1,8 @@
 <template>
-  <div class="function-bar__layout">
+  <div
+    class="function-bar__layout"
+    ref='bar'
+  >
     <main>
       <!-- 功能栏 start-->
       <div
@@ -68,7 +71,10 @@
       </div>
       <!-- 功能栏 end-->
       <!-- 评价点赞 -->
-      <div class="evaluation">
+      <div
+        class="evaluation"
+        ref='evaluation'
+      >
         <!-- 点赞 -->
         <div
           transition="md-slide-down"
@@ -115,17 +121,25 @@
                 class="item-label"
                 v-else
               >{{`${item.label[0]}：`}}</sapn>
-              <sapn class="item-value">{{item.value}}</sapn>
+
+              <sapn
+                class="item-value"
+                @click='commentReply(item.label[0],index)'
+              >{{item.value}} </sapn>
               <!-- 长按复制 -->
               <div
                 class="tip-btn"
                 tabindex
                 v-if="longTouchShow === index"
-                v-clipboard="item.value"
-                v-clipboard:success="clipboardSuccessHandler"
-                v-clipboard:error="clipboardErrorHandler"
+                flex
               >
-                复制
+                <div
+                  class="press-btn"
+                  tabindex
+                  v-clipboard="item.value"
+                  v-clipboard:success="clipboardSuccessHandler"
+                  v-clipboard:error="clipboardErrorHandler"
+                >复制</div>
               </div>
             </div>
           </div>
@@ -136,12 +150,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit, Model, Watch } from 'vue-property-decorator';
+import { Vue, Component, Prop, Emit, Model, Watch, Ref } from 'vue-property-decorator';
 import { Icon, Button, Transition } from 'mand-mobile';
 import TyStar from '@/components/base/star/TyStar.vue';
 import { UserModule } from '@/store/modules/user';
 import Ellipsis from 'ellipsis-plus';
 import { Toast } from 'mand-mobile';
+import { getElementStyle } from '@/util/util.assist';
 @Component({
   name: 'functionBar',
   components: {
@@ -206,6 +221,12 @@ export default class FunctionBar extends Vue {
   @Model('change', { type: Number }) readonly point!: number;
 
   /*=============================================
+  =                    Ref                     =
+  =============================================*/
+
+  @Ref('evaluation') readonly evaluation!: HTMLElement;
+  @Ref('bar') readonly bar!: HTMLElement;
+  /*=============================================
   =                    Watch                     =
   =============================================*/
 
@@ -264,6 +285,7 @@ export default class FunctionBar extends Vue {
   private get borderActive(): boolean {
     return this.likes.length > 0 || this.star;
   }
+
   /*=============================================
   =                    Method                   =
   =============================================*/
@@ -290,6 +312,16 @@ export default class FunctionBar extends Vue {
     this.longTouchShow = -1;
     Toast.failed('系统不支持', 1000);
   }
+  /**
+   * 点击文本回复
+   */
+  @Emit('comment-reply')
+  private commentReply(label: string, index: number) {
+    if (this.longTouchShow !== -1) {
+      return { label: '', index };
+    }
+    return { label: label, index };
+  }
   /* -------- Star  ------- */
 
   /**
@@ -308,9 +340,22 @@ export default class FunctionBar extends Vue {
    * 评论按钮被点击
    */
   @Emit('comment-handler')
-  private commentHandler(e) {
-    console.log(e)
-    return e
+  private commentHandler(e: Event) {
+    /**
+     * 获取头部图片的高度
+     */
+    const comment = this.getEleStyle(this.evaluation, 'height');
+    const barMarginBottom = this.getEleStyle(this.bar, 'margin-bottom');
+    return { e, comment: comment + barMarginBottom };
+  }
+
+  /**
+   * 获取元素属性
+   *
+   * @private
+   */
+  private getEleStyle(el: HTMLElement, style: string): number {
+    return parseFloat(getElementStyle(el, style));
   }
   /*=============================================
   =                    Mounted                   =
@@ -487,8 +532,8 @@ export default class FunctionBar extends Vue {
       color: #333333;
       font-size: 28px;
       position: relative;
-      span{
-        font-size: 28px
+      span {
+        font-size: 28px;
       }
       &.clipboard-success {
         background-color: #dcdada;
@@ -513,7 +558,7 @@ export default class FunctionBar extends Vue {
       }
       .tip-btn {
         position: absolute;
-        width: 150px;
+        // width: 150px;
         height: 70px;
         background-color: #41485d;
         font-size: 28px;
@@ -527,14 +572,34 @@ export default class FunctionBar extends Vue {
         &::after {
           content: '';
           position: absolute;
-          bottom: -18px; //inherit
-          @include triangle(bottom, 20px, #41485d);
+          bottom: -18px;
           @include center-translate(x);
         }
-        &:active {
-          background-color: rgb(116, 118, 119);
-          &::after {
-            @include triangle(bottom, 20px, rgb(116, 118, 119));
+        .press-btn {
+          width: 150px;
+          height: 70px;
+          background-color: red;
+          border-radius: 18px;
+          background-color: #41485d;
+          position: relative;
+          &:active {
+            background-color: rgb(116, 118, 119);
+          }
+          @include last(1) {
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -18px;
+              left: 0px;
+              @include triangle(bottom, 20px, #41485d);
+              @include center-translate(x);
+            }
+            &:active {
+              background-color: rgb(116, 118, 119);
+              &::after {
+                @include triangle(bottom, 20px, rgb(116, 118, 119));
+              }
+            }
           }
         }
       }

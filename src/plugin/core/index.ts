@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-23 21:20:21
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-06 20:53:43
+ * @Last Modified time: 2019-11-28 10:51:19
  */
 
 /**
@@ -14,6 +14,11 @@ import './responsive/responsive';
  * 解决 ios 300ms 延迟
  */
 import './fastclick/index';
+
+/**
+ * 解决 ios 300ms 延迟
+ */
+import './inobounce/inobounce.js';
 
 /**
  * 自动导入

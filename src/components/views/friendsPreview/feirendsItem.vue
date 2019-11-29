@@ -65,6 +65,7 @@
         :comment=comment
         v-model='point'
         @comment-handler='commentHandler'
+        @comment-reply='commentReply'
       />
     </div>
   </div>
@@ -168,6 +169,14 @@ export default class FriendsItem extends Vue {
     type: Array,
   })
   comment!: any[];
+
+  /**
+   * 评论
+   */
+  @Prop({
+    type: Number,
+  })
+  index!: number;
   /**
    * 滚动条位置
    */
@@ -219,9 +228,8 @@ export default class FriendsItem extends Vue {
    * 评论按钮被点击
    */
   @Emit('comment-handler')
-  private commentHandler(e) {
-    console.log(2);
-    return e;
+  private commentHandler({ e, comment }: { e: Event; comment: number }) {
+    return { e, comment, index: this.index };
   }
   /* -------- ellipsis-plus  ------- */
   /**
@@ -242,6 +250,7 @@ export default class FriendsItem extends Vue {
   private longTouch() {
     this.longTouchShow = true;
   }
+
   /**
    * 关闭复制按钮
    */
@@ -269,6 +278,15 @@ export default class FriendsItem extends Vue {
     Toast.failed('系统不支持', 1000);
   }
 
+  /**
+   * 评论栏长按回复他人
+   */
+  @Emit('comment-reply')
+  private commentReply({ label, index }: { label: string; index: number }) {
+    console.log({ label, index: this.index, commentIndex: index })
+
+    return { label, index: this.index, commentIndex: index };
+  }
   /*=============================================
   =                    Mounted                  =
   =============================================*/

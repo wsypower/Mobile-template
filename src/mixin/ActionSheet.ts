@@ -90,8 +90,6 @@ export default class ActionSheetMixin extends Vue {
           value: '1',
         },
       ],
-      defaultIndex: 1,
-      invalidIndex: 2,
       cancelText: '取消',
       onSelected: this.selected,
     },
