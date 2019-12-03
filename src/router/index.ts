@@ -10,7 +10,7 @@ Vue.use(Router);
  * 没有权限要求的基本页面
  * 可以访问所有角色
  */
-export const constantRoutes: RouteConfig[] = [friendRouter];
+export const constantRoutes: RouteConfig[] = [...friendRouter];
 
 /**
  * 页面滚到顶部 scrollBehavior()

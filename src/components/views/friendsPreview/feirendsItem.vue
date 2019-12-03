@@ -284,7 +284,6 @@ export default class FriendsItem extends Vue {
   @Emit('comment-reply')
   private commentReply({ label, index }: { label: string; index: number }) {
     console.log({ label, index: this.index, commentIndex: index })
-
     return { label, index: this.index, commentIndex: index };
   }
   /*=============================================

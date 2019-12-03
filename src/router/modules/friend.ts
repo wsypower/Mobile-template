@@ -10,13 +10,24 @@ import { RouteConfig } from 'vue-router';
  * 懒加载
  * Detail see: https://router.vuejs.org/zh/guide/advanced/lazy-loading.html
  */
-const Friends: RouteConfig = {
-  path: '/',
-  component: () => import(/* webpackChunkName: "friends" */ '@views/FriendsPreview.vue'),
-  name: 'Friends',
-  meta: {
-    title: '朋友圈',
-    icon: 'Friends',
+const Friends: RouteConfig[] = [
+  {
+    path: '/',
+    component: () => import(/* webpackChunkName: "friends" */ '@views/FriendsPreview.vue'),
+    name: 'Friends',
+    meta: {
+      title: '朋友圈',
+      icon: 'Friends',
+    },
   },
-};
+  {
+    path: '/upload',
+    component: () => import(/* webpackChunkName: "friends" */ '@views/upload.vue'),
+    name: 'Upload',
+    meta: {
+      title: '朋友圈动态发布',
+    },
+  },
+];
+
 export default Friends;

@@ -59,3 +59,6 @@ declare module 'vue-progressive-image';
 
 // TODO: remove this part after vue-lazy-image-loading has its typescript file
 declare module 'layzr.js';
+
+// TODO: remove this part after vueg has its typescript file
+declare module 'vueg';

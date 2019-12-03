@@ -28,14 +28,20 @@
     <div
       class="page-features page-header-btn"
       flex="main:center cross:center"
-      @click="rightBtnClickHandler()"
+      @click="rightBtnClickHandler"
     >
       <md-icon
-        name="camera"
+        :name="icon"
         svg
         size="lg"
         color="#ffffff"
       ></md-icon>
+      <span
+        class="right-text"
+        v-if='rightText.length!==0'
+      >
+        {{rightText}}
+      </span>
     </div>
   </div>
 </template>
@@ -43,6 +49,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 import { Icon } from 'mand-mobile';
+import { diff } from 'prettier';
 @Component({
   name: 'PageHeader',
   components: {
@@ -67,19 +74,30 @@ export default class PageHeader extends Vue {
    */
   @Prop({
     type: Number,
-    default: 0,
+    default: 1,
   })
   transparent!: number;
   /**
-   * 头部栏的透明度
+   * 左侧的按钮icon
    *
    * @description 头部栏的透明度
-   * @param {Boolean} default: false
    */
   @Prop({
-    type: Boolean,
-    default: false,
+    type: String,
+    default: '',
   })
+  icon!: string;
+
+  /**
+   * 左侧的按钮icon
+   *
+   * @description 头部栏的透明度
+   */
+  @Prop({
+    type: String,
+    default: '',
+  })
+  rightText!: string;
 
   /**
    * Emit传递左侧按钮点击事件
@@ -97,7 +115,9 @@ export default class PageHeader extends Vue {
    * @event PageHeader#rightBtnClickHandler
    */
   @Emit('rightBtnClickHandler')
-  private rightBtnClickHandler(): void {} // tslint:disable-line
+  public rightBtnClickHandler() {
+    console.log(1);
+  } // tslint:disable-line
 
   /**
    * scss 和 js 共享变量
@@ -144,6 +164,12 @@ export default class PageHeader extends Vue {
   /* 右侧功能栏 */
   .page-header-btn {
     width: 87px;
+    color: #fff;
+    position: relative;
+    .right-text {
+      @include center-translate();
+      width: 100%;
+    }
   }
 }
 /* 头部颜色 */

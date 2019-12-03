@@ -5,6 +5,7 @@
       ref='header'
       @rightBtnClickHandler="rightBtnClickHandler()"
       :transparent="headerTransparent"
+      icon='camera'
       title='朋友圈'
     />
     <!-- header end -->

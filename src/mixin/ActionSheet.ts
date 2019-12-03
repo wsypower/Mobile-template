@@ -98,5 +98,6 @@ export default class ActionSheetMixin extends Vue {
   }
   selected(item: ActionSheetItem) {
     console.log(item);
+    this.$router.push('/upload');
   }
 }
