@@ -1,5 +1,8 @@
 <template>
-  <div class="upload_page" v-transition:options='options'>
+  <div
+    class="upload_page"
+    v-transition:options='options'
+  >
     <!-- header start -->
     <page-header
       ref='header'
@@ -34,68 +37,14 @@
           </md-textarea-item>
         </md-field>
       </div>
-      <!--  -->
-      <!-- 图片上传 start -->
-      <div class="image-upload-layout ">
-        <ul class="image-reader-list">
-          <li
-            class="image-reader-item"
-            v-for="(img, index) in imageList['reader']"
-            :key="index"
-            :style="{
-              'backgroundImage': `url(${img})`,
-              'backgroundPosition': 'center center',
-              'backgroundRepeat': 'no-repeat',
-              'backgroundSize': 'cover'
-        }"
-            @click.stop="showViewer(index, $event)"
-          >
-            <md-tag
-              class="image-reader-item-del"
-              size="small"
-              shape="quarter"
-              fill-color="#3A9CFC"
-              type="fill"
-              font-color="#fff"
-              @click.native.stop="onDeleteImage('reader', index)"
-            >
-              <md-icon name="close"></md-icon>
-            </md-tag>
-          </li>
-          <li
-            class="image-reader-item add"
-            v-if='imageList.reader.length<=8'
-          >
-            <md-image-reader
-              name="reader"
-              @select="onReaderSelect"
-              @complete="onReaderComplete"
-              @error="onReaderError"
-              is-multiple
-              :amount='amount'
-            ></md-image-reader>
-            <md-icon
-              name="camera"
-              svg
-              size="lg"
-              color="#3A9CFC"
-            ></md-icon>
-            <p>添加图片</p>
-          </li>
-        </ul>
-      </div>
-      <!-- 图片上传 end -->
+      <!-- 图片上传器 -->
+      <image-upload
+        amount='9'
+        ref='uploadImage'
+      ></image-upload>
     </main>
     <!-- main end -->
-    <!-- 图片放大器 star-->
-    <md-image-viewer
-      v-model="isViewerShow"
-      :list="imageList.UploadImage"
-      :has-dots="true"
-      :initial-index="viewerIndex"
-    >
-    </md-image-viewer>
-    <!-- 图片放大器 end-->
+
   </div>
 </template>
 
@@ -104,6 +53,7 @@ import { Vue, Component, Prop, Emit, Ref, Watch, Model } from 'vue-property-deco
 import { Toast, ImageReader, Icon, Tag, ImageViewer, TextareaItem, Field } from 'mand-mobile';
 import imageProcessor from 'mand-mobile/lib/image-reader/image-processor';
 import PageHeader from '../components/base/PageHeader.vue';
+import ImageUpload from '../components/base/ImageUpload/ImageUpload.vue';
 
 @Component({
   name: 'upload',
@@ -115,6 +65,7 @@ import PageHeader from '../components/base/PageHeader.vue';
     [TextareaItem.name]: TextareaItem,
     [Field.name]: Field,
     [ImageViewer.name]: ImageViewer,
+    ImageUpload,
   },
 })
 export default class Upload extends Vue {
@@ -130,25 +81,9 @@ export default class Upload extends Vue {
     forwardAnim: 'bounceInUp', //前进动画，默认为fadeInRight
     backAnim: 'swing', //后退动画，默认为fedeInLeft
     sameDepthDisable: true, //url深度相同时禁用动画，默认为false
-    disable:false      
+    disable: false,
   };
-  /**
-   * 图片上传的配置项
-   */
-  private amount: number = 9;
-  /**
-   * 图片上传
-   */
-  private imageList: any = {
-    reader: [],
-    UploadImage: [],
-    viewer: [],
-  };
-  /**
-   * 图片放大
-   */
-  private isViewerShow: boolean = false;
-  private viewerIndex: number = 0;
+
   /*=============================================
   =                     Prop                    =
   =============================================*/
@@ -158,6 +93,7 @@ export default class Upload extends Vue {
   /*=============================================
   =                      Ref                    =
   =============================================*/
+  @Ref('uploadImage') readonly uploadImage!: any;
   /*=============================================
   =                     Method                  =
   =============================================*/
@@ -169,8 +105,9 @@ export default class Upload extends Vue {
    * @date 2019-12-02 09:55:25
    */
   private rightBtnClickHandler() {
-    // 查看上报的数据
-    console.log(this.imageList['UploadImage']);
+    // 查看上报的图像数据
+    // this.uploadImage.UploadImage.push(1);
+    console.log(this.uploadImage.UploadImage);
   }
 
   /**
@@ -183,105 +120,15 @@ export default class Upload extends Vue {
     this.$router.go(-1);
   }
 
-  /**
-   * 图片选择完成事件，还未开始读取
-   * @select(name, { files })
-   *
-   *
-   * @param {String} name 选择器标识
-   * @param {Array} files 图片对象集合
-   * @author weiyafei
-   * @date 2019-12-02 17:13:22
-   */
-  onReaderSelect(name: string, { files }: { files: File[] }) {
-    console.log(files)
-    const nums = this.amount;
-    if (files.length > nums) {
-      Toast.failed(`图片最多${nums}张图片`, 1000);
-      return;
-    }
-    //选取的图片
-    Toast.loading('图片读取中...', 500);
-  }
-  /**
-   * 图片选择读取完成事件
-   * @complete(name, { dataUrl, blob, file })
-   *
-   *
-   * @param {String} name 选择器标识
-   * @param {String} dataUrl 图片Base64
-   * @param {Blob} [blob] 图片Blob对象，可用于formData
-   * @param {File} [file] 图片对象
-   * @author weiyafei
-   * @date 2019-12-02 17:13:22
-   */
-  private onReaderComplete(
-    name: string,
-    { dataUrl, blob, file }: { dataUrl: string; blob: Blob; file: File },
-  ) {
-    const nums = this.amount;
-    const ImageList = this.imageList[name] || [];
-    imageProcessor({
-      dataUrl,
-      width: 200,
-      height: 200,
-      quality: 0.1,
-    }).then(({ dataUrl }: { dataUrl: string; blob?: Blob; file?: File }) => {
-      if (ImageList.length < nums) ImageList.push(dataUrl);
-    });
-    this.$set(this.imageList, name, ImageList);
-    // 推入先上传的图片
-    if (ImageList.length < nums) this.imageList['UploadImage'].push(file);
-    // 图片放大器
-    // const url = this.FiletoUrl(file);
-  }
-
-  /**
-   * 图片选择读取失败事件
-   * @error(name, { code, msg })
-   *
-   *
-   * @param {String} name 选择器标识
-   * @param {String} code 错误标识，见附录
-   * @param {String} msg 错误信息
-   * @author weiyafei
-   * @date 2019-12-02 17:13:22
-   */
-  private onReaderError(name: string, { msg }: { code?: string; msg?: string }) {
-    Toast.failed(`${msg}`, 1000);
-  }
-
-  /**
-   * 删除图片事件
-   *
-   * @param {String} name 选择器标识
-   * @param {Number} index 错误标识，见附录
-   * @author weiyafei
-   * @date 2019-12-02 17:13:22
-   */
-  private onDeleteImage(name: string, index: number) {
-    const ImageList = this.imageList[name] || [];
-    console.log(ImageList);
-    ImageList.splice(index, 1);
-    this.$set(this.imageList, name, ImageList);
-    // 待上传的图片删除当前被删除的图片
-    this.imageList['UploadImage'].splice(index, 1);
-  }
-
-  /**
-   * 图片放大器
-   *
-   * @param {Number} index 当前选择图片的索引
-   * @author weiyafei
-   * @date 2019-12-02 17:13:22
-   */
-  private showViewer(index: number) {
-    this.viewerIndex = index;
-    this.isViewerShow = true;
-  }
   /*=============================================
   =                    Mounted                  =
   =============================================*/
+  private mounted() {
+    if (this.$route.query.data) {
+      const result = this.$route.query.data;
+      this.uploadImage.UploadImage.push(...result);
+    }
+  }
 }
 </script>
 

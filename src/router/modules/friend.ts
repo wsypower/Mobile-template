@@ -28,6 +28,14 @@ const Friends: RouteConfig[] = [
       title: '朋友圈动态发布',
     },
   },
+  {
+    path: '/self/history',
+    component: () => import(/* webpackChunkName: "friends" */ '@views/sefHistory.vue'),
+    name: 'SelfHistory',
+    meta: {
+      title: '朋友圈动态发布',
+    },
+  },
 ];
 
 export default Friends;

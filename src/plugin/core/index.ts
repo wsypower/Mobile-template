@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-23 21:20:21
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-28 10:51:19
+ * @Last Modified time: 2019-12-03 16:42:11
  */
 
 /**
@@ -29,6 +29,8 @@ import './svg/requireAllSvg';
  */
 import Vue from 'vue';
 
+// import './hesc/hesc';
+// import './hesc/heschybird';
 /**
  * Vue.js 的插件应该暴露一个 install 方法
  *

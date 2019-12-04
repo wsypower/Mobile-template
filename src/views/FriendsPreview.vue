@@ -145,6 +145,7 @@ import {
 } from 'mand-mobile';
 import ActionSheetMixin from '@/mixin/ActionSheet';
 import { Skeleton } from 'mand-mobile';
+import nativeMethod from '@/plugin/core/hesc/heschybird';
 /*=============================================
 =                  Component                  =
 =============================================*/
@@ -361,7 +362,6 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * @memberof PageHeader
    */
   private rightBtnClickHandler(): void {
-    console.log('shoudaole');
     this.showActionSheet({
       value: true,
       options: [
@@ -375,10 +375,64 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
         },
       ],
       cancelText: '取消',
-      onSelected: this.selected,
+      onSelected: this.rightActionClickHandler,
     });
   }
-
+  /**
+   * 选择回调
+   */
+  private rightActionClickHandler(item: any) {
+    Toast.loading('加载中...');
+    // 调用原生图片或照相机
+    this.nativePhotoOrPicture(item.value)
+      .then((res: any) => {
+        // 没有选择就直接返回
+        if (res.length === 0) {
+          Toast.hide();
+          return;
+        }
+        // 有拍照或者选择照相
+        // 带查询参数，变成 /register?plan=private
+        Toast.hide();
+        this.$router.push({ path: '/upload', query: { data: res } });
+      })
+      .catch((err: any) => {
+        Toast.failed(`${err}`, 1000);
+        console.log(err);
+      });
+  }
+  /**
+   * 选择拍照还是相册
+   *
+   * @author weiyafei
+   * @date 2019-12-03-17:41:44
+   * @param {Object} option: number 0 => 拍照，1=> 相册
+   */
+  private nativePhotoOrPicture(option: number = 1, max: string = '9') {
+    return new Promise((resolve, reject) => {
+      return option >>> 0 === 0 //保证为数字
+        ? nativeMethod(
+            'takephone',
+            { path: '' },
+            (detail: any) => {
+              resolve(detail);
+            },
+            (err: any) => {
+              reject(err);
+            },
+          )
+        : nativeMethod(
+            'chooseimg',
+            { maxSelect: max },
+            (detail: any) => {
+              resolve(detail);
+            },
+            (err: any) => {
+              reject(err);
+            },
+          );
+    });
+  }
   /* -------- scrollPageWrap ------- */
   /**
    * 监听滚动的点位,修改头部背景色的透明度
