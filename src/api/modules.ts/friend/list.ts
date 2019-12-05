@@ -23,3 +23,18 @@ export const AsyncGetList = (data?: any): AxiosPromise => {
     data,
   });
 };
+
+/**
+ * 获取列表数据
+ *
+ * @description
+ * @param {*} [data]
+ * @returns {AxiosPromise}
+ */
+export const AsyncGetHistory = (data?: any): AxiosPromise => {
+  return request({
+    url: `@test/history`,
+    method: 'post',
+    data,
+  });
+};

@@ -66,6 +66,7 @@
         v-model='point'
         @comment-handler='commentHandler'
         @comment-reply='commentReply'
+        @delete='deleteHandler'
       />
     </div>
   </div>
@@ -230,6 +231,13 @@ export default class FriendsItem extends Vue {
   @Emit('comment-handler')
   private commentHandler({ e, comment }: { e: Event; comment: number }) {
     return { e, comment, index: this.index };
+  }
+  /**
+   * 删除本条
+   */
+  @Emit('delete')
+  private deleteHandler(){
+    return this.index
   }
   /* -------- ellipsis-plus  ------- */
   /**

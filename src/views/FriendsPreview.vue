@@ -23,6 +23,7 @@
         <Friends-preview-header
           ref="FriendsPreviewHeader"
           :realname="realname"
+          @avatarClickHandler='avatarClickHandler'
         />
       </template>
       <!-- 头部 start-->
@@ -49,6 +50,7 @@
           :key="index"
         >
           <Friends-item
+            v-if='item.show'
             :text='item.text'
             :star='item.star'
             :time='item.time'
@@ -59,6 +61,7 @@
             :comment='item.comment'
             :index='index'
             v-model='point'
+            @delete='deleteHandler'
             @starThumbsUp='starThumbsUp(index)'
             @comment-handler='commentHandler'
             @comment-reply='commentReply'
@@ -130,7 +133,7 @@ import util from '@/util/util';
 import { AsyncGetUser } from '@/api/modules.ts/friend/list';
 import FriendsItem from '../components/views/friendsPreview/feirendsItem.vue';
 import { AsyncGetList } from '../api/modules.ts/friend/list';
-import { ceil, throttle, debounce } from 'lodash';
+import { ceil } from 'lodash';
 import { UserModule } from '@/store/modules/user';
 import {
   ActionSheet,
@@ -349,12 +352,34 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /*=============================================
   =                    Method                   =
   =============================================*/
+  /**
+   * 头部点击事件
+   */
+  private avatarClickHandler() {
+    this.$router.push({ path: '/self/history', query: { userId: this.userId } });
+  }
   /* -------- start ------- */
   private starThumbsUp(index: number) {
     // 取反数据，否则会重刷，以后用v-model设计传值
     this.list[index].star = !this.list[index].star;
   }
-
+  /**
+   * 删除本条朋友圈
+   */
+  private deleteHandler(index: number) {
+    Dialog.confirm({
+      title: '确认',
+      content: '是否删除本条朋友圈',
+      confirmText: '确定',
+      onConfirm: () => {
+        Toast.loading('删除中...');
+        setTimeout(() => {
+          Toast.succeed('操作成功', 1000);
+          this.list[index].show = false;
+        }, 1000);
+      },
+    });
+  }
   /* -------- PageHeader ------- */
   /**
    * 监听点击头部左侧功能按钮
@@ -475,7 +500,10 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     })
       .then((res: any) => {
         const { list } = res;
-        this.list.push(...list);
+        const newList = list.map((obj: any) => {
+          return { show: true, ...obj };
+        });
+        this.list.push(...newList);
         this.scroll.scrollView.finishLoadMore();
       })
       .catch(err => {
@@ -494,9 +522,12 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       userId: this.userId,
     })
       .then((res: any) => {
-        console.log(res);
         const { list } = res;
-        this.list = list;
+        const newList = list.map((obj: any) => {
+          return { show: true, ...obj };
+        });
+        this.list = newList;
+        console.log(this.list);
         if (fn) {
           fn();
         }
@@ -513,24 +544,6 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   private commentHandler({ e, comment, index }: { e: any; comment: number; index: number }) {
     this.index = index;
     this.showPopUp('bottom');
-    // const { clientY, pageY, layerY, offsetY, screenY } = e;
-    // console.log('screenY', screenY);
-    // console.log('offsetY', offsetY);
-    // console.log('layerY', layerY);
-    // console.log('pageY', pageY);
-    // console.log('clientY', clientY);
-    // 点击区域按钮距离显示区域顶部的距离
-    // const PointButton = clientY - offsetY;
-    // 评论栏的高度
-    // const commentHeight = comment;
-    // 弹出框的高度
-    // const popupHeight = 155; //（执行时间太慢，写死一个数据吧）
-    // 可视区域高度
-    // const clientHeight = document.body.clientHeight;
-    // 要移动的距离
-    // const RollingDistance = this.scrollTopNumber + PointButton - commentHeight - comment;
-    // this.scroll.scrollView.scrollTo(null, RollingDistance, true);
-    // this.scroll.scrollView.scrollTo(null, this.scrollImgHeight-this.headerHeight, true);
   }
   /**
    * 删除自己的评论弹出层

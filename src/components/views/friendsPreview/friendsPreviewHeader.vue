@@ -3,7 +3,10 @@
     class="cg_preview_header"
     flex="dir:right cross:bottom"
   >
-    <div class="user_avatar"></div>
+    <div
+      class="user_avatar"
+      @click=avatarClickHandler
+    ></div>
     <div
       class="user_name"
       flex="cross:center main:right"
@@ -28,6 +31,8 @@ export default class FriendsPreviewHeader extends Vue {
     default: '',
   })
   realname!: String;
+  @Emit('avatarClickHandler')
+  avatarClickHandler() {}
 }
 </script>
 

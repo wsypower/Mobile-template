@@ -11,7 +11,12 @@
       >
         <!-- 时间 start-->
         <div class="tiemer">
-          {{ time | RelativeTime }}
+          {{ 1575456932319 | RelativeTime }}
+          <span
+            class="delete"
+            v-if='true'
+            @click='deleteRoleHandler'
+          > 删除 </span>
         </div>
         <!-- 时间 end-->
         <!-- 按钮 start-->
@@ -156,6 +161,7 @@ import TyStar from '@/components/base/star/TyStar.vue';
 import { UserModule } from '@/store/modules/user';
 import Ellipsis from 'ellipsis-plus';
 import { Toast } from 'mand-mobile';
+import { deleteRole } from '../../api/example';
 import { getElementStyle } from '@/util/util.assist';
 @Component({
   name: 'functionBar',
@@ -289,7 +295,11 @@ export default class FunctionBar extends Vue {
   /*=============================================
   =                    Method                   =
   =============================================*/
-
+  /**
+   * 删除本条
+   */
+  @Emit('delete')
+  private deleteRoleHandler() {}
   /**
    * 开启复制按钮
    */
@@ -382,6 +392,9 @@ export default class FunctionBar extends Vue {
       .tiemer {
         font-size: 28px;
         color: #999999;
+        .delete {
+          margin-left: 10px;
+        }
       }
       /* 点赞按钮 */
       .operating {

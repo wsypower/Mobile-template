@@ -49,7 +49,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator';
 import { Icon } from 'mand-mobile';
-import { diff } from 'prettier';
+// import { diff } from 'prettier';
 @Component({
   name: 'PageHeader',
   components: {

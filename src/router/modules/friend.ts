@@ -30,10 +30,18 @@ const Friends: RouteConfig[] = [
   },
   {
     path: '/self/history',
-    component: () => import(/* webpackChunkName: "friends" */ '@views/sefHistory.vue'),
+    component: () => import(/* webpackChunkName: "friends" */ '@views/selfHistory.vue'),
     name: 'SelfHistory',
     meta: {
       title: '朋友圈动态发布',
+    },
+  },
+  {
+    path: '/self/history/details',
+    component: () => import(/* webpackChunkName: "friends" */ '@views/details.vue'),
+    name: 'Details',
+    meta: {
+      title: '详情',
     },
   },
 ];
