@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 15:36:18
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-12-06 17:38:36
+ * @Last Modified time: 2019-12-06 18:45:01
  */
 
 /**
@@ -63,5 +63,5 @@ declare module 'layzr.js';
 // TODO: remove this part after vueg has its typescript file
 declare module 'vueg';
 
-// TODO: remove this part after alloyfinger has its typescript file
-declare module 'alloyfinger';
+// TODO: remove this part after alloyfinger/alloy_finger has its typescript file
+declare module 'alloyfinger/alloy_finger';

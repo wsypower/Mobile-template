@@ -15,6 +15,7 @@
       <!-- 滚动条 star -->
       <md-scroll-view
         ref="scrollView"
+        auto-reflow
         @scroll="onScroll"
         :scrolling-x='false'
       >
@@ -23,6 +24,7 @@
           :comment='requestedData.comment'
           @delete='deleteHandler'
           @comment-handler='commentHandler'
+          @comment-reply='commentReply'
         ></details-basic>
         <!-- 朋友圈详情 end -->
       </md-scroll-view>
@@ -79,6 +81,7 @@
 </template>
 
 <script lang="ts">
+import { mixins } from 'vue-class-component';
 import { Vue, Component, Prop, Emit, Model, Watch, Ref } from 'vue-property-decorator';
 import {
   ActionSheet,
@@ -97,6 +100,7 @@ import { UserModule } from '@/store/modules/user';
 import Ellipsis from 'ellipsis-plus';
 import PageHeader from '../components/base/PageHeader.vue';
 import DetailsBasic from '../components/base/detailsBasic.vue';
+import ActionSheetMixin from '@/mixin/ActionSheet';
 @Component({
   name: 'Details',
   components: {
@@ -112,7 +116,7 @@ import DetailsBasic from '../components/base/detailsBasic.vue';
     [ActionBar.name]: ActionBar,
   },
 })
-export default class Details extends Vue {
+export default class Details extends mixins(ActionSheetMixin) {
   /*=============================================
   =                     Data                    =
   =============================================*/
@@ -131,6 +135,7 @@ export default class Details extends Vue {
       },
     ],
   };
+  private commentIndex: number | null = null;
   private userId: string = '';
   private id: string = '';
   private value: string = '';
@@ -231,6 +236,49 @@ export default class Details extends Vue {
     this.textareaPlaceholder = Placeholder;
 
     this.$set(this.isPopupShow, type, true);
+  }
+  /**
+   * 回复
+   */
+  private commentReply({ label, commentIndex }: { label: string; commentIndex: number }) {
+    console.log(commentIndex);
+    console.log(label);
+    this.commentIndex = commentIndex;
+    if (label === '') {
+      return;
+    }
+    if (this.realname === label) {
+      this.removeSelfComment();
+      console.log('是本人啊');
+      return;
+    }
+    this.showPopUp('bottom', label);
+  }
+  /**
+   * 删除自己的评论弹出层
+   */
+  private removeSelfComment(): void {
+    this.showActionSheet({
+      value: true,
+      options: [
+        {
+          text: '删除',
+          value: '0',
+        },
+      ],
+      defaultIndex: 0,
+      cancelText: '取消',
+      onSelected: this.removeSelfCommentHandler,
+    });
+  }
+
+  /**
+   * 删除评论
+   */
+  private removeSelfCommentHandler() {
+    const index = this.commentIndex;
+    this.requestedData.comment.splice(index, 1);
+    Toast.succeed('删除成功', 1000);
   }
   /*=============================================
   =                    Mounted                  =

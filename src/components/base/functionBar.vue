@@ -148,6 +148,7 @@
               >
                 <div
                   class="press-btn"
+                  ref='copybtn'
                   tabindex
                   v-clipboard="item.value"
                   v-clipboard:success="clipboardSuccessHandler"
@@ -246,6 +247,7 @@ export default class FunctionBar extends Vue {
 
   @Ref('evaluation') readonly evaluation!: HTMLElement;
   @Ref('bar') readonly bar!: HTMLElement;
+  @Ref('copybtn') readonly copybtn!: HTMLElement;
   /*=============================================
   =                    Watch                     =
   =============================================*/
@@ -310,17 +312,26 @@ export default class FunctionBar extends Vue {
    * 开启复制按钮
    */
   private longTouch(event: Event, index: number) {
+    console.log(index);
     this.longTouchShow = index;
-    this.$root.$el.addEventListener(
-      'click',
-      (event: Event) => {
-        console.log(event)
-        this.longTouchShow = -1;
-        event.preventDefault();
-      },
-      // 只调用一次
-      { once: true },
-    );
+    this.$nextTick(() => {
+      const btn: any = this.copybtn;
+      this.$root.$el.addEventListener(
+        'touchstart',
+        // 关闭复制
+        (event: Event) => {
+          if (event.target === btn[0]) {
+            return;
+          } else {
+            this.longTouchShow = -1;
+          }
+        },
+        // 只调用一次
+        {
+          once: true,
+        },
+      );
+    });
   }
 
   /**

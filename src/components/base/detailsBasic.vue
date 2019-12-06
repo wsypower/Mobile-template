@@ -28,6 +28,7 @@
           >
             <div
               class="tip-btn"
+              ref='tipbtn'
               tabindex
               v-if="longTouchShow"
               v-clipboard="text"
@@ -84,7 +85,6 @@ import Viewer from '@/components/base/viewer/viewer.vue';
 import Ellipsis from 'ellipsis-plus';
 import { Toast } from 'mand-mobile';
 import FunctionBar from '@/components/base/functionBar.vue';
-import AlloyFinger from 'alloyfinger'
 @Component({
   name: 'DetailsBasic',
   components: {
@@ -224,6 +224,10 @@ export default class DetailsBasic extends Vue {
    *  文本区域
    */
   @Ref('textArea') readonly textArea!: any;
+  /**
+   * 复制按钮
+   */
+  @Ref('tipbtn') readonly tipbtn!: any;
 
   /* -------- Star  ------- */
   /**
@@ -266,19 +270,22 @@ export default class DetailsBasic extends Vue {
    */
   private longTouch() {
     this.longTouchShow = true;
-    // 获取滚动条元素所有的元素
-    this.$root.$el.addEventListener(
-      'click',
-      // 关闭复制
-      (event: Event) => {
-        console.log(event)
-        console.log(1111);
-        this.longTouchShow = false;
-      },
-      {
-        once: true,
-      },
-    );
+    this.$nextTick(() => {
+      const btn = document.querySelectorAll('.tip-btn')[0];
+      console.log(btn);
+      this.$root.$el.addEventListener(
+        'touchstart',
+        // 关闭复制
+        (event: Event) => {
+          if (event.target !== btn) {
+            this.longTouchShow = false;
+          }
+        },
+        {
+          once: true,
+        },
+      );
+    });
   }
   /**
    * 复制文本 成功
@@ -301,8 +308,7 @@ export default class DetailsBasic extends Vue {
    */
   @Emit('comment-reply')
   private commentReply({ label, index }: { label: string; index: number }) {
-    console.log({ label, index: this.index, commentIndex: index });
-    return { label, index: this.index, commentIndex: index };
+    return { label, commentIndex: index };
   }
   /*=============================================
   =                    Mounted                  =

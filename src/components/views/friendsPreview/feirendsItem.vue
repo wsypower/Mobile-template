@@ -25,6 +25,7 @@
         >
           <div
             class="tip-btn"
+            ref='tipbtn'
             tabindex
             v-if="longTouchShow"
             v-clipboard="text"
@@ -61,7 +62,6 @@
         :star='star'
         :time='time'
         :likes='likes'
-        
         @thumbs-up='starThumbsUp'
         :comment=comment
         v-model='point'
@@ -214,6 +214,11 @@ export default class FriendsItem extends Vue {
    *  文本区域
    */
   @Ref('textArea') readonly textArea!: any;
+
+  /**
+   * 复制按钮
+   */
+  @Ref('tipbtn') readonly tipbtn!: any;
   /*=============================================
   =                     Method                  =
   =============================================*/
@@ -258,6 +263,22 @@ export default class FriendsItem extends Vue {
    */
   private longTouch() {
     this.longTouchShow = true;
+    this.$nextTick(() => {
+      const btn = document.querySelectorAll('.tip-btn')[0];
+      console.log(btn);
+      this.$root.$el.addEventListener(
+        'touchstart',
+        // 关闭复制
+        (event: Event) => {
+          if (event.target !== btn) {
+            this.longTouchShow = false;
+          }
+        },
+        {
+          once: true,
+        },
+      );
+    });
   }
 
   /**
