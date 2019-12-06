@@ -27,6 +27,14 @@ for (let i = 0; i < 10; i++) {
         w: 1200,
         h: 900,
       },
+      {
+        src: 'https://farm4.staticflickr.com/3902/14985871946_86abb8c56f_b.jpg',
+        msrc: 'https://farm4.staticflickr.com/3902/14985871946_86abb8c56f_m.jpg',
+        alt: 'picture2',
+        title: 'Image Caption 2',
+        w: 1200,
+        h: 900,
+      },
     ],
     // 'images|1-6': ['http://192.168.71.33:50000//upload/file/2019/11/12/20191112171532422153.jpg'],
   });

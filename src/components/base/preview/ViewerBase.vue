@@ -95,6 +95,9 @@ export default class ViewerBase extends Vue {
 @import '~photoswipe/dist/default-skin/default-skin.css';
 </style>
 <style lang="scss" scoped>
+.pswp{
+  z-index: 2001;
+}
 // .indexbar {
 //   width: 100%;
 //   height: 75px;

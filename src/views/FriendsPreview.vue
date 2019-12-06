@@ -616,14 +616,11 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
 
     this.$set(this.isPopupShow, type, true);
 
-    setTimeout(() => {
-      this.$nextTick(() => {
-        this.textarea.focus();
-      });
-    }, 200);
-  }
-  private focus(name) {
-    console.log('fouce');
+    // setTimeout(() => {
+    //   this.$nextTick(() => {
+    //     this.textarea.focus();
+    //   });
+    // }, 200);
   }
   /**
    * 提交

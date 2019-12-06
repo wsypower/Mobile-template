@@ -4,16 +4,24 @@
     ref='bar'
   >
     <main>
+      <!-- 时间栏 （当属于详情时候显示） -->
+      <div
+        class="detailsTime"
+        flex='main:left'
+        v-if='isDetails'
+      >{{1575456932319 | date_format}}</div>
       <!-- 功能栏 start-->
       <div
         class="function-bar"
+        :class="{ details: isDetails }"
         flex="dir:left main:justify cross:center"
       >
         <!-- 时间 start-->
         <div class="tiemer">
-          {{ 1575456932319 | RelativeTime }}
+          <span v-if='!isDetails'>{{ 1575456932319 | RelativeTime }}</span>
           <span
             class="delete"
+            :class="{ detailsDelete: isDetails }"
             v-if='true'
             @click='deleteRoleHandler'
           > 删除 </span>
@@ -114,7 +122,7 @@
               :key='index'
               :class="{'clipboard-success':longTouchShow === index}"
               tabindex
-              v-longtap:[index]='longTouch'
+              v-longtap:[index]='{time: 600,handler:longTouch}'
             >
               <sapn v-if='item.label.length>1'>
                 <span class="item-label">{{`${item.label[0]}`}}</span>
@@ -186,6 +194,14 @@ export default class FunctionBar extends Vue {
   =                     Prop                    =
   =============================================*/
   /**
+   * 如果是详情页面布局具有部分差异
+   */
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  isDetails!: boolean;
+  /**
    * 点赞状态
    * @description
    */
@@ -224,8 +240,6 @@ export default class FunctionBar extends Vue {
   /**
    * 滚动条位置
    */
-  @Model('change', { type: Number }) readonly point!: number;
-
   /*=============================================
   =                    Ref                     =
   =============================================*/
@@ -236,14 +250,6 @@ export default class FunctionBar extends Vue {
   =                    Watch                     =
   =============================================*/
 
-  /**
-   * 滚动条
-   *
-   */
-  @Watch('point')
-  onPointChanged(val: number, oldVal: number): void {
-    this.longTouchShow = -1;
-  }
   /*=============================================
   =                   Computed                  =
   =============================================*/
@@ -305,6 +311,16 @@ export default class FunctionBar extends Vue {
    */
   private longTouch(event: Event, index: number) {
     this.longTouchShow = index;
+    this.$root.$el.addEventListener(
+      'click',
+      (event: Event) => {
+        console.log(event)
+        this.longTouchShow = -1;
+        event.preventDefault();
+      },
+      // 只调用一次
+      { once: true },
+    );
   }
 
   /**
@@ -354,9 +370,10 @@ export default class FunctionBar extends Vue {
     /**
      * 获取头部图片的高度
      */
-    const comment = this.getEleStyle(this.evaluation, 'height');
-    const barMarginBottom = this.getEleStyle(this.bar, 'margin-bottom');
-    return { e, comment: comment + barMarginBottom };
+    console.log(1111);
+    // const comment = this.getEleStyle(this.evaluation, 'height');
+    // const barMarginBottom = this.getEleStyle(this.bar, 'margin-bottom');
+    // return { e, comment: comment + barMarginBottom };
   }
 
   /**
@@ -381,6 +398,11 @@ export default class FunctionBar extends Vue {
   width: 100%;
   min-height: 88px;
   margin-bottom: 30px;
+  .detailsTime {
+    font-size: 28px;
+    color: #999999;
+    padding-left: 100px;
+  }
   main {
     /* 功能栏 */
     .function-bar {
@@ -394,6 +416,10 @@ export default class FunctionBar extends Vue {
         color: #999999;
         .delete {
           margin-left: 10px;
+          color: #62759b;
+        }
+        .detailsDelete {
+          margin-left: 0px;
         }
       }
       /* 点赞按钮 */
@@ -419,6 +445,9 @@ export default class FunctionBar extends Vue {
           padding-right: 10px;
         }
       }
+    }
+    .details {
+      padding-left: 100px;
     }
     /* 评价栏 */
     .evaluation {

@@ -196,7 +196,7 @@ const filters: Filters = {
    * @param {string} [setting='YYYY-MM-DD HH:mm:ss']
    * @returns {string}
    */
-  date_format: (Day: Dayjs, setting: string = 'YYYY-MM-DD HH:mm:ss'): string =>
+  date_format: (Day: Dayjs, setting: string = 'YYYY年MM月DD日 HH:mm:ss'): string =>
     P(Day).format(setting),
 
   /**

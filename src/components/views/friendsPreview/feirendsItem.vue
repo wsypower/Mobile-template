@@ -55,12 +55,13 @@
         :images='images'
       />
       <!-- 视屏 -->
-      <video-basic v-if="video!==null"></video-basic>
+      <!-- <video-basic v-if="video!==null"></video-basic> -->
       <!-- 功能栏 -->
       <function-bar
         :star='star'
         :time='time'
         :likes='likes'
+        
         @thumbs-up='starThumbsUp'
         :comment=comment
         v-model='point'
@@ -236,8 +237,8 @@ export default class FriendsItem extends Vue {
    * 删除本条
    */
   @Emit('delete')
-  private deleteHandler(){
-    return this.index
+  private deleteHandler() {
+    return this.index;
   }
   /* -------- ellipsis-plus  ------- */
   /**
@@ -263,12 +264,7 @@ export default class FriendsItem extends Vue {
    * 关闭复制按钮
    */
   private closeLongTouch(e: Event) {
-    // console.log(Boolean(this.textArea.contains(e.target)));
-    // if (this.textArea) {
-    //   if (!this.textArea.contains(e.target)) {
-    //     this.longTouchShow = false;
-    //   }
-    // }
+    this.longTouchShow = false;
   }
   /**
    * 复制文本 成功
@@ -291,7 +287,7 @@ export default class FriendsItem extends Vue {
    */
   @Emit('comment-reply')
   private commentReply({ label, index }: { label: string; index: number }) {
-    console.log({ label, index: this.index, commentIndex: index })
+    console.log({ label, index: this.index, commentIndex: index });
     return { label, index: this.index, commentIndex: index };
   }
   /*=============================================
@@ -346,7 +342,6 @@ export default class FriendsItem extends Vue {
         text-align: left;
         z-index: 20;
         position: relative;
-
         .tip-btn {
           position: absolute;
           width: 150px;

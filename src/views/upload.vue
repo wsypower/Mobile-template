@@ -9,7 +9,7 @@
       @rightBtnClickHandler="rightBtnClickHandler()"
       @backClickHandler='backClickHandler()'
       :transparent="headerTransparent"
-      rightText='发布'
+      rightText=''
       title='动态发布'
     />
     <!-- header end -->
@@ -25,6 +25,8 @@
             :autosize="true"
             placeholder="请输入内容..."
             clearable
+            @focus="focus"
+            @blur="blur"
           >
             <template slot="footer">
               <p
@@ -42,18 +44,86 @@
         amount='9'
         ref='uploadImage'
       ></image-upload>
+      <div
+        class="upload-btns"
+        v-if='btnShow'
+      >
+        <md-button
+          class="preview-btn"
+          type="primary"
+          plain
+          round
+          icon='info-solid'
+          @click="showNoMaskHandler"
+        >
+          预览
+        </md-button>
+        <md-button
+          type="primary"
+          round
+          icon='success'
+        >
+          发布
+        </md-button>
+      </div>
+
     </main>
     <!-- main end -->
+    <md-landscape
+      v-model="showPic"
+      full-screen
+    >
+      <div class="preview-details">
+        <md-scroll-view
+          ref="scrollView"
+          :scrolling-x='false'
+        >
+          <md-skeleton
+            avatar
+            title
+            :row='3'
+          />
+          <preview
+            :text='value'
+            v-if='showPic'
+          />
+          <md-skeleton
+            avatar
+            title
+            :row='5'
+          />
+          <md-skeleton
+            avatar
+            title
+            :row='2'
+          />
+        </md-scroll-view>
+      </div>
 
+    </md-landscape>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Ref, Watch, Model } from 'vue-property-decorator';
-import { Toast, ImageReader, Icon, Tag, ImageViewer, TextareaItem, Field } from 'mand-mobile';
+import {
+  Toast,
+  ImageReader,
+  Icon,
+  Tag,
+  ImageViewer,
+  TextareaItem,
+  Field,
+  Button,
+  Landscape,
+  Skeleton,
+  ScrollView,
+} from 'mand-mobile';
 import imageProcessor from 'mand-mobile/lib/image-reader/image-processor';
 import PageHeader from '../components/base/PageHeader.vue';
-import ImageUpload from '../components/base/ImageUpload/ImageUpload.vue';
+import ImageUpload from '@/components/base/ImageUpload/ImageUpload.vue';
+import Preview from '@/components/base/Preview.vue';
+import preview from '../components/base/preview/preview.vue';
 
 @Component({
   name: 'upload',
@@ -65,7 +135,12 @@ import ImageUpload from '../components/base/ImageUpload/ImageUpload.vue';
     [TextareaItem.name]: TextareaItem,
     [Field.name]: Field,
     [ImageViewer.name]: ImageViewer,
+    [Button.name]: Button,
+    [Landscape.name]: Landscape,
+    [Skeleton.name]: Skeleton,
+    [ScrollView.name]: ScrollView,
     ImageUpload,
+    Preview,
   },
 })
 export default class Upload extends Vue {
@@ -76,6 +151,7 @@ export default class Upload extends Vue {
    * 上传的文字
    */
   private value: string = '';
+  private btnShow: boolean = true;
   private maxLength: number = 300;
   private vuegConfig: any = {
     forwardAnim: 'bounceInUp', //前进动画，默认为fadeInRight
@@ -83,7 +159,7 @@ export default class Upload extends Vue {
     sameDepthDisable: true, //url深度相同时禁用动画，默认为false
     disable: false,
   };
-
+  private showPic: boolean = false;
   /*=============================================
   =                     Prop                    =
   =============================================*/
@@ -119,7 +195,21 @@ export default class Upload extends Vue {
   private backClickHandler() {
     this.$router.go(-1);
   }
-
+  /**
+   * 点击预览
+   */
+  private showNoMaskHandler() {
+    this.showPic = true;
+  }
+  /**
+   * 聚焦事件
+   */
+  private focus() {
+    this.btnShow = false;
+  }
+  private blur() {
+    this.btnShow = true;
+  }
   /*=============================================
   =                    Mounted                  =
   =============================================*/
@@ -143,7 +233,53 @@ export default class Upload extends Vue {
     height: 100%;
     // background-color: red;
     padding-top: 87px;
+    position: relative;
   }
+  .upload-btns {
+    width: 100%;
+    position: absolute;
+    // height: 100px;
+    bottom: 100px;
+    padding: 0 15px;
+    .preview-btn {
+      margin-bottom: 30px;
+    }
+  }
+}
+/deep/.md-popup-mask {
+  width: 100%;
+  height: 100%;
+}
+/deep/.md-popup-box {
+  position: relative;
+  pointer-events: auto;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  /deep/.md-landscape-content {
+    width: 100%;
+    height: 100%;
+  }
+}
+/deep/.md-landscape .md-icon.md-landscape-close {
+  z-index: 5;
+  color: #3a9dfd;
+  opacity: 1;
+}
+/deep/.md-icon.icon-font:before {
+  position: relative;
+  @include center-translate();
+  z-index: 2;
+}
+/* 预览 */
+.preview-details {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  border-radius: 15px;
+  min-height: 500px;
+  padding: 40px 15px 40px 15px;
 }
 /* 上传文字 */
 .textarea-item {
@@ -210,5 +346,16 @@ export default class Upload extends Vue {
       }
     }
   }
+}
+/deep/.md-skeleton {
+  margin-bottom: 30px;
+  margin-top: 30px;
+  padding-right: 25px;
+  .md-skeleton-avatar {
+    margin-right: 25px;
+  }
+}
+/deep/.md-button-content {
+  padding-left: 15px;
 }
 </style>

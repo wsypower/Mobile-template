@@ -65,7 +65,7 @@ Vue.use(LongTap);
 import 'animate.css';
 
 //  TODO:  正式环境移除
-Vue.use(new VConsole());
+// Vue.use(new VConsole());
 
 // import VueImageSwipe from '@/components/base/previewImage/index'
 // import 'vue-image-swipe/dist/vue-image-swipe.css';
