@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-11-19 20:56:54
+ * @Last Modified time: 2019-12-09 15:26:32
  */
 
 /**
@@ -238,17 +238,17 @@ module.exports = {
             ])
             .after('html');
         },
-      )
-      //开发环境且productionSourceMap为true
-      /**
-       * 如果productionSourceMap为true,修改下面source-map展示项
-       * https://www.webpackjs.com/configuration/devtool/#devtool
-       */
-      // .when(
-      //   process.env.NODE_ENV === 'development' && PRODUCTION_SOURCE_MAP,
-      //   // sourcemap不包含列信息
-      //   config => config.devtool('cheap-source-map'),
-      // );
+      );
+    //开发环境且productionSourceMap为true
+    /**
+     * 如果productionSourceMap为true,修改下面source-map展示项
+     * https://www.webpackjs.com/configuration/devtool/#devtool
+     */
+    // .when(
+    //   process.env.NODE_ENV === 'development' && PRODUCTION_SOURCE_MAP,
+    //   // sourcemap不包含列信息
+    //   config => config.devtool('cheap-source-map'),
+    // );
     // // 非开发环境
     // .when(process.env.NODE_ENV !== 'development', config => {
     //   config.optimization.minimizer([
