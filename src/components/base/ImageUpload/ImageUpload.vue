@@ -199,6 +199,7 @@ export default class ImageUpload extends mixins(ActionSheetMixin) {
           );
     });
   }
+  //120 * 138   
   /**
    * 图片选择完成事件
    *
@@ -211,9 +212,6 @@ export default class ImageUpload extends mixins(ActionSheetMixin) {
     this.UploadImage.push(...res);
     Toast.hide();
     // 取一个src 数组
-    // const srcUrl = res.map(item => item.newPath);
-    // console.log(srcUrl);
-    // this.imageList['reader'].push(...srcUrl);
   }
   /**
    * 删除图片事件

@@ -65,7 +65,7 @@ Vue.use(LongTap);
 import 'animate.css';
 
 //  TODO:  正式环境移除
-// Vue.use(new VConsole());
+Vue.use(new VConsole());
 
 // import VueImageSwipe from '@/components/base/previewImage/index'
 // import 'vue-image-swipe/dist/vue-image-swipe.css';
@@ -88,8 +88,11 @@ new Vue({
   mounted() {
     // 获取用户信息
     UserModule.SET_USER({
-      userId: Mock.mock('@id'),
-      realname: Mock.mock('@cname'),
+      userId: '004a96201f9f11e9ff864295114d3f23',
+      realname: '胖大海',
+
+      // userId: '025779e01dee11e94540d88926650d93',
+      // realname: '张三'
     });
   },
 }).$mount('#app');

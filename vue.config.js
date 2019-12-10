@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-12-09 15:26:32
+ * @Last Modified time: 2019-12-09 16:34:22
  */
 
 /**
@@ -130,6 +130,7 @@ module.exports = {
       scss: {
         prependData: `@import '~@/style/core/core.scss';`,
       },
+      // PX利用autoprefixer转换为REM
       stylus: {
         use: [
           poststylus([
@@ -147,8 +148,10 @@ module.exports = {
   },
   configureWebpack: config =>
     process.env.NODE_ENV === 'production'
-      ? {
-          module: TS_IMPORT_PLUGINS.module,
+      ? // 为生产环境修改配置
+        {
+          // module: TS_IMPORT_PLUGINS.module,
+         
           plugins: [
             /**
              * 开始GZIP文件压缩
@@ -165,7 +168,8 @@ module.exports = {
             new BundleAnalyzerPlugin(),
           ],
         }
-      : {
+      : // 为开发环境修改配置
+        {
           module: TS_IMPORT_PLUGINS.module,
         },
   /**

@@ -3,12 +3,15 @@
  * @Author: wei.yafei
  * @Date: 2019-11-13 20:24:29
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-13 20:47:48
+ * @Last Modified time: 2019-12-09 17:01:52
  */
 
 import Qs from 'qs';
 import baseUrl from './axios.baseurl';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { UserModule } from '@/store/modules/user';
+// userId
+const userId = UserModule.userId;
 /**
  * axios config配置
  */
@@ -32,14 +35,17 @@ const axiosRequestConfig: AxiosRequestConfig = {
   transformRequest: [
     function(data: any) {
       // 对 data 进行任意转换处理 => 转为fromData(按照实际后台约定修改转换)
-      return Qs.stringify(data, { arrayFormat: 'repeat' });
+      const dataModify = Object.assign({ userId }, data);
+      return Qs.stringify(dataModify, { arrayFormat: 'repeat' });
     },
   ],
   /**
    * @desc:必须是一个无格式对象(plain object)或 URLSearchParams 对象(GET)
    */
   paramsSerializer: function(params: any) {
-    return Qs.stringify(params, { arrayFormat: 'brackets' });
+    const dataModify = Object.assign({ userId }, params);
+    console.log('dataModify', dataModify);
+    return Qs.stringify(dataModify, { arrayFormat: 'brackets' });
   },
 };
 export default axiosRequestConfig;

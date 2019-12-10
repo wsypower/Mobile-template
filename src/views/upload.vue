@@ -6,7 +6,6 @@
     <!-- header start -->
     <page-header
       ref='header'
-      @rightBtnClickHandler="rightBtnClickHandler()"
       @backClickHandler='backClickHandler()'
       :transparent="headerTransparent"
       rightText=''
@@ -62,6 +61,7 @@
           type="primary"
           round
           icon='success'
+          @click='uploadData'
         >
           发布
         </md-button>
@@ -118,13 +118,14 @@ import {
   Landscape,
   Skeleton,
   ScrollView,
+  Dialog,
 } from 'mand-mobile';
 import imageProcessor from 'mand-mobile/lib/image-reader/image-processor';
 import PageHeader from '../components/base/PageHeader.vue';
 import ImageUpload from '@/components/base/ImageUpload/ImageUpload.vue';
 import Preview from '@/components/base/Preview.vue';
 import preview from '../components/base/preview/preview.vue';
-
+import { AsyncPublish } from '@/api/modules.ts/friend/publish';
 @Component({
   name: 'upload',
   components: {
@@ -139,6 +140,7 @@ import preview from '../components/base/preview/preview.vue';
     [Landscape.name]: Landscape,
     [Skeleton.name]: Skeleton,
     [ScrollView.name]: ScrollView,
+    [Dialog.name]: Dialog,
     ImageUpload,
     Preview,
   },
@@ -180,12 +182,42 @@ export default class Upload extends Vue {
    * @author weiyafei
    * @date 2019-12-02 09:55:25
    */
-  private rightBtnClickHandler() {
-    // 查看上报的图像数据
-    // this.uploadImage.UploadImage.push(1);
+  private uploadData() {
+    console.log(this.value);
     console.log(this.uploadImage.UploadImage);
+    // 上传的图片
+    const FILES = this.uploadImage.UploadImage.length > 0 ? this.uploadImage.UploadImage : [];
+    // 发布的文字
+    const VALUE = this.value;
+    // 为空打断
+    if (VALUE.length === 0 && FILES.length === 0) {
+      Toast.failed('请输入要发布的内容', 1000);
+      return;
+    }
+    Toast.loading('发布中');
+    AsyncPublish({
+      // 发布的文字
+      content: this.value,
+      // 上传的图片
+      files: this.uploadImage.UploadImage,
+    }).then(res => {
+      console.log(res);
+      Toast.hide();
+      this.succeedConfirm('发布成功');
+    });
   }
-
+  /**
+   * 发布成功提示
+   */
+  succeedConfirm(msg: string) {
+    Dialog.succeed({
+      title: '发布成功',
+      // content: msg,
+      confirmText: '确定',
+      onConfirm: () => this.$router.go(-1),
+      onCancel: () => this.$router.go(-1),
+    });
+  }
   /**
    * 点击右侧头部按钮
    *
