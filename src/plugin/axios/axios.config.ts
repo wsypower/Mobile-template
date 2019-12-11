@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-11-13 20:24:29
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-12-09 17:01:52
+ * @Last Modified time: 2019-12-11 15:30:02
  */
 
 import Qs from 'qs';
@@ -22,10 +22,6 @@ const axiosRequestConfig: AxiosRequestConfig = {
   headers: {
     get: {
       'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-      // 在开发中，一般还需要单点登录或者其他功能的通用请求头，可以一并配置进来
-    },
-    post: {
-      'Content-Type': 'application/json;charset=utf-8',
       // 在开发中，一般还需要单点登录或者其他功能的通用请求头，可以一并配置进来
     },
   },

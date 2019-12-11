@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-12-09 16:34:22
+ * @Last Modified time: 2019-12-11 19:04:15
  */
 
 /**
@@ -107,9 +107,9 @@ module.exports = {
    * 详细信息：https://cli.vuejs.org/config/#publicpath
    */
   //根据你的实际情况更改这里
-  publicPath: PUBLIC_PATH,
+  // publicPath: PUBLIC_PATH,
   //仅在开发环境下使用
-  lintOnSave: process.env.NODE_ENV === 'development',
+  // lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: PRODUCTION_SOURCE_MAP,
   outputDir: 'dist',
   assetsDir: 'static',

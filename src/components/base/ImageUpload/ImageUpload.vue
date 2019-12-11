@@ -8,7 +8,7 @@
           v-for="(img, index) in reader"
           :key="index"
           :style="{
-              'backgroundImage': `url(${img})`,
+              'backgroundImage': `url(${img.msrc})`,
               'backgroundPosition': 'center center',
               'backgroundRepeat': 'no-repeat',
               'backgroundSize': 'cover'
@@ -47,7 +47,7 @@
     <!-- 图片放大器 star-->
     <md-image-viewer
       v-model="isViewerShow"
-      :list="reader"
+      :list="list"
       :has-dots="true"
       :initial-index="viewerIndex"
     >
@@ -99,6 +99,11 @@ export default class ImageUpload extends mixins(ActionSheetMixin) {
   })
   amount!: string;
 
+  private get list() {
+    return this.reader.map(item => {
+      return item.src;
+    });
+  }
   /*=============================================
   =                      Emit                   =
   =============================================*/
@@ -108,11 +113,26 @@ export default class ImageUpload extends mixins(ActionSheetMixin) {
   /*=============================================
   =                      Watch                  =
   =============================================*/
+  /**
+   * 返回上传的展示的图
+   */
   @Watch('UploadImage')
   onChildChanged(val: any, oldVal: any) {
-    console.log('watch', val);
-    const srcUrl = val.map((item: any) => item && item.newPath);
-    // this.$set(this.imageList, 'reader', srcUrl);
+    const srcUrl = val.map((item: any) => {
+      const srcSmall = item.newPath.replace(
+        /\.(png|jpg|gif|jpeg|webp)$/g,
+        ($img: string) => `-small${$img}`,
+      );
+      return {
+        src: item.newPath,
+        msrc: srcSmall,
+        alt: item.alt || '',
+        title: item.title || '',
+        w: item.width,
+        h: item.height,
+      };
+    });
+    console.log(srcUrl);
     this.reader = srcUrl;
   }
 
@@ -199,7 +219,6 @@ export default class ImageUpload extends mixins(ActionSheetMixin) {
           );
     });
   }
-  //120 * 138   
   /**
    * 图片选择完成事件
    *

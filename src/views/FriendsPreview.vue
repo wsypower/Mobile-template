@@ -51,12 +51,12 @@
         >
           <Friends-item
             v-if='item.show'
-            :text='item.text'
+            :text='item.content'
             :star='item.star'
-            :time='item.time'
-            :name='item.name'
-            :likes='item.likes'
-            :images='item.images'
+            :time='item.createtime'
+            :name='item.username'
+            :likes='item.like'
+            :images='item.image'
             :video='item.video'
             :comment='item.comment'
             :index='index'
@@ -519,15 +519,31 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   private GetListData(fn?: Function): any {
     return AsyncGetList({
       // 参数列表
-      userId: this.userId,
+      curpage: 1,
     })
       .then((res: any) => {
-        const { list } = res;
-        const newList = list.map((obj: any) => {
+        console.log('res',res)
+        const { queryList } = res;
+        const newList = queryList.map((obj: any, index: number) => {
+          // 修改image属性
+          obj.image = obj.image.map((img: any[]) => {
+            const srcSmall = img.path.replace(
+              /\.(png|jpg|gif|jpeg|webp)$/g,
+              ($img: string) => `-small${$img}`,
+            );
+            return {
+              src: img.path,
+              msrc: srcSmall,
+              alt: img.alt || '',
+              title: img.title || '',
+              w: img.width,
+              h: img.height,
+            };
+          });
+          // 添加一个 show 属性
           return { show: true, ...obj };
         });
         this.list = newList;
-        console.log(this.list);
         if (fn) {
           fn();
         }
@@ -680,7 +696,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     /**
      * 初始化滚动条 加载list数据
      */
-    this.GetListData(this.scroll.scrollView.init).then(res => {
+    this.GetListData(this.scroll.scrollView.init).then((res:any) => {
       //关闭骨架屏
       this.skeleton = false;
     });

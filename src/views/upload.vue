@@ -78,13 +78,9 @@
           ref="scrollView"
           :scrolling-x='false'
         >
-          <md-skeleton
-            avatar
-            title
-            :row='3'
-          />
           <preview
             :text='value'
+            :images='uploadImage.reader'
             v-if='showPic'
           />
           <md-skeleton
@@ -96,6 +92,11 @@
             avatar
             title
             :row='2'
+          />
+          <md-skeleton
+            avatar
+            title
+            :row='5'
           />
         </md-scroll-view>
       </div>
@@ -203,19 +204,7 @@ export default class Upload extends Vue {
     }).then(res => {
       console.log(res);
       Toast.hide();
-      this.succeedConfirm('发布成功');
-    });
-  }
-  /**
-   * 发布成功提示
-   */
-  succeedConfirm(msg: string) {
-    Dialog.succeed({
-      title: '发布成功',
-      // content: msg,
-      confirmText: '确定',
-      onConfirm: () => this.$router.go(-1),
-      onCancel: () => this.$router.go(-1),
+      this.$router.go(-1);
     });
   }
   /**

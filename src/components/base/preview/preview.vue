@@ -108,9 +108,9 @@ export default class preview extends Vue {}
   .layout-one {
     width: 100%;
     height: 100%;
+    text-align: left;
     img {
-      max-width: 100%;
-      max-height: 100%;
+      height: 100%;
       object-fit: contain;
     }
   }
@@ -127,15 +127,20 @@ export default class preview extends Vue {}
   // @include n-between(3, 3, 12) {
   //   margin-right: 0px;
   // }
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    // clip: rect(auto, 0);
-  }
+  // img {
+  //   width: 100%;
+  //   height: 100%;
+  //   object-fit: cover;
+  //   // clip: rect(auto, 0);
+  // }
 }
 .layout-odd {
   .layout_img_warpper {
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     @include n-between(3, 3, 12) {
       margin-right: 0px;
     }
@@ -143,6 +148,11 @@ export default class preview extends Vue {}
 }
 .layout-event {
   // margin-right: 20px;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   .layout_img_warpper {
     margin-right: 10px;

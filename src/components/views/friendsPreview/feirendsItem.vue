@@ -52,7 +52,7 @@
       </header>
       <!-- 图片插看 -->
       <viewer
-        v-if='images.length!==0'
+        v-if='!images.length'
         :images='images'
       />
       <!-- 视屏 -->
@@ -318,6 +318,7 @@ export default class FriendsItem extends Vue {
   private mounted(): void {
     // 判断是否显示隐藏展开全文功能那个
     this.show = this.ellipsis.show;
+    console.log(this.images.length)
   }
 }
 </script>
