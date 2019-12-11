@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-12-11 19:04:15
+ * @Last Modified time: 2019-12-11 20:38:47
  */
 
 /**
@@ -67,34 +67,13 @@ const resolve = dir => require('path').join(__dirname, dir);
  * `PUBLIC_PATH` 基础路径
  * `PRODUCTION_SOURCE_MAP` 不需要生产环境的 source map(根据项目实际需求，能减少一半以上打包体积)
  */
-const PUBLIC_PATH = '/';
+const PUBLIC_PATH = './';
 const PRODUCTION_SOURCE_MAP = false;
 
 /**
  * 配置 mand-mobile的ts类型按需引入
  * `module.rules` 覆盖对于ts-loader的配置
  */
-const TS_IMPORT_PLUGINS = {
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-        options: {
-          appendTsSuffixTo: [/\.vue$/],
-          transpileOnly: true,
-          getCustomTransformers: () => ({
-            before: [
-              require('ts-import-plugin')({
-                libraryName: 'mand-mobile',
-              }),
-            ],
-          }),
-        },
-      },
-    ],
-  },
-};
 /*=============================================
 =                vue-cli3配置                  =
 =============================================*/
@@ -107,9 +86,9 @@ module.exports = {
    * 详细信息：https://cli.vuejs.org/config/#publicpath
    */
   //根据你的实际情况更改这里
-  // publicPath: PUBLIC_PATH,
+  publicPath: PUBLIC_PATH,
   //仅在开发环境下使用
-  // lintOnSave: process.env.NODE_ENV === 'development',
+  lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: PRODUCTION_SOURCE_MAP,
   outputDir: 'dist',
   assetsDir: 'static',
@@ -146,37 +125,51 @@ module.exports = {
       },
     },
   },
-  configureWebpack: config =>
-    process.env.NODE_ENV === 'production'
-      ? // 为生产环境修改配置
-        {
-          // module: TS_IMPORT_PLUGINS.module,
-         
-          plugins: [
-            /**
-             * 开始GZIP文件压缩
-             */
-            new compressionPlugin({
-              test: /\.js$|\.html$|\.css/,
-              threshold: 1024 * 100,
-              deleteOriginalAssets: false, //是否删除源文件
-            }),
-            /**
-             * 打包进度条
-             */
-            new ProgressBarPlugin(),
-            new BundleAnalyzerPlugin(),
-          ],
-        }
-      : // 为开发环境修改配置
-        {
-          module: TS_IMPORT_PLUGINS.module,
-        },
+  configureWebpack: config => {
+    // 为生产环境修改配置
+    if (process.env.NODE_ENV === 'production') {
+      plugins: [
+        /**
+         * 开始GZIP文件压缩
+         */
+        new compressionPlugin({
+          test: /\.js$|\.html$|\.css/,
+          threshold: 1024 * 100,
+          deleteOriginalAssets: false, //是否删除源文件
+        }),
+        /**
+         * 打包进度条
+         */
+        new ProgressBarPlugin(),
+        new BundleAnalyzerPlugin(),
+      ];
+    }
+  },
   /**
    * 基于webpack-chain的链式调用
    * 默认设置: https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-service/lib/config/base.js
    */
   chainWebpack: config => {
+    // 修改 ts-loader
+    config.module
+      .rule('tsx')
+      .use('ts-loader')
+      .loader('ts-loader')
+      .tap(options => {
+        options = {
+          appendTsSuffixTo: [/\.vue$/],
+          transpileOnly: true,
+          getCustomTransformers: () => ({
+            before: [
+              require('ts-import-plugin')({
+                libraryName: 'mand-mobile',
+              }),
+            ],
+          }),
+        };
+        return options;
+      });
+
     //重新设置 alias
     config.resolve.alias
       .set('@', resolve('src'))
@@ -243,32 +236,6 @@ module.exports = {
             .after('html');
         },
       );
-    //开发环境且productionSourceMap为true
-    /**
-     * 如果productionSourceMap为true,修改下面source-map展示项
-     * https://www.webpackjs.com/configuration/devtool/#devtool
-     */
-    // .when(
-    //   process.env.NODE_ENV === 'development' && PRODUCTION_SOURCE_MAP,
-    //   // sourcemap不包含列信息
-    //   config => config.devtool('cheap-source-map'),
-    // );
-    // // 非开发环境
-    // .when(process.env.NODE_ENV !== 'development', config => {
-    //   config.optimization.minimizer([
-    //     new UglifyJsPlugin({
-    //       uglifyOptions: {
-    //         // 移除 console
-    //         // 其它优化选项 https://segmentfault.com/a/1190000010874406
-    //         compress: {
-    //           drop_console: true,
-    //           drop_debugger: true,
-    //           pure_funcs: ['console.log'],
-    //         },
-    //       },
-    //     }),
-    //   ]);
-    // });
   },
   transpileDependencies: ['mand-mobile'],
 };

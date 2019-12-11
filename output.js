@@ -66,7 +66,7 @@
             loader: 'cache-loader',
             options: {
               cacheDirectory: '/Users/weiyafei/Documents/中国电信/wsy-cli/Mobile-template/node_modules/.cache/vue-loader',
-              cacheIdentifier: '20189469'
+              cacheIdentifier: 'cfade34e'
             }
           },
           {
@@ -76,7 +76,7 @@
                 preserveWhitespace: false
               },
               cacheDirectory: '/Users/weiyafei/Documents/中国电信/wsy-cli/Mobile-template/node_modules/.cache/vue-loader',
-              cacheIdentifier: '20189469'
+              cacheIdentifier: 'cfade34e'
             }
           }
         ]
@@ -1009,7 +1009,7 @@
             loader: 'cache-loader',
             options: {
               cacheDirectory: '/Users/weiyafei/Documents/中国电信/wsy-cli/Mobile-template/node_modules/.cache/babel-loader',
-              cacheIdentifier: '11c268e3'
+              cacheIdentifier: 'b0eb74c6'
             }
           },
           {
@@ -1037,7 +1037,7 @@
                 '.tsx'
               ],
               cache: true,
-              cacheIdentifier: '6d2d3f37',
+              cacheIdentifier: '64710c0d',
               emitWarning: true,
               emitError: false,
               eslintPath: '/Users/weiyafei/Documents/中国电信/wsy-cli/Mobile-template/node_modules/_eslint@5.16.0@eslint',
@@ -1054,7 +1054,7 @@
             loader: 'cache-loader',
             options: {
               cacheDirectory: '/Users/weiyafei/Documents/中国电信/wsy-cli/Mobile-template/node_modules/.cache/ts-loader',
-              cacheIdentifier: '8941ae82'
+              cacheIdentifier: '7dc9ece0'
             }
           },
           {
@@ -1080,7 +1080,7 @@
             loader: 'cache-loader',
             options: {
               cacheDirectory: '/Users/weiyafei/Documents/中国电信/wsy-cli/Mobile-template/node_modules/.cache/ts-loader',
-              cacheIdentifier: '8941ae82'
+              cacheIdentifier: '7dc9ece0'
             }
           },
           {
@@ -1125,7 +1125,7 @@
         }
       }
     ]
-  }
+  },
   plugins: [
     /* config.plugin('vue-loader') */
     new VueLoaderPlugin(),
@@ -1138,7 +1138,7 @@
           NODE_ENV: '"development"',
           VUE_APP_REPO: '"https://github.com/wsypower/control-admin"',
           VUE_APP_VERSION: '"0.1.0"',
-          VUE_APP_BUILD_TIME: '"2019-12-10 21:00:47"',
+          VUE_APP_BUILD_TIME: '"2019-12-11 20:06:00"',
           BASE_URL: '"/"'
         }
       }
