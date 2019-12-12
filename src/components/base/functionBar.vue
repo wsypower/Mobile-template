@@ -9,7 +9,7 @@
         class="detailsTime"
         flex='main:left'
         v-if='isDetails'
-      >{{1575456932319 | date_format}}</div>
+      >{{time | date_format}}</div>
       <!-- 功能栏 start-->
       <div
         class="function-bar"
@@ -18,7 +18,7 @@
       >
         <!-- 时间 start-->
         <div class="tiemer">
-          <span v-if='!isDetails'>{{ 1575456932319 | RelativeTime }}</span>
+          <span v-if='!isDetails'>{{ time | RelativeTime }}</span>
           <span
             class="delete"
             :class="{ detailsDelete: isDetails }"
@@ -93,6 +93,7 @@
           transition="md-slide-down"
           class="like"
           v-if='likes.length>0 || star'
+          flex="dir:left cross:center"
         >
           <!-- 心 -->
           <md-icon
@@ -103,9 +104,19 @@
             color='#576B95'
           ></md-icon>
           <!-- 点赞的人 -->
-          <span class="like_people">
-            {{ likeString }}
-          </span>
+          <div class="like_people">
+            <span v-if='star'>
+              {{`${realName}`}}
+              <i v-if='likes.length'>,</i>
+            </span>
+            <span
+              v-for="(item,index) in likes"
+              :key='item.userId'
+            >
+              {{`${item.username}`}}
+              <i v-if='index+1!==likes.length'>,</i>
+            </span>
+          </div>
         </div>
         <!-- 评价 star-->
         <div
@@ -124,21 +135,21 @@
               tabindex
               v-longtap:[index]='{time: 600,handler:longTouch}'
             >
-              <sapn v-if='item.label.length>1'>
-                <span class="item-label">{{`${item.label[0]}`}}</span>
+              <sapn v-if='item.replyname'>
+                <span class="item-label">{{item.replyname}}</span>
                 回复
-                <span class="item-label">{{`${item.label[1]}：`}}</span>
+                <span class="item-label">{{`${item.username}：`}}</span>
               </sapn>
 
               <sapn
                 class="item-label"
                 v-else
-              >{{`${item.label[0]}：`}}</sapn>
+              >{{`${item.username}：`}}</sapn>
 
               <sapn
                 class="item-value"
-                @click='commentReply(item.label[0],index)'
-              >{{item.value}} </sapn>
+                @click='commentReply(item,index)'
+              >{{item.content}} </sapn>
               <!-- 长按复制 -->
               <div
                 class="tip-btn"
@@ -150,7 +161,7 @@
                   class="press-btn"
                   ref='copybtn'
                   tabindex
-                  v-clipboard="item.value"
+                  v-clipboard="item.content"
                   v-clipboard:success="clipboardSuccessHandler"
                   v-clipboard:error="clipboardErrorHandler"
                 >复制</div>
@@ -288,12 +299,13 @@ export default class FunctionBar extends Vue {
    * @description
    * 添加或者取消自己姓名
    */
-  private get likeString(): string {
+  private get likeString(): any {
     return !this.star
       ? this.likes.join(`, `)
       : this.likes.length === 0
       ? `${this.realName}`
       : `${this.realName}, ${this.likes.join(`, `)}`;
+    // return this.star
   }
 
   private get borderActive(): boolean {
@@ -353,11 +365,13 @@ export default class FunctionBar extends Vue {
    * 点击文本回复
    */
   @Emit('comment-reply')
-  private commentReply(label: string, index: number) {
+  private commentReply(item: any, index: number) {
+    console.log(index)
+    console.log(item)
     if (this.longTouchShow !== -1) {
       return { label: '', index };
     }
-    return { label: label, index };
+    return { commentItem: item, index };
   }
   /* -------- Star  ------- */
 
@@ -377,14 +391,11 @@ export default class FunctionBar extends Vue {
    * 评论按钮被点击
    */
   @Emit('comment-handler')
-  private commentHandler(e: Event) {
+  private commentHandler() {
     /**
      * 获取头部图片的高度
      */
-    console.log(1111);
-    // const comment = this.getEleStyle(this.evaluation, 'height');
-    // const barMarginBottom = this.getEleStyle(this.bar, 'margin-bottom');
-    // return { e, comment: comment + barMarginBottom };
+    console.log('初始点击');
   }
 
   /**
@@ -488,9 +499,9 @@ export default class FunctionBar extends Vue {
           @include triangle(top, 15px, #f5f5f5);
         }
         /deep/.md-icon {
-          position: relative;
-          top: 6px;
-          left: 5px;
+          // position: relative;
+          // top: 6px;
+          // left: 5px;
         }
         .like_people {
           color: #576b95;

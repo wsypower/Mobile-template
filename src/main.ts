@@ -89,7 +89,7 @@ new Vue({
     // 获取用户信息
     UserModule.SET_USER({
       userId: '004a96201f9f11e9ff864295114d3f23',
-      realname: '胖大海',
+      realname: '嵊州监督员310',
 
       // userId: '025779e01dee11e94540d88926650d93',
       // realname: '张三'

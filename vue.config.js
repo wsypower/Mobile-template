@@ -3,7 +3,7 @@
  * @Author: wei.yafei
  * @Date: 2019-10-22 16:32:01
  * @Last Modified by: wei.yafei 
- * @Last Modified time: 2019-12-11 20:38:47
+ * @Last Modified time: 2019-12-11 20:51:51
  */
 
 /**
@@ -67,7 +67,7 @@ const resolve = dir => require('path').join(__dirname, dir);
  * `PUBLIC_PATH` 基础路径
  * `PRODUCTION_SOURCE_MAP` 不需要生产环境的 source map(根据项目实际需求，能减少一半以上打包体积)
  */
-const PUBLIC_PATH = './';
+const PUBLIC_PATH = '/';
 const PRODUCTION_SOURCE_MAP = false;
 
 /**

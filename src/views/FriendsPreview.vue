@@ -47,7 +47,7 @@
         <div
           class="preview_item"
           v-for="(item, index) in list"
-          :key="index"
+          :key="item.id"
         >
           <Friends-item
             v-if='item.show'
@@ -63,7 +63,7 @@
             v-model='point'
             @delete='deleteHandler'
             @starThumbsUp='starThumbsUp(index)'
-            @comment-handler='commentHandler'
+            @comment-handler='commentHandler(item.id,index)'
             @comment-reply='commentReply'
           ></Friends-item>
         </div>
@@ -360,7 +360,9 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   }
   /* -------- start ------- */
   private starThumbsUp(index: number) {
+    // console.log(star)
     // 取反数据，否则会重刷，以后用v-model设计传值
+    console.log('点赞');
     this.list[index].star = !this.list[index].star;
   }
   /**
@@ -491,6 +493,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * @memberof scrollPageWrap
    */
   private onEndReached() {
+    console.log(`列表页上拉加载`);
     if (this.isFinished) {
       return;
     }
@@ -517,23 +520,25 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * @promise
    */
   private GetListData(fn?: Function): any {
+    console.log('获取数据');
     return AsyncGetList({
       // 参数列表
       curpage: 1,
     })
       .then((res: any) => {
-        console.log('res',res)
         const { queryList } = res;
         const newList = queryList.map((obj: any, index: number) => {
           // 修改image属性
+          // 基础路劲
+          const baseurl = 'http://192.168.71.33:50000';
           obj.image = obj.image.map((img: any[]) => {
             const srcSmall = img.path.replace(
               /\.(png|jpg|gif|jpeg|webp)$/g,
               ($img: string) => `-small${$img}`,
             );
             return {
-              src: img.path,
-              msrc: srcSmall,
+              src: `${baseurl}${img.path}`,
+              msrc: `${baseurl}${srcSmall}`,
               alt: img.alt || '',
               title: img.title || '',
               w: img.width,
@@ -547,6 +552,8 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
         if (fn) {
           fn();
         }
+        console.log(this.list);
+        console.log('获取数据-----结束');
         return Promise.resolve();
       })
       .catch(err => {
@@ -557,7 +564,9 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /**
    * 评论按钮被点击
    */
-  private commentHandler({ e, comment, index }: { e: any; comment: number; index: number }) {
+  private commentHandler(id: any, index: any) {
+    console.log(index);
+    console.log('id', id);
     this.index = index;
     this.showPopUp('bottom');
   }
@@ -588,24 +597,22 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     Toast.succeed('删除成功', 1000);
   }
   /**
-   * 评论区长按回复
+   * 评论区回复
    */
   private commentReply({
-    label,
+    commentItem,
     index,
     commentIndex,
   }: {
-    label: string;
+    commentItem: any;
     index: number;
     commentIndex: number;
   }) {
     this.index = index;
     this.commentIndex = commentIndex;
-    if (label === '') {
-      return;
-    }
-
-    if (this.realname === label) {
+    const label = commentItem.replyname || commentItem.username;
+    const replyId = commentItem.replyId || commentItem.userId;
+    if (this.userId === replyId) {
       this.removeSelfComment();
       return;
     }
@@ -629,9 +636,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     // 判断 placeholder 显示的数据
     const Placeholder = this.label === '' ? '回复信息在100字以内' : `回复@${this.label}`;
     this.textareaPlaceholder = Placeholder;
-
     this.$set(this.isPopupShow, type, true);
-
     // setTimeout(() => {
     //   this.$nextTick(() => {
     //     this.textarea.focus();
@@ -654,13 +659,23 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       // 关闭弹窗
       this.$set(this.isPopupShow, 'bottom', false);
       Toast.succeed('答复成功', 1000);
-      // 判断是不是回复谁，还是自己回复的 textareaPlaceholder
-      const Resultlabel = this.label === '' ? [this.realname] : [this.realname, this.label];
-      console.log(this.textareaPlaceholder);
-      const result = {
-        label: Resultlabel,
-        value: this.value,
-      };
+      // 判断是回复谁，还是自己回复的 textareaPlaceholder
+      // const Resultlabel = this.label === '' ? [this.realname] : [this.realname, this.label];
+      // console.log(this.label)
+      let result;
+      if (this.label === '') {
+        result = {
+          content: this.value,
+          username: this.realname,
+        };
+      } else {
+        result = {
+          content: this.value,
+          username: this.label,
+          replyname: this.realname,
+        };
+      }
+
       this.list[this.index as number].comment.push(result);
     }, 1000);
   }
@@ -696,7 +711,8 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     /**
      * 初始化滚动条 加载list数据
      */
-    this.GetListData(this.scroll.scrollView.init).then((res:any) => {
+    //
+    this.GetListData(this.scroll.scrollView.init).then((res: any) => {
       //关闭骨架屏
       this.skeleton = false;
     });

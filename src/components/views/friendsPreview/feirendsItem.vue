@@ -52,7 +52,7 @@
       </header>
       <!-- 图片插看 -->
       <viewer
-        v-if='!images.length'
+        v-if='images.length!==0'
         :images='images'
       />
       <!-- 视屏 -->
@@ -229,14 +229,15 @@ export default class FriendsItem extends Vue {
    */
   @Emit('starThumbsUp')
   private starThumbsUp(star: boolean): boolean {
+    console.log(star);
     return star;
   }
   /**
    * 评论按钮被点击
    */
   @Emit('comment-handler')
-  private commentHandler({ e, comment }: { e: Event; comment: number }) {
-    return { e, comment, index: this.index };
+  private commentHandler() {
+    console.log('传递');
   }
   /**
    * 删除本条
@@ -307,9 +308,9 @@ export default class FriendsItem extends Vue {
    * 评论栏长按回复他人
    */
   @Emit('comment-reply')
-  private commentReply({ label, index }: { label: string; index: number }) {
-    console.log({ label, index: this.index, commentIndex: index });
-    return { label, index: this.index, commentIndex: index };
+  private commentReply({ commentItem, index }: { commentItem: any; index: number }) {
+    console.log({ commentItem, index: this.index, commentIndex: index });
+    return { commentItem, index: this.index, commentIndex: index };
   }
   /*=============================================
   =                    Mounted                  =
@@ -318,7 +319,6 @@ export default class FriendsItem extends Vue {
   private mounted(): void {
     // 判断是否显示隐藏展开全文功能那个
     this.show = this.ellipsis.show;
-    console.log(this.images.length)
   }
 }
 </script>
