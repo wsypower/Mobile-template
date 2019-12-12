@@ -92,7 +92,7 @@
         <div
           transition="md-slide-down"
           class="like"
-          v-if='likes.length>0 || star'
+          v-if='likes.length>0|| star'
           flex="dir:left cross:center"
         >
           <!-- 心 -->
@@ -136,9 +136,9 @@
               v-longtap:[index]='{time: 600,handler:longTouch}'
             >
               <sapn v-if='item.replyname'>
-                <span class="item-label">{{item.replyname}}</span>
+                <span class="item-label">{{item.username}}</span>
                 回复
-                <span class="item-label">{{`${item.username}：`}}</span>
+                <span class="item-label">{{`${item.replyname}：`}}</span>
               </sapn>
 
               <sapn
@@ -292,6 +292,14 @@ export default class FunctionBar extends Vue {
    */
   private get realName(): string {
     return UserModule.getRelName;
+  }
+    /**
+   * userId
+   *
+   * @memberof FriendsPreviewHeader
+   */
+  private get UserId() {
+    return UserModule.userId;
   }
   /* -------- 点赞人数  ------- */
   /**

@@ -227,9 +227,8 @@ export default class FriendsItem extends Vue {
    * 点亮-取消 赞
    *
    */
-  @Emit('starThumbsUp')
+  @Emit('star-thumbsUp')
   private starThumbsUp(star: boolean): boolean {
-    console.log(star);
     return star;
   }
   /**
@@ -237,7 +236,7 @@ export default class FriendsItem extends Vue {
    */
   @Emit('comment-handler')
   private commentHandler() {
-    console.log('传递');
+    console.log('传递')
   }
   /**
    * 删除本条

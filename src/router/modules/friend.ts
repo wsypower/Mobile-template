@@ -22,7 +22,7 @@ const Friends: RouteConfig[] = [
   },
   {
     path: '/upload',
-    component: () => import(/* webpackChunkName: "friends" */ '@views/upload.vue'),
+    component: () => import(/* webpackChunkName: "upload" */ '@views/upload.vue'),
     name: 'Upload',
     meta: {
       title: '朋友圈动态发布',
@@ -30,15 +30,23 @@ const Friends: RouteConfig[] = [
   },
   {
     path: '/self/history',
-    component: () => import(/* webpackChunkName: "friends" */ '@views/selfHistory.vue'),
+    component: () => import(/* webpackChunkName: "history" */ '@views/selfHistory.vue'),
     name: 'SelfHistory',
     meta: {
-      title: '朋友圈动态发布',
+      title: '历史动态',
+    },
+  },
+  {
+    path: '/Friends/self',
+    component: () => import(/* webpackChunkName: "self" */ '@views/self.vue'),
+    name: 'FriendsSelf',
+    meta: {
+      title: '朋友圈',
     },
   },
   {
     path: '/self/history/details',
-    component: () => import(/* webpackChunkName: "friends" */ '@views/details.vue'),
+    component: () => import(/* webpackChunkName: "details" */ '@views/details.vue'),
     name: 'Details',
     meta: {
       title: '详情',

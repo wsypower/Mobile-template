@@ -62,9 +62,9 @@
             :index='index'
             v-model='point'
             @delete='deleteHandler'
-            @starThumbsUp='starThumbsUp(index)'
+            @star-thumbsUp='starThumbsUp($event,index,item.id)'
             @comment-handler='commentHandler(item.id,index)'
-            @comment-reply='commentReply'
+            @comment-reply='commentReply($event,item.id)'
           ></Friends-item>
         </div>
       </template>
@@ -132,7 +132,7 @@ import { getElementStyle } from '@/util/util.assist';
 import util from '@/util/util';
 import { AsyncGetUser } from '@/api/modules.ts/friend/list';
 import FriendsItem from '../components/views/friendsPreview/feirendsItem.vue';
-import { AsyncGetList } from '../api/modules.ts/friend/list';
+import { AsyncGetList, AsyncSetStar, AsyncSetComment } from '../api/modules.ts/friend/list';
 import { ceil } from 'lodash';
 import { UserModule } from '@/store/modules/user';
 import {
@@ -229,6 +229,11 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       loading: false,
     },
   ];
+  /**
+   * 评论提交
+   */
+  private subjectid: any = '';
+  private replyid: any = '';
   /* -------- FriendsItem ------- */
 
   /* -------- PageHeader ------- */
@@ -293,7 +298,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   }
 
   /**
-   * 姓名
+   * userId
    *
    * @memberof FriendsPreviewHeader
    */
@@ -356,14 +361,19 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * 头部点击事件
    */
   private avatarClickHandler() {
-    this.$router.push({ path: '/self/history', query: { userId: this.userId } });
+    this.$router.push({ path: '/Friends/self', query: { userId: this.userId } });
   }
   /* -------- start ------- */
-  private starThumbsUp(index: number) {
-    // console.log(star)
+  private starThumbsUp(star: boolean, index: number, id: string) {
+    const type = star ? 1 : 0;
     // 取反数据，否则会重刷，以后用v-model设计传值
     console.log('点赞');
     this.list[index].star = !this.list[index].star;
+    // 上传点赞或者取消赞
+    AsyncSetStar({
+      subjectid: id,
+      type,
+    });
   }
   /**
    * 删除本条朋友圈
@@ -528,17 +538,21 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       .then((res: any) => {
         const { queryList } = res;
         const newList = queryList.map((obj: any, index: number) => {
+          // 点赞里面移除和自身userId相同的
+          obj.like =
+            obj.like.length > 0
+              ? obj.like.filter((item: any) => item.userId !== this.userId)
+              : obj.like;
           // 修改image属性
           // 基础路劲
-          const baseurl = 'http://192.168.71.33:50000';
           obj.image = obj.image.map((img: any[]) => {
             const srcSmall = img.path.replace(
               /\.(png|jpg|gif|jpeg|webp)$/g,
               ($img: string) => `-small${$img}`,
             );
             return {
-              src: `${baseurl}${img.path}`,
-              msrc: `${baseurl}${srcSmall}`,
+              src: `${img.path}`,
+              msrc: `${srcSmall}`,
               alt: img.alt || '',
               title: img.title || '',
               w: img.width,
@@ -552,8 +566,6 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
         if (fn) {
           fn();
         }
-        console.log(this.list);
-        console.log('获取数据-----结束');
         return Promise.resolve();
       })
       .catch(err => {
@@ -567,7 +579,9 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   private commentHandler(id: any, index: any) {
     console.log(index);
     console.log('id', id);
+    this.subjectid = id;
     this.index = index;
+    this.replyid = '';
     this.showPopUp('bottom');
   }
   /**
@@ -599,19 +613,28 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /**
    * 评论区回复
    */
-  private commentReply({
-    commentItem,
-    index,
-    commentIndex,
-  }: {
-    commentItem: any;
-    index: number;
-    commentIndex: number;
-  }) {
+  private commentReply(
+    {
+      commentItem,
+      index,
+      commentIndex,
+    }: {
+      commentItem: any;
+      index: number;
+      commentIndex: number;
+    },
+    id: string,
+  ) {
+    console.log(id);
     this.index = index;
     this.commentIndex = commentIndex;
-    const label = commentItem.replyname || commentItem.username;
-    const replyId = commentItem.replyId || commentItem.userId;
+
+    this.subjectid = id;
+    this.replyid = commentItem.userId;
+    // this.index = index;
+
+    const label = commentItem.username;
+    const replyId = commentItem.userId;
     if (this.userId === replyId) {
       this.removeSelfComment();
       return;
@@ -653,15 +676,16 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     }
     // 开启提交加载
     this.TextareaAction[0].loading = true;
-    setTimeout(() => {
+    AsyncSetComment({
+      subjectid: this.subjectid,
+      content: this.value,
+      replyid: this.replyid,
+    }).then(() => {
       // 关闭提交加载
       this.TextareaAction[0].loading = false;
       // 关闭弹窗
       this.$set(this.isPopupShow, 'bottom', false);
       Toast.succeed('答复成功', 1000);
-      // 判断是回复谁，还是自己回复的 textareaPlaceholder
-      // const Resultlabel = this.label === '' ? [this.realname] : [this.realname, this.label];
-      // console.log(this.label)
       let result;
       if (this.label === '') {
         result = {
@@ -671,13 +695,12 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       } else {
         result = {
           content: this.value,
-          username: this.label,
-          replyname: this.realname,
+          username: this.realname,
+          replyname: this.label,
         };
       }
-
       this.list[this.index as number].comment.push(result);
-    }, 1000);
+    });
   }
   /**
    * 取消提交

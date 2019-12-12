@@ -45,3 +45,49 @@ export const AsyncGetHistory = (data?: any): AxiosPromise => {
     data,
   });
 };
+
+/**
+ * 点赞
+ *
+ * @description 参数说明如下
+ *  +-------------------------------------------------------------------|
+ *  | userId *     |  用户ID     |  String      |       044....sda
+ *  |-------------------------------------------------------------------|
+ *  | subjectid *  |  朋友圈ID    |  String      |      044....sda
+ *  |-------------------------------------------------------------------|
+ *  | type *       |  取消|点赞    |  number      |      0:取消，msg:点赞
+ *  +-------------------------------------------------------------------|
+ * @param {*} [data]
+ * @returns {AxiosPromise}
+ */
+export const AsyncSetStar = (data?: any): AxiosPromise => {
+  return request({
+    url: `pyq/like`,
+    method: 'post',
+    data,
+  });
+};
+
+/**
+ * 点赞
+ *
+ * @description 参数说明如下
+ *  +-----------------------------------------------------------------------|
+ *  | userId *        |  回复人ID     |  String       |       044....sda
+ *  |-----------------------------------------------------------------------|
+ *  | subjectid *     |  朋友圈ID      |  String      |       044....sda
+ *  |-----------------------------------------------------------------------|
+ *  | replyid *       |  被回复人ID    |  number       |      044....sda
+ *  |-----------------------------------------------------------------------|
+ *  | content *       |  内容          |  String      |      'hello world'
+ *  +-----------------------------------------------------------------------|
+ * @param {*} [data]
+ * @returns {AxiosPromise}
+ */
+export const AsyncSetComment = (data?: any): AxiosPromise => {
+  return request({
+    url: `pyq/comment`,
+    method: 'post',
+    data,
+  });
+};

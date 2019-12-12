@@ -200,7 +200,7 @@ export default class Upload extends Vue {
       // 发布的文字
       content: this.value,
       // 上传的图片
-      files: this.uploadImage.UploadImage,
+      files: JSON.stringify(this.uploadImage.UploadImage),
     }).then(res => {
       console.log(res);
       Toast.hide();
