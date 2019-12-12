@@ -65,3 +65,6 @@ declare module 'vueg';
 
 // TODO: remove this part after alloyfinger/alloy_finger has its typescript file
 declare module 'alloyfinger/alloy_finger';
+
+// TODO: remove this part after photoswipe/dist/photoswipe has its typescript file
+declare module 'photoswipe/dist/photoswipe';

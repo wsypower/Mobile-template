@@ -6,7 +6,10 @@
     aria-hidden="true"
   >
     <!-- 新建 -->
-    <div class="indexbar" flex='cross:center main:center'>
+    <div
+      class="indexbar"
+      flex='cross:center main:center'
+    >
       <div class="indexbar-item"></div>
       <div class="indexbar-item"></div>
       <div class="indexbar-item"></div>
@@ -80,13 +83,19 @@ import { Vue, Component, Prop, Watch, Model, Ref } from 'vue-property-decorator'
 export default class ViewerBase extends Vue {
   private mounted() {
     this.$nextTick(() => {
-      const body = document.querySelector('body');
+      const body: any = document.querySelector('body');
       if (body.append) {
         body.append(this.$el);
       } else {
         body.appendChild(this.$el);
       }
     });
+  }
+  private destroyed() {
+    console.log(111);
+    const pswp: any = document.querySelector('.pswp');
+    console.log(pswp);
+    pswp.remove();
   }
 }
 </script>
@@ -95,7 +104,7 @@ export default class ViewerBase extends Vue {
 @import '~photoswipe/dist/default-skin/default-skin.css';
 </style>
 <style lang="scss" scoped>
-.pswp{
+.pswp {
   z-index: 2001;
 }
 // .indexbar {

@@ -7,11 +7,12 @@
       flex='dir:left'
       v-if="[1].includes(slides.length)"
     >
-      <template v-for="item in slides">
+      <template v-for="(item,index) in slides">
         <figure
           itemprop="associatedMedia"
           itemscope
           class="layout_img_warpper layout-one"
+          :key='index'
         >
           <a
             :href="item.src"
@@ -34,11 +35,12 @@
       flex='dir:left'
       v-else-if="[2,4].includes(slides.length)"
     >
-      <template v-for="item in slides">
+      <template v-for="(item,index) in slides">
         <figure
           itemprop="associatedMedia"
           itemscope
           class="layout_img_warpper"
+          :key='index'
         >
           <a
             :href="item.src"
@@ -61,11 +63,12 @@
       flex='dir:left'
       v-else
     >
-      <template v-for="item in slides">
+      <template v-for="(item,index) in slides">
         <figure
           itemprop="associatedMedia"
           itemscope
           class="layout_img_warpper"
+          :key='index'
         >
           <a
             :href="item.src"
