@@ -1,6 +1,6 @@
 <template>
   <div class="scroll-page-wrap">
-    <!-- 滚动组件 start-->
+    <!-- 滚动组件 start :manual-init='true'-->
     <md-scroll-view
       ref="scrollView"
       :scrolling-x="false"
@@ -8,7 +8,7 @@
       @refreshing="onRefresh"
       @end-reached="onEndReached"
       auto-reflow
-      :manual-init='true'
+      
     >
       <!-- 下拉刷新 start-->
       <md-scroll-view-refresh

@@ -175,6 +175,10 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /*=============================================
   =                     Data                    =
   =============================================*/
+  //滚动条总页数
+  private pageCount: any = 1;
+  // 当前页
+  private curpage: any = 1;
   /**
    *
    * 列表信息
@@ -492,9 +496,15 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * @memberof scrollPageWrap
    */
   private onRefresh() {
-    this.GetListData(this.scroll.scrollView.finishRefresh);
+    this.GetListData(1).then((res: any) => {
+      this.curpage = 1;
+      this.pageCount = res.pageCount;
+      this.list = res.list;
+      this.scroll.scrollView.finishRefresh();
+      this.isFinished = false;
+      this.scroll.scrollView.finishLoadMore();
+    });
     // 重置“上拉加载”的状态
-    this.scroll.scrollView.finishLoadMore();
   }
 
   /**
@@ -507,21 +517,16 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     if (this.isFinished) {
       return;
     }
-    AsyncGetList({
-      // 参数列表
-      userId: this.userId,
-    })
-      .then((res: any) => {
-        const { list } = res;
-        const newList = list.map((obj: any) => {
-          return { show: true, ...obj };
-        });
-        this.list.push(...newList);
-        this.scroll.scrollView.finishLoadMore();
-      })
-      .catch(err => {
-        throw new Error(err);
-      });
+    this.curpage += this.curpage;
+    if (this.curpage > this.pageCount) {
+      console.log(111);
+      this.isFinished = true;
+      return;
+    }
+    this.GetListData(this.curpage).then((res: any) => {
+      this.list.push(...res.list);
+      this.scroll.scrollView.finishLoadMore();
+    });
   }
   /* -------- async ------- */
   /**
@@ -529,13 +534,14 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    *
    * @promise
    */
-  private GetListData(fn?: Function): any {
+  private GetListData(curpage: any = 1): any {
     console.log('获取数据');
     return AsyncGetList({
       // 参数列表
-      curpage: 1,
+      curpage,
     })
       .then((res: any) => {
+        console.log(res);
         const { queryList } = res;
         const newList = queryList.map((obj: any, index: number) => {
           // 点赞里面移除和自身userId相同的
@@ -562,11 +568,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
           // 添加一个 show 属性
           return { show: true, ...obj };
         });
-        this.list = newList;
-        if (fn) {
-          fn();
-        }
-        return Promise.resolve();
+        return Promise.resolve({ pageCount: res.pageCount, list: newList });
       })
       .catch(err => {
         throw new Error(err);
@@ -644,9 +646,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /**
    * 答复的键盘事件
    */
-  private textareaKeyUp(name: string) {
-    console.log(name);
-  }
+  private textareaKeyUp(name: string) {}
   /**
    * 显示输入弹窗
    */
@@ -732,12 +732,14 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
      */
     this.headerHeight = this.getEleStyle(this.header.$el, 'height');
     /**
-     * 初始化滚动条 加载list数据
+     * 初始化滚动条 加载list数据 this.scroll.scrollView.init
      */
     //
-    this.GetListData(this.scroll.scrollView.init).then((res: any) => {
+    this.GetListData().then((res: any) => {
+      this.list = res.list;
       //关闭骨架屏
       this.skeleton = false;
+      this.pageCount = res.pageCount;
     });
   }
 
