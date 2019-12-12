@@ -7,6 +7,7 @@
       @scroll="onScroll"
       @refreshing="onRefresh"
       @end-reached="onEndReached"
+      :end-reached-threshold='600'
       auto-reflow
       
     >
@@ -38,6 +39,7 @@
         slot="more"
         :is-finished="isFinished"
       >
+      1111
       </md-scroll-view-more>
       <!-- 上拉加载 end -->
 
