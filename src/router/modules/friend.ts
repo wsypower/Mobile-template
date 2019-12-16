@@ -52,6 +52,14 @@ const Friends: RouteConfig[] = [
       title: '详情',
     },
   },
+  {
+    path: '/self/history/details/message',
+    component: () => import(/* webpackChunkName: "massage" */ '@views/Message.vue'),
+    name: 'message',
+    meta: {
+      title: '历史消息',
+    },
+  },
 ];
 
 export default Friends;

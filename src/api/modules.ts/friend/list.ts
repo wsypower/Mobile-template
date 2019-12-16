@@ -91,3 +91,39 @@ export const AsyncSetComment = (data?: any): AxiosPromise => {
     data,
   });
 };
+
+/**
+ * 删除评论
+ *
+ * @description 参数说明如下
+ *  +-----------------------------------------------------------------------|
+ *  | commentid *     |  评论ID     |  String       |       044....sda
+ *  +-----------------------------------------------------------------------|
+ * @param {*} [data]
+ * @returns {AxiosPromise}
+ */
+export const AsyncDeleteComment = (data?: any): AxiosPromise => {
+  return request({
+    url: `pyq/deleteComment`,
+    method: 'post',
+    data,
+  });
+};
+
+/**
+ * 删除评论
+ *
+ * @description 参数说明如下
+ *  +-----------------------------------------------------------------------|
+ *  | subjectid *     |  朋友圈ID     |  String       |       044....sda
+ *  +-----------------------------------------------------------------------|
+ * @param {*} [data]
+ * @returns {AxiosPromise}
+ */
+export const AsyncDeleteSubject = (data?: any): AxiosPromise => {
+  return request({
+    url: `pyq/deleteSubject`,
+    method: 'post',
+    data,
+  });
+};

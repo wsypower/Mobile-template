@@ -22,7 +22,7 @@
           <span
             class="delete"
             :class="{ detailsDelete: isDetails }"
-            v-if='true'
+            v-if='queryid === UserId'
             @click='deleteRoleHandler'
           > 删除 </span>
         </div>
@@ -250,6 +250,21 @@ export default class FunctionBar extends Vue {
   comment!: any[];
 
   /**
+   * 案卷id
+   */
+  @Prop({
+    type: String,
+  })
+  id!: string;
+
+  /**
+   * 案卷发布人id
+   */
+  @Prop({
+    type: String,
+  })
+  queryid!: string;
+  /**
    * 滚动条位置
    */
   /*=============================================
@@ -293,7 +308,7 @@ export default class FunctionBar extends Vue {
   private get realName(): string {
     return UserModule.getRelName;
   }
-    /**
+  /**
    * userId
    *
    * @memberof FriendsPreviewHeader
@@ -327,7 +342,9 @@ export default class FunctionBar extends Vue {
    * 删除本条
    */
   @Emit('delete')
-  private deleteRoleHandler() {}
+  private deleteRoleHandler() {
+    return this.id;
+  }
   /**
    * 开启复制按钮
    */
@@ -374,8 +391,8 @@ export default class FunctionBar extends Vue {
    */
   @Emit('comment-reply')
   private commentReply(item: any, index: number) {
-    console.log(index)
-    console.log(item)
+    console.log(index);
+    console.log(item);
     if (this.longTouchShow !== -1) {
       return { label: '', index };
     }

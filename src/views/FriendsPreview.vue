@@ -51,6 +51,8 @@
         >
           <Friends-item
             v-if='item.show'
+            :id=item.id
+            :queryid='item.userId'
             :text='item.content'
             :star='item.star'
             :time='item.createtime'
@@ -132,7 +134,13 @@ import { getElementStyle } from '@/util/util.assist';
 import util from '@/util/util';
 import { AsyncGetUser } from '@/api/modules.ts/friend/list';
 import FriendsItem from '../components/views/friendsPreview/feirendsItem.vue';
-import { AsyncGetList, AsyncSetStar, AsyncSetComment } from '../api/modules.ts/friend/list';
+import {
+  AsyncGetList,
+  AsyncSetStar,
+  AsyncSetComment,
+  AsyncDeleteComment,
+  AsyncDeleteSubject,
+} from '../api/modules.ts/friend/list';
 import { ceil } from 'lodash';
 import { UserModule } from '@/store/modules/user';
 import {
@@ -291,6 +299,10 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       },
     },
   ];
+  /**
+   * 评论id
+   */
+  private commentId: any = '';
   /* -------- FriendsPreviewHeader ------- */
   /**
    * 姓名
@@ -365,7 +377,8 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * 头部点击事件
    */
   private avatarClickHandler() {
-    this.$router.push({ path: '/Friends/self', query: { userId: this.userId } });
+    // this.$router.push({ path: '/Friends/self', query: { userId: this.userId } });
+    this.$router.push({ path: '/self/history', query: { userId: this.userId } });
   }
   /* -------- start ------- */
   private starThumbsUp(star: boolean, index: number, id: string) {
@@ -382,17 +395,20 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /**
    * 删除本条朋友圈
    */
-  private deleteHandler(index: number) {
+  private deleteHandler({ index, id }: { index: number; id: any }) {
     Dialog.confirm({
       title: '确认',
       content: '是否删除本条朋友圈',
       confirmText: '确定',
       onConfirm: () => {
         Toast.loading('删除中...');
-        setTimeout(() => {
+        AsyncDeleteSubject({
+          subjectid: id,
+        }).then(res => {
+          console.log(res);
           Toast.succeed('操作成功', 1000);
           this.list[index].show = false;
-        }, 1000);
+        });
       },
     });
   }
@@ -589,7 +605,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /**
    * 删除自己的评论弹出层
    */
-  private removeSelfComment(): void {
+  private removeSelfComment() {
     this.showActionSheet({
       value: true,
       options: [
@@ -607,10 +623,15 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /**
    * 删除评论
    */
-  private removeSelfCommentHandler() {
-    const index = this.commentIndex;
-    this.list[this.index as number].comment.splice(index, 1);
-    Toast.succeed('删除成功', 1000);
+  private removeSelfCommentHandler(id: any) {
+    AsyncDeleteComment({
+      commentid: this.commentId,
+    }).then(res => {
+      console.log(res);
+      const index = this.commentIndex;
+      this.list[this.index as number].comment.splice(index, 1);
+      Toast.succeed('删除成功', 1000);
+    });
   }
   /**
    * 评论区回复
@@ -637,6 +658,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
 
     const label = commentItem.username;
     const replyId = commentItem.userId;
+    this.commentId = commentItem.id;
     if (this.userId === replyId) {
       this.removeSelfComment();
       return;
@@ -680,7 +702,8 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       subjectid: this.subjectid,
       content: this.value,
       replyid: this.replyid,
-    }).then(() => {
+    }).then(res => {
+      console.log('id', res);
       // 关闭提交加载
       this.TextareaAction[0].loading = false;
       // 关闭弹窗
@@ -689,11 +712,13 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       let result;
       if (this.label === '') {
         result = {
+          userId: this.userId,
           content: this.value,
           username: this.realname,
         };
       } else {
         result = {
+          userId: this.userId,
           content: this.value,
           username: this.realname,
           replyname: this.label,

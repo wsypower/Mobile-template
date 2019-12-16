@@ -169,6 +169,7 @@ export default class PageHeader extends Vue {
     .right-text {
       @include center-translate();
       width: 100%;
+      padding-right: 15px;
     }
   }
 }

@@ -59,6 +59,8 @@
       <!-- <video-basic v-if="video!==null"></video-basic> -->
       <!-- 功能栏 -->
       <function-bar
+        :id=id
+        :queryid='queryid'
         :star='star'
         :time='time'
         :likes='likes'
@@ -179,6 +181,21 @@ export default class FriendsItem extends Vue {
     type: Number,
   })
   index!: number;
+
+  /**
+   * 案卷id
+   */
+  @Prop({
+    type: String,
+  })
+  id!: string;
+  /**
+   * 案卷发布人id
+   */
+  @Prop({
+    type: String,
+  })
+  queryid!: string;
   /**
    * 滚动条位置
    */
@@ -236,14 +253,15 @@ export default class FriendsItem extends Vue {
    */
   @Emit('comment-handler')
   private commentHandler() {
-    console.log('传递')
+    console.log('传递');
   }
   /**
    * 删除本条
    */
   @Emit('delete')
-  private deleteHandler() {
-    return this.index;
+  private deleteHandler(id: any) {
+    console.log({ index: this.index, id: id });
+    return { index: this.index, id: id };
   }
   /* -------- ellipsis-plus  ------- */
   /**

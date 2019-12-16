@@ -330,11 +330,17 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
         },
       ],
       cancelText: '取消',
-      onSelected: this.rightActionClickHandler,
+      onSelected: this.checkedMessageList,
     });
   }
   /**
-   * 查看历史详情
+   * 查看历史消息
+   */
+  private checkedMessageList(){
+    this.$router.push('/self/history/details/message')
+  }
+  /**
+   * 拍照或者相册
    */
   private uploadClickHandler() {
     this.showActionSheet({
