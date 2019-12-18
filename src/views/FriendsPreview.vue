@@ -23,7 +23,7 @@
         <Friends-preview-header
           ref="FriendsPreviewHeader"
           :realname="realname"
-          @avatarClickHandler='avatarClickHandler'
+          @avatarClickHandler="avatarClickHandler"
         />
       </template>
       <!-- 头部 start-->
@@ -132,7 +132,7 @@ import scrollPageWrap from '@/components/base/scrollPageWrap.vue';
 import FriendsPreviewHeader from '@/components/views/friendsPreview/friendsPreviewHeader.vue';
 import { getElementStyle } from '@/util/util.assist';
 import util from '@/util/util';
-import { AsyncGetUser } from '@/api/modules.ts/friend/list';
+// import { AsyncGetUser } from '@/api/modules.ts/friend/list';
 import FriendsItem from '../components/views/friendsPreview/feirendsItem.vue';
 import {
   AsyncGetList,
@@ -436,7 +436,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     });
   }
   /**
-   * 选择回调
+   * 选择拍摄或相册回调
    */
   private rightActionClickHandler(item: any) {
     Toast.loading('加载中...');
@@ -627,7 +627,6 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     AsyncDeleteComment({
       commentid: this.commentId,
     }).then(res => {
-      console.log(res);
       const index = this.commentIndex;
       this.list[this.index as number].comment.splice(index, 1);
       Toast.succeed('删除成功', 1000);
@@ -682,11 +681,6 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
     const Placeholder = this.label === '' ? '回复信息在100字以内' : `回复@${this.label}`;
     this.textareaPlaceholder = Placeholder;
     this.$set(this.isPopupShow, type, true);
-    // setTimeout(() => {
-    //   this.$nextTick(() => {
-    //     this.textarea.focus();
-    //   });
-    // }, 200);
   }
   /**
    * 提交
@@ -702,9 +696,10 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       subjectid: this.subjectid,
       content: this.value,
       replyid: this.replyid,
-    }).then(res => {
-      console.log('id', res);
+    }).then((res: any) => {
       // 关闭提交加载
+      // 获取案卷id
+      const { id: commentId } = res;
       this.TextareaAction[0].loading = false;
       // 关闭弹窗
       this.$set(this.isPopupShow, 'bottom', false);
@@ -712,12 +707,14 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       let result;
       if (this.label === '') {
         result = {
+          id: commentId,
           userId: this.userId,
           content: this.value,
           username: this.realname,
         };
       } else {
         result = {
+          id: commentId,
           userId: this.userId,
           content: this.value,
           username: this.realname,

@@ -35,7 +35,7 @@
               v-clipboard:success="clipboardSuccessHandler"
               v-clipboard:error="clipboardErrorHandler"
             >
-              复制
+              复制{{text}}
             </div>
             <ellipsis-plus
               :text="text"
@@ -55,7 +55,7 @@
         </header>
         <!-- 图片插看 star-->
         <viewer
-          v-if='images.length!==0'
+          v-if='images.length'
           :images='images'
         />
         <!-- 图片插看 star-->
@@ -63,6 +63,7 @@
     </div>
     <div class="layout-main">
       <function-bar
+        :queryid='detail.userId'
         isDetails
         :star='star'
         :time='time'
@@ -105,17 +106,16 @@ export default class DetailsBasic extends Vue {
   /*=============================================
   =                     Prop                    =
   =============================================*/
+  @Prop({
+    type: Object,
+  })
+  detail!: any;
   /**
    * 空白按钮
    * @date 2019-11-12 19:55:20
    */
   @Prop({
     type: String,
-    default: `鼠标点击的少部分数据的克服你会计师的烦恼你房间内圣诞节南方今年是大富科技
-    你看时间DNF开机你山东矿机发你看圣诞节
-    南方开机你山东矿机发你可接受的你副科级纳斯达克就能发快结束等你看剧发年会计师DNF框架
-    南方开机你山东矿机发你可接受的你副科级纳斯达克就能发快结束等你看剧发年会计师DNF框架
-    南方开机你山东矿机发你可接受的你副科级纳斯达克就能发快结束等你看剧发年会计师DNF框架`,
   })
   text!: string;
 
@@ -142,32 +142,6 @@ export default class DetailsBasic extends Vue {
    */
   @Prop({
     type: Array,
-    default: [
-      {
-        src: 'https://farm6.staticflickr.com/5591/15008867125_68a8ed88cc_b.jpg',
-        msrc: 'https://farm6.staticflickr.com/5591/15008867125_68a8ed88cc_m.jpg',
-        alt: 'picture1',
-        title: 'Image Caption 1',
-        w: 600,
-        h: 400,
-      },
-      {
-        src: 'https://farm4.staticflickr.com/3902/14985871946_86abb8c56f_b.jpg',
-        msrc: 'https://farm4.staticflickr.com/3902/14985871946_86abb8c56f_m.jpg',
-        alt: 'picture2',
-        title: 'Image Caption 2',
-        w: 1200,
-        h: 900,
-      },
-      {
-        src: 'https://farm4.staticflickr.com/3902/14985871946_86abb8c56f_b.jpg',
-        msrc: 'https://farm4.staticflickr.com/3902/14985871946_86abb8c56f_m.jpg',
-        alt: 'picture2',
-        title: 'Image Caption 2',
-        w: 1200,
-        h: 900,
-      },
-    ],
   })
   images!: any[];
 
@@ -177,7 +151,6 @@ export default class DetailsBasic extends Vue {
    */
   @Prop({
     type: String,
-    default: '张三',
   })
   name!: string;
 
@@ -307,8 +280,8 @@ export default class DetailsBasic extends Vue {
    * 评论栏长按回复他人
    */
   @Emit('comment-reply')
-  private commentReply({ label, index }: { label: string; index: number }) {
-    return { label, commentIndex: index };
+  private commentReply({ commentItem, index }: { commentItem: any; index: number }) {
+    return { commentItem, index };
   }
   /*=============================================
   =                    Mounted                  =
@@ -317,6 +290,7 @@ export default class DetailsBasic extends Vue {
   private mounted(): void {
     // 判断是否显示隐藏展开全文功能那个
     this.show = this.ellipsis.show;
+    console.log('detail', this.detail);
   }
   /*=============================================
   =                    Mounted                  =

@@ -14,13 +14,16 @@
         :scrolling-x='false'
         auto-reflow
       >
+        <div class="result_page">
+          <md-result-page></md-result-page>
+        </div>
         <!-- 列表项 -->
         <div
           class="massage_list_item_warp"
           v-for='(item,index) in list'
           :key='index'
           tabindex
-          @click=listClickHandler
+          @click=listClickHandler(item)
         >
           <div
             class="massage_list_item border-bottom-1px"
@@ -44,7 +47,20 @@
                 class="center-cen"
                 flex='main:left '
               >
-                <span>{{item.commentcontent}}</span>
+
+                <!--  v-if="new Boolean(item.isread)"-->
+                <span>
+                  <md-icon
+                    v-if="item.type"
+                    slot="icon"
+                    svg
+                    name="heart"
+                    size="md"
+                    color='#576B95'
+                    class="star"
+                  ></md-icon>
+                  {{item.commentcontent }}
+                </span>
               </div>
               <div
                 class="center-bot"
@@ -84,13 +100,16 @@ import { Vue, Component, Prop, Emit, Ref, Watch, Model } from 'vue-property-deco
 import { mixins } from 'vue-class-component';
 import ActionSheetMixin from '@/mixin/ActionSheet';
 import PageHeader from '@/components/base/PageHeader.vue';
-import { ScrollView } from 'mand-mobile';
+import { ScrollView, Icon, Toast, ResultPage } from 'mand-mobile';
 import { AsyncGetMessageList } from '../api/modules.ts/friend/message';
+import { AsyncClearMessage } from '@/api/modules.ts/friend/list';
 @Component({
   name: 'MessageList',
   components: {
     PageHeader,
     [ScrollView.name]: ScrollView,
+    [Icon.name]: Icon,
+    [ResultPage.name]: ResultPage,
   },
 })
 export default class MessageList extends mixins(ActionSheetMixin) {
@@ -110,13 +129,14 @@ export default class MessageList extends mixins(ActionSheetMixin) {
   /**
    * 列表项点击
    */
-  private listClickHandler() {
+  private listClickHandler(item: any) {
+    console.log(item);
     this.showActionSheet({
       value: true,
       options: [
         {
           text: '查看详情',
-          value: '0',
+          value: item,
         },
         {
           text: '删除消息',
@@ -128,7 +148,21 @@ export default class MessageList extends mixins(ActionSheetMixin) {
       onSelected: this.ItemActionsClickHandler,
     });
   }
-  private ItemActionsClickHandler() {}
+  private ItemActionsClickHandler(item: any) {
+    if (item.text == '查看详情') {
+      console.log(item);
+
+      if (item.value.type === 2) {
+        console.log(111);
+        Toast.failed('评论已删除');
+        return;
+      }
+      this.$router.push({
+        path: '/self/history/look/details',
+        query: { subjectid: item.value.subjectid },
+      });
+    }
+  }
   /**
    * 头部清空按钮
    */
@@ -151,6 +185,7 @@ export default class MessageList extends mixins(ActionSheetMixin) {
    */
   private clearList() {
     console.log('清楚列表');
+    AsyncClearMessage().then(res => {});
   }
   private mounted() {
     AsyncGetMessageList().then(res => {
@@ -169,6 +204,8 @@ export default class MessageList extends mixins(ActionSheetMixin) {
     width: 100%;
     height: 100%;
     padding-top: 87px;
+    background-color: #fff;
+
     .massage_list_item_warp {
       width: 100%;
       padding: 0px 20px;
@@ -209,10 +246,12 @@ export default class MessageList extends mixins(ActionSheetMixin) {
             height: 90px;
             font-size: 28px;
             text-align: left;
-            padding-right: 5ex;
+            padding-right: 5px;
             overflow: hidden;
             span {
+              overflow: hidden;
               @include ellipsis-lines(2);
+              padding-top: 5px;
             }
           }
           .center-bot {
@@ -254,6 +293,16 @@ export default class MessageList extends mixins(ActionSheetMixin) {
           border-color: #e0e0e0;
         }
       }
+    }
+  }
+  .star {
+    margin-right: 5px;
+    vertical-align: sub;
+  }
+  /deep/.result_page {
+    margin-top: 40%;
+    .md-result-text {
+      color: #bebfc1;
     }
   }
 }

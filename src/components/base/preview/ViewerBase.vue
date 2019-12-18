@@ -92,9 +92,7 @@ export default class ViewerBase extends Vue {
     });
   }
   private destroyed() {
-    console.log(111);
     const pswp: any = document.querySelector('.pswp');
-    console.log(pswp);
     pswp.remove();
   }
 }

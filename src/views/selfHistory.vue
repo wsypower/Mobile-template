@@ -1,12 +1,12 @@
 <template>
   <div class="self_history">
     <page-header
-      ref='header'
+      ref="header"
       :transparent="headerTransparent"
-      icon='more'
-      title='我的朋友圈'
+      :icon="moreIcon"
+      title="历史动态"
       @backClickHandler="backClickHandler"
-      @rightBtnClickHandler='rightBtnClickHandler'
+      @rightBtnClickHandler="rightBtnClickHandler"
     />
     <main class="layout-main">
       <!-- 滚动条 -->
@@ -20,19 +20,19 @@
           <!-- 头部 -->
           <Friends-preview-header
             ref="FriendsPreviewHeader"
-            :realname="realname"
-            @avatarClickHandler='avatarClickHandler'
+            :realname="name"
+            @avatarClickHandler="avatarClickHandler"
             style="z-index:10"
           />
           <!-- 今日 star-->
           <div class="scroll-view-list today-view-list">
             <div
               class="scroll-view-item tody-item"
-              flex='box:first'
+              flex="box:first"
             >
               <div
                 class="timer"
-                flex='main:left cross:baseline'
+                flex="main:left cross:baseline"
               >
                 <span class="day">
                   今日
@@ -43,7 +43,7 @@
                 <div
                   class="details-item"
                   flex="box:first"
-                  v-if='userId===selfUserId'
+                  v-if="userId === selfUserId"
                 >
                   <div
                     class="picture"
@@ -53,97 +53,118 @@
                   </div>
                 </div>
                 <!-- 拍照片上传 end-->
+
                 <!-- 今日的循环 star-->
                 <div
                   class="details-item"
                   flex="box:first"
-                  @click='detailsClick'
+                  v-for="item in current"
+                  :key='item.id'
+                  @click="detailsClick(item.id)"
                   tabindex
                 >
-                  <div class="picture">
+                  <div
+                    class="picture"
+                    v-if='item.image.length>0'
+                  >
                     <img
-                      src="http://192.168.71.33:50000//upload/file/2019/11/12/20191112171532422153.jpg"
+                      :src="SetImageToSmall(item.image)"
                       alt=""
-                    >
+                    />
                   </div>
                   <div
                     class="text"
-                    flex='dir:top main:justify'
+                    flex="dir:top main:justify"
+                    v-if='item.image.length>0'
                   >
-                    <span class="textarea">今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天</span>
+                    <span class="textarea">{{item.content}}</span>
                     <span
                       class="image-page"
-                      flex='main:left'
-                    > 共三张</span>
+                      flex="main:left"
+                    > 共{{ item.count }}张</span>
                   </div>
                   <!-- 没有图片启用的布局 -->
-                  <!-- <div class="textarea-noimg"  @click='detailsClick'>
-                    <span>今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天</span>
-                  </div> -->
+                  <div
+                    class="textarea-noimg"
+                    v-if='item.image.length===0'
+                  >
+                    <span>{{item.content}}</span>
+                  </div>
                 </div>
                 <!-- 今日的循环 end-->
+
               </div>
             </div>
           </div>
           <!-- 今日 end-->
           <!-- 以年为分割 -->
           <div
-            v-for="(item,index) in category"
+            v-for="(item, index) in list"
             :key="index"
             class="scroll-view-category"
           >
             <p
               class="scroll-view-category-title"
               v-show="index"
-              flex='main:left cross:center'
-            >{{ item.year }}年</p>
+              flex="main:left cross:center"
+            >
+              {{ item.year }}年
+            </p>
             <!-- 以日为分割 -->
 
             <div
-              v-for="(MonthandDay,i) in item.data"
+              v-for="(MonthandDay, i) in item.data"
               :key="i"
               class="scroll-view-list"
             >
               <!-- 月日 star-->
               <div
                 class="scroll-view-item"
-                flex='box:first'
-                @click='detailsClick'
+                flex="box:first"
               >
                 <div
                   class="timer"
-                  flex='main:left cross:baseline'
+                  flex="main:left cross:baseline"
                 >
                   <span class="day">
-                    {{MonthandDay.day.substring(3)}}
+                    {{ MonthandDay.day.substring(3) }}
                   </span>
-                  <span class="month">
-                    {{month(MonthandDay.day)}}月
-                  </span>
+                  <span class="month"> {{ month(MonthandDay.day) }}月 </span>
                 </div>
                 <div class="details">
                   <!-- 详情 -->
                   <div
                     class="details-item"
                     flex="box:first"
-                    v-for="(j,k) in MonthandDay.data"
+                    v-for="(j, k) in MonthandDay.data"
                     :key="k"
+                    @click="detailsClick(j.id)"
                   >
-                    <div class="picture">
+                    <div
+                      class="picture"
+                      v-if="j.image.length > 0"
+                    >
                       <img
-                        src="http://192.168.71.33:50000//upload/file/2019/11/12/20191112171532422153.jpg"
+                        :src="SetImageToSmall(j.image)"
                         alt=""
-                      >
+                      />
                     </div>
                     <div
                       class="text"
-                      flex='dir:top main:justify'
+                      flex="dir:top main:justify"
+                      v-if="j.image.length > 0"
                     >
-                      <span class="textarea">今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天今天</span>
+                      <span class="textarea">{{ j.content }}</span>
                       <span
                         class="image-page"
-                        flex='main:left'
-                      > 共三张</span>
+                        flex="main:left"
+                      > 共{{ j.count }}张</span>
+                    </div>
+                    <div
+                      v-if="j.image.length === 0"
+                      class="textarea-noimg"
+                    >
+                      <span>{{ j.content || '暂无数据' }}</span>
                     </div>
                   </div>
                 </div>
@@ -158,10 +179,12 @@
           enter-active-class="animated fadeInUp"
         >
           <p
-            v-if="activeBlockIndex!==''"
+            v-if="activeBlockIndex !== ''"
             class="scroll-view-striky-title"
-            flex='main:left cross:center'
-          >{{ activeBlockIndex }}</p>
+            flex="main:left cross:center"
+          >
+            {{ activeBlockIndex }}
+          </p>
         </transition>
         <!-- </md-transition> -->
       </div>
@@ -176,11 +199,12 @@ import { UserModule } from '@/store/modules/user';
 import { Vue, Component, Prop, Ref, Watch } from 'vue-property-decorator';
 import { ScrollView, Transition, Icon, Toast } from 'mand-mobile';
 import { ceil } from 'lodash';
-import { AsyncGetHistory } from '../api/modules.ts/friend/list';
+import { AsyncGetHistory, AsyncGetHeader } from '../api/modules.ts/friend/list';
 import { getElementStyle } from '@/util/util.assist';
 import { mixins } from 'vue-class-component';
 import ActionSheetMixin from '@/mixin/ActionSheet';
 import nativeMethod from '@/plugin/core/hesc/heschybird';
+import dayjs from 'dayjs';
 @Component({
   name: 'SelfHistory',
   components: {
@@ -191,76 +215,13 @@ import nativeMethod from '@/plugin/core/hesc/heschybird';
   },
 })
 export default class SelfHistory extends mixins(ActionSheetMixin) {
-  // private category = ['2020', '2019', '2018', '2017', '2016', '2015'];
-  private category = [
-    {
-      year: '2018',
-      data: [
-        {
-          day: '12-08',
-          data: [1, 1, 1],
-        },
-        {
-          day: '12-05',
-          data: [1, 1, 1],
-        },
-        {
-          day: '12-01',
-          data: [1, 1, 1],
-        },
-        {
-          day: '01-08',
-          data: [1, 1, 1],
-        },
-      ],
-    },
-    {
-      year: '2017',
-      data: [
-        {
-          day: '12-08',
-          data: [1, 1, 1],
-        },
-        {
-          day: '12-05',
-          data: [1, 1, 1],
-        },
-        {
-          day: '12-01',
-          data: [1, 1, 1],
-        },
-        {
-          day: '11-08',
-          data: [1, 1, 1],
-        },
-      ],
-    },
-    {
-      year: '2016',
-      data: [
-        {
-          day: '12-08',
-          data: [1, 1, 1],
-        },
-        {
-          day: '12-05',
-          data: [1, 1, 1],
-        },
-        {
-          day: '12-01',
-          data: [1, 1, 1],
-        },
-        {
-          day: '11-08',
-          data: [1, 1, 1],
-        },
-      ],
-    },
-  ];
-  private list = 5;
+  private list: any = [];
+  private current: any = [];
   private dimensions = [];
   private scrollY = 0;
   private userId: any = '';
+  private name: any = '';
+  private isMe: any = true;
   /**
    * 头部图片的高度
    *
@@ -288,19 +249,18 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
   private get realname() {
     return UserModule.getRelName;
   }
-  private get positionTitle() {
-    // 滚动条的第一项
-    const dimension = this.dimensions[0];
-    if (this.scrollY >= dimension[0] && this.scrollY <= dimension[1]) {
-      return true;
-    }
+  /**
+   * 是否是本人查看
+   */
+  private get moreIcon() {
+    return this.isMe ? 'more' : '';
   }
   private get activeBlockIndex() {
     let activeIndex: any = '';
     // let activeIndex = -1;
     this.dimensions.forEach((dimension, index) => {
       if (this.scrollY >= dimension[0] && this.scrollY <= dimension[1]) {
-        activeIndex = this.category[index].year;
+        activeIndex = this.list[index].year;
       }
     });
     return activeIndex;
@@ -321,6 +281,9 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
    * 左侧点击事件
    */
   private rightBtnClickHandler() {
+    if (!this.isMe) {
+      return;
+    }
     this.showActionSheet({
       value: true,
       options: [
@@ -334,10 +297,16 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
     });
   }
   /**
+   * 日期是否一致
+   */
+  private isSame(day: any) {
+    return !dayjs(+new Date()).isSame(dayjs(day), 'day');
+  }
+  /**
    * 查看历史消息
    */
-  private checkedMessageList(){
-    this.$router.push('/self/history/details/message')
+  private checkedMessageList() {
+    this.$router.push('/self/history/message');
   }
   /**
    * 拍照或者相册
@@ -362,8 +331,8 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
   /**
    * 点击查看详情
    */
-  private detailsClick() {
-    this.$router.push({ path: '/self/history/details', query: { userId: '123123123' } });
+  private detailsClick(id: any) {
+    this.$router.push({ path: '/self/history/look/details', query: { subjectid: id } });
   }
   /**
    * 选择回调
@@ -387,6 +356,12 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
         Toast.failed(`${err}`, 1000);
         console.log(err);
       });
+  }
+  /**
+   * 大图转为小图
+   */
+  private SetImageToSmall(image: string): string {
+    return image.replace(/\.(png|jpg|gif|jpeg|webp)$/g, ($img: string) => `-small${$img}`);
   }
   /**
    * 选择拍照还是相册
@@ -464,6 +439,19 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
   }
   /* -------- async ------- */
   /**
+   * 获取头部信息数据
+   */
+  private AsyncGetHeader() {
+    AsyncGetHeader({
+      // 参数列表
+      lookid: this.userId,
+    }).then((res: any) => {
+      const { username, isMe } = res;
+      this.name = username;
+      this.isMe = isMe;
+    });
+  }
+  /**
    * 获取user数据
    *
    * @promise
@@ -471,15 +459,28 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
   private GetListData(): any {
     return AsyncGetHistory({
       // 参数列表
-      userId: this.userId,
+      lookid: this.userId,
     })
       .then((res: any) => {
-        const { list } = res;
-        console.log(list);
-        const newData = list.map((item: any) => {
-          return item.time;
+        this.list = res;
+        const currentTime = +new Date(); //当前时间
+        const year = dayjs(currentTime).format('YYYY'); //当前年
+        const day = dayjs(currentTime).format('MM-DD'); //当前月
+        // 提取当日的数据
+        const list = [];
+        res.forEach((item: any, index: number) => {
+          if (item.year === year) {
+            item.data.forEach((days: any, i: number) => {
+              if (days.day === day) {
+                this.current.push(...days.data);
+                this.list[index].data.splice(i, 1);
+              }
+            });
+          }
         });
-        console.log(newData);
+        this.$nextTick(() => {
+          this.initScrollBlock();
+        });
       })
       .catch(err => {
         throw new Error(err);
@@ -488,18 +489,17 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
   private mounted() {
     this.userId = this.$route.query.userId;
     this.GetListData();
+    this.AsyncGetHeader();
     /**
      * 获取头部图片的高度
      */
     this.scrollImgHeight = this.getEleStyle(this.FriendsPreviewHeader.$el, 'height');
     // 如果内容发生变化，需重新初始化block和scroller
-    this.initScrollBlock();
-    // this.$refs.scrollView.reflowScroller()
   }
 }
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .animated {
   animation-duration: 0.3s; // 动画执行时间
   animation-fill-mode: both;
@@ -552,7 +552,7 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
     width: 100%;
     background-color: #fff;
     .scroll-view-item {
-      min-height: 211px;
+      // min-height: 211px;
       width: 100%;
       padding: 30px 30px 0 30px;
       margin-bottom: 15px;
@@ -600,9 +600,12 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
             .textarea {
               font-size: 28px;
               color: #333333;
+              text-align: left;
+              padding-left: 6px;
               @include ellipsis-lines(2);
             }
             .image-page {
+              padding-left: 6px;
               color: #4e4e4e;
               font-size: 22px;
             }
@@ -611,6 +614,7 @@ export default class SelfHistory extends mixins(ActionSheetMixin) {
             width: 100%;
             background-color: #f5f5f5;
             padding: 10px;
+            text-align: left;
             span {
               @include ellipsis-lines(3);
               font-size: 28px;

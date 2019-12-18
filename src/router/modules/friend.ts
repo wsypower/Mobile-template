@@ -45,7 +45,7 @@ const Friends: RouteConfig[] = [
     },
   },
   {
-    path: '/self/history/details',
+    path: '/self/history/look/details',
     component: () => import(/* webpackChunkName: "details" */ '@views/details.vue'),
     name: 'Details',
     meta: {
@@ -53,7 +53,7 @@ const Friends: RouteConfig[] = [
     },
   },
   {
-    path: '/self/history/details/message',
+    path: '/self/history/message',
     component: () => import(/* webpackChunkName: "massage" */ '@views/Message.vue'),
     name: 'message',
     meta: {

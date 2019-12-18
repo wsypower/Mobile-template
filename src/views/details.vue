@@ -21,7 +21,16 @@
       >
         <!-- 朋友圈详情 star -->
         <details-basic
+          v-if='requestedData'
+          :detail='requestedData'
+          :name='requestedData.username'
+          :text='requestedData.content'
+          :star='requestedData.star'
           :comment='requestedData.comment'
+          :images='requestedData.image'
+          :time='requestedData.createtime'
+          :likes='requestedData.like'
+          @starThumbsUp='starThumbsUp'
           @delete='deleteHandler'
           @comment-handler='commentHandler'
           @comment-reply='commentReply'
@@ -101,6 +110,13 @@ import Ellipsis from 'ellipsis-plus';
 import PageHeader from '../components/base/PageHeader.vue';
 import DetailsBasic from '../components/base/detailsBasic.vue';
 import ActionSheetMixin from '@/mixin/ActionSheet';
+import {
+  AsyncGetSubjectDetail,
+  AsyncSetStar,
+  AsyncSetComment,
+  AsyncDeleteComment,
+  AsyncDeleteSubject,
+} from '@/api/modules.ts/friend/list';
 @Component({
   name: 'Details',
   components: {
@@ -121,24 +137,14 @@ export default class Details extends mixins(ActionSheetMixin) {
   =                     Data                    =
   =============================================*/
   //数据
-  private requestedData: any = {
-    comment: [
-      {
-        label: ['张三', '李四'],
-        value:
-          '战歌随地便溺节点是否皇家贝蒂斯不减肥背景色的放不进四大皆空加快速度发加快速度就开发商的借款方就和你',
-      },
-      {
-        label: ['张三'],
-        value:
-          '战歌随地便溺节点是否皇家贝蒂斯不减肥背景色的放不进四大皆空加快速度发加快速度就开发商的借款方就和你',
-      },
-    ],
-  };
+  private requestedData: any = null;
+  private subject: any = {};
   private commentIndex: number | null = null;
-  private userId: string = '';
+  private commentId: any = '';
+  private subjectid: string = '';
   private id: string = '';
   private value: string = '';
+  private replyid: string = '';
   /**
    * 输入框
    */
@@ -184,6 +190,19 @@ export default class Details extends mixins(ActionSheetMixin) {
   =                    Method                   =
   =============================================*/
   /**
+   * 点赞
+   */
+  private starThumbsUp(star: boolean) {
+    const type = star ? 1 : 0;
+    // 取反数据，否则会重刷，以后用v-model设计传值
+    console.log('点赞');
+    // 上传点赞或者取消赞
+    AsyncSetStar({
+      subjectid: this.requestedData.id,
+      type,
+    });
+  }
+  /**
    * 提交
    */
   private subHandleClick() {
@@ -193,21 +212,36 @@ export default class Details extends mixins(ActionSheetMixin) {
     }
     // 开启提交加载
     this.TextareaAction[0].loading = true;
-    setTimeout(() => {
+    AsyncSetComment({
+      subjectid: this.requestedData.id,
+      content: this.value,
+      replyid: this.replyid,
+    }).then(res => {
+      const { id: commentId } = res;
       // 关闭提交加载
       this.TextareaAction[0].loading = false;
       // 关闭弹窗
       this.$set(this.isPopupShow, 'bottom', false);
       Toast.succeed('答复成功', 1000);
-      // 判断是不是回复谁，还是自己回复的 textareaPlaceholder
-      const Resultlabel = this.label === '' ? [this.realname] : [this.realname, this.label];
-      console.log(this.textareaPlaceholder);
-      const result = {
-        label: Resultlabel,
-        value: this.value,
-      };
+      let result;
+      if (this.label === '') {
+        result = {
+          id: commentId,
+          userId: UserModule.userId,
+          content: this.value,
+          username: this.realname,
+        };
+      } else {
+        result = {
+          id: commentId,
+          userId: UserModule.userId,
+          content: this.value,
+          username: this.realname,
+          replyname: this.label,
+        };
+      }
       this.requestedData.comment.push(result);
-    }, 1000);
+    });
   }
   /**
    * 后退按钮
@@ -231,6 +265,7 @@ export default class Details extends mixins(ActionSheetMixin) {
     // 显示输入弹窗
     // 复制给label
     this.label = label;
+    console.log(label);
     // 判断 placeholder 显示的数据
     const Placeholder = this.label === '' ? '回复信息在100字以内' : `回复@${this.label}`;
     this.textareaPlaceholder = Placeholder;
@@ -240,16 +275,14 @@ export default class Details extends mixins(ActionSheetMixin) {
   /**
    * 回复
    */
-  private commentReply({ label, commentIndex }: { label: string; commentIndex: number }) {
-    console.log(commentIndex);
-    console.log(label);
-    this.commentIndex = commentIndex;
-    if (label === '') {
-      return;
-    }
-    if (this.realname === label) {
+  private commentReply({ commentItem, index }: { commentItem: any; index: number }) {
+    const label = commentItem.username;
+    this.replyid = commentItem.userId;
+    this.commentIndex = index;
+    this.commentId = commentItem.id;
+    console.log(commentItem);
+    if (commentItem.userId === UserModule.userId) {
       this.removeSelfComment();
-      console.log('是本人啊');
       return;
     }
     this.showPopUp('bottom', label);
@@ -276,9 +309,13 @@ export default class Details extends mixins(ActionSheetMixin) {
    * 删除评论
    */
   private removeSelfCommentHandler() {
-    const index = this.commentIndex;
-    this.requestedData.comment.splice(index, 1);
-    Toast.succeed('删除成功', 1000);
+    AsyncDeleteComment({
+      commentid: this.commentId,
+    }).then(res => {
+      const index = this.commentIndex;
+      this.requestedData.comment.splice(index, 1);
+      Toast.succeed('删除成功', 1000);
+    });
   }
   /*=============================================
   =                    Mounted                  =
@@ -297,20 +334,57 @@ export default class Details extends mixins(ActionSheetMixin) {
       confirmText: '确定',
       onConfirm: () => {
         Toast.loading('删除中...');
-        setTimeout(() => {
+        AsyncDeleteSubject({
+          subjectid: this.requestedData.id,
+        }).then(res => {
+          console.log(res);
           Toast.succeed('操作成功', 1000);
-          this.$router.go(-1);
-        }, 1000);
+          setTimeout(() => {
+            this.$router.go(-1);
+          }, 500);
+        });
       },
+    });
+  }
+  /**
+   * 获取详情
+   */
+  private AsyncGetSubjectDetail() {
+    AsyncGetSubjectDetail({
+      subjectid: this.subjectid,
+    }).then((res: any) => {
+      res.like =
+        res.like.length > 0
+          ? res.like.filter((item: any) => item.userId !== UserModule.userId)
+          : res.like;
+      // 修改image属性
+      // 基础路劲
+      res.image = res.image.map((img: any[]) => {
+        const srcSmall = img.path.replace(
+          /\.(png|jpg|gif|jpeg|webp)$/g,
+          ($img: string) => `-small${$img}`,
+        );
+        return {
+          src: `${img.path}`,
+          msrc: `${srcSmall}`,
+          alt: img.alt || '',
+          title: img.title || '',
+          w: img.width,
+          h: img.height,
+        };
+      });
+      this.requestedData = res;
+      console.log(this.requestedData);
     });
   }
   private mounted() {
     /* 首先当前用户 userId*/
-    if (this.$route.query.userId) {
-      const result = this.$route.query.userId;
-      this.userId = result as string;
+    if (this.$route.query.subjectid) {
+      const result = this.$route.query.subjectid;
+      this.subjectid = result as string;
     }
-    console.log(this.userId);
+    this.AsyncGetSubjectDetail();
+    console.log(this.subjectid);
   }
 }
 </script>

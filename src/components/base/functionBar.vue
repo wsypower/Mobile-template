@@ -392,7 +392,7 @@ export default class FunctionBar extends Vue {
   @Emit('comment-reply')
   private commentReply(item: any, index: number) {
     console.log(index);
-    console.log(item);
+    console.log('item',item);
     if (this.longTouchShow !== -1) {
       return { label: '', index };
     }
