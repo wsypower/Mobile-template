@@ -2,7 +2,7 @@
  * @Author: wei.yafei
  * @Date: 2019-11-06 15:10:14
  * @Last Modified by: wei.yafei
- * @Last Modified time: 2019-11-06 15:21:05
+ * @Last Modified time: 2019-12-19 22:40:19
  */
 import { RouteConfig } from 'vue-router';
 
@@ -29,7 +29,7 @@ const Friends: RouteConfig[] = [
     },
   },
   {
-    path: '/self/history',
+    path: '/Friends/self/history',
     component: () => import(/* webpackChunkName: "history" */ '@views/selfHistory.vue'),
     name: 'SelfHistory',
     meta: {

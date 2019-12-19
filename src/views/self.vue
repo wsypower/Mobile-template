@@ -55,16 +55,36 @@
               />
               <md-cell-item
                 :title="phone"
-                arrow
                 no-border
               />
             </div>
           </header>
           <div class="layout-centet">
+            <div
+              class="cell-viewer"
+              flex="cross:center"
+              @click='check'
+            >
+              <div
+                class="viewer"
+                v-for="(img,index) in files"
+              >
+                <img
+                  :src="SetImageToSmall(img)"
+                  alt=""
+                >
+              </div>
+              <!-- <div class="viewer"></div>
+              <div class="viewer"></div>
+              <div class="viewer"></div> -->
+            </div>
             <md-cell-item
+              class="viewer-warp"
               title="朋友圈"
               arrow
-            />
+              @click='check'
+            >
+            </md-cell-item>
             <md-cell-item
               v-if="selfId === userId"
               title="个人设置"
@@ -99,6 +119,7 @@ import { UserModule } from '@/store/modules/user';
 export default class FriendsSelf extends Vue {
   userId: any = '';
   selfData: any = {};
+  files: any = [];
   private get area() {
     console.log(this.selfData);
     return `地区：${this.selfData.area}`;
@@ -108,6 +129,12 @@ export default class FriendsSelf extends Vue {
   }
   private get selfId() {
     return UserModule.userId;
+  }
+  /**
+   * 大图转为小图
+   */
+  private SetImageToSmall(image: string): string {
+    return image.replace(/\.(png|jpg|gif|jpeg|webp)$/g, ($img: string) => `-small${$img}`);
   }
   /**
    * 回到上一页
@@ -126,8 +153,17 @@ export default class FriendsSelf extends Vue {
       lookid: this.userId,
     }).then((res: any) => {
       console.log(res);
+      this.files = res.files.map((item: any) => {
+        return item.path;
+      });
       this.selfData = res;
     });
+  }
+  /**
+   * 查看朋友圈
+   */
+  private check() {
+    this.$router.push({ path: '/Friends/self/history', query: { userId: this.userId } });
   }
   /**
    * mounted
@@ -197,9 +233,32 @@ export default class FriendsSelf extends Vue {
       .layout-centet {
         padding: 0 30px;
         background-color: #fff;
+        position: relative;
       }
       /deep/.md-cell-item-title {
         text-align: left;
+      }
+      .viewer-warp {
+        /deep/.md-cell-item-body {
+          padding-top: 60px;
+          padding-bottom: 60px;
+        }
+      }
+      .cell-viewer {
+        position: absolute;
+        height: 160px;
+        left: 200px;
+        .viewer {
+          height: 100px;
+          width: 100px;
+          margin-right: 10px;
+          background-color: sandybrown;
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
       }
     }
   }

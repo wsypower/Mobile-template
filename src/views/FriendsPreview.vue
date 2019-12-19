@@ -386,7 +386,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    */
   private avatarClickHandler() {
     // this.$router.push({ path: '/Friends/self', query: { userId: this.userId } });
-    this.$router.push({ path: '/self/history', query: { userId: this.userId } });
+    this.$router.push({ path: '/Friends/self', query: { userId: this.userId } });
   }
   /* -------- start ------- */
   private starThumbsUp(star: boolean, index: number, id: string) {
