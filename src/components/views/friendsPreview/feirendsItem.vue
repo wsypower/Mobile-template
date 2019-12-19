@@ -4,7 +4,10 @@
     flex="dir:left box:first"
   >
     <div class="frends_item—left">
-      <div class="avatar"></div>
+      <div
+        class="avatar"
+        @click='avatarClickHandler'
+      ></div>
     </div>
     <div class="frends_item—right border-bottom-1px">
       <header>
@@ -240,6 +243,10 @@ export default class FriendsItem extends Vue {
   =                     Method                  =
   =============================================*/
   /* -------- Star  ------- */
+  @Emit('avatarClickHandler')
+  private avatarClickHandler() {
+    console.log(1);
+  }
   /**
    * 点亮-取消 赞
    *

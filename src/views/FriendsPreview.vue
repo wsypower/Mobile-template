@@ -63,6 +63,7 @@
             :comment='item.comment'
             :index='index'
             v-model='point'
+            @avatarClickHandler="itemAvatarClickHandler(item.userId)"
             @delete='deleteHandler'
             @star-thumbsUp='starThumbsUp($event,index,item.id)'
             @comment-handler='commentHandler(item.id,index)'
@@ -373,6 +374,13 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /*=============================================
   =                    Method                   =
   =============================================*/
+  /**
+   * 点击各项头像
+   */
+  private itemAvatarClickHandler(id: any) {
+    console.log(id);
+    this.$router.push({ path: '/Friends/self', query: { userId: id } });
+  }
   /**
    * 头部点击事件
    */

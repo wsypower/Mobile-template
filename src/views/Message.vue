@@ -14,7 +14,10 @@
         :scrolling-x='false'
         auto-reflow
       >
-        <div class="result_page">
+        <div
+          class="result_page"
+          v-if='list.length==0'
+        >
           <md-result-page></md-result-page>
         </div>
         <!-- 列表项 -->
