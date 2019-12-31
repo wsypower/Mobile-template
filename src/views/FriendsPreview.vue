@@ -30,6 +30,21 @@
       <!-- 内容  start-->
       <!-- v-scroll-reveal.reset -->
       <template #body>
+        <!-- 新消息通知 -->
+        <div
+          class="message_new"
+          flex="cross:center main:center"
+          v-if='messageLen.length'
+          @click='messageClickHandler'
+        >
+          <div
+            class="message-item"
+            flex="cross:center main:center"
+          >
+            <div class="avatar"></div>
+            {{`${messageLen} 条未读消息`}}
+          </div>
+        </div>
         <div
           class="skeleton"
           v-for='item in 10'
@@ -141,6 +156,7 @@ import {
   AsyncSetComment,
   AsyncDeleteComment,
   AsyncDeleteSubject,
+  AsyncGetMessageCount,
 } from '../api/modules.ts/friend/list';
 import { ceil } from 'lodash';
 import { UserModule } from '@/store/modules/user';
@@ -184,6 +200,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   /*=============================================
   =                     Data                    =
   =============================================*/
+  private messageLen: any = 0;
   //滚动条总页数
   private pageCount: any = 1;
   // 当前页
@@ -520,14 +537,18 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
    * @memberof scrollPageWrap
    */
   private onRefresh() {
-    this.GetListData(1).then((res: any) => {
-      this.curpage = 1;
-      this.pageCount = res.pageCount;
-      this.list = res.list;
-      this.scroll.scrollView.finishRefresh();
-      this.isFinished = false;
-      this.scroll.scrollView.finishLoadMore();
-    });
+    this.GetListData(1)
+      .then((res: any) => {
+        this.curpage = 1;
+        this.pageCount = res.pageCount;
+        this.list = res.list;
+        this.scroll.scrollView.finishRefresh();
+        this.isFinished = false;
+        this.scroll.scrollView.finishLoadMore();
+      })
+      .then(() => {
+        this.AsyncGetMessageCount();
+      });
     // 重置“上拉加载”的状态
   }
 
@@ -747,7 +768,15 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
   private getEleStyle(el: HTMLElement, style: string): number {
     return parseFloat(getElementStyle(el, style));
   }
-
+  private AsyncGetMessageCount() {
+    AsyncGetMessageCount().then(res => {
+      console.log('rs', res);
+      this.messageLen = res;
+    });
+  }
+  private messageClickHandler() {
+    this.$router.push('/self/history/message');
+  }
   /*=============================================
   =                    Mounted                  =
   =============================================*/
@@ -771,6 +800,7 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       this.skeleton = false;
       this.pageCount = res.pageCount;
     });
+    this.AsyncGetMessageCount();
   }
 
   /*=============================================
@@ -823,6 +853,30 @@ export default class FriPreview extends mixins(ActionSheetMixin) {
       width: 100%;
       color: #c5cad5;
       font-weight: 400;
+    }
+  }
+  .message_new {
+    width: 100%;
+    height: 100px;
+    background-color: #fff;
+    .avatar {
+      width: 50px;
+      height: 50px;
+      @include switch-img('~@img/friends-items');
+      position: absolute;
+      left: 15px;
+    }
+    .message-item {
+      padding-left: 20px;
+      position: relative;
+      background-color: #fff;
+      height: 70px;
+      width: 300px;
+      border-radius: 18px;
+      color: #3a9dfd;
+      font-size: 28px;
+      box-shadow: 0px 2px 7px 0px #bcd2e7;
+      border: 1px solid rgba($color: #3a9dfd, $alpha: 0.5);
     }
   }
 }

@@ -26,7 +26,7 @@
           v-for='(item,index) in list'
           :key='index'
           tabindex
-          @click=listClickHandler(item)
+          @click=listClickHandler(item,index)
         >
           <div
             class="massage_list_item border-bottom-1px"
@@ -52,9 +52,9 @@
               >
 
                 <!--  v-if="new Boolean(item.isread)"-->
-                <span>
+                <span v-if='item.replyname'>
                   <md-icon
-                    v-if="item.type"
+                    v-if="item.type==0"
                     slot="icon"
                     svg
                     name="heart"
@@ -62,7 +62,19 @@
                     color='#576B95'
                     class="star"
                   ></md-icon>
-                  {{item.commentcontent }}
+                  {{`@${item.replyname}: ${item.commentcontent}` }}
+                </span>
+                <span v-else>
+                  <md-icon
+                    v-if="item.type==0"
+                    slot="icon"
+                    svg
+                    name="heart"
+                    size="md"
+                    color='#576B95'
+                    class="star"
+                  ></md-icon>
+                  {{`${item.commentcontent}` }}
                 </span>
               </div>
               <div
@@ -104,8 +116,8 @@ import { mixins } from 'vue-class-component';
 import ActionSheetMixin from '@/mixin/ActionSheet';
 import PageHeader from '@/components/base/PageHeader.vue';
 import { ScrollView, Icon, Toast, ResultPage } from 'mand-mobile';
-import { AsyncGetMessageList } from '../api/modules.ts/friend/message';
-import { AsyncClearMessage } from '@/api/modules.ts/friend/list';
+import { AsyncGetMessageList, AsyncDeleteMessage } from '../api/modules.ts/friend/message';
+import { AsyncClearMessage, AsyncGetSubjectDetail } from '@/api/modules.ts/friend/list';
 @Component({
   name: 'MessageList',
   components: {
@@ -132,7 +144,7 @@ export default class MessageList extends mixins(ActionSheetMixin) {
   /**
    * 列表项点击
    */
-  private listClickHandler(item: any) {
+  private listClickHandler(item: any, index: number) {
     console.log(item);
     this.showActionSheet({
       value: true,
@@ -143,7 +155,7 @@ export default class MessageList extends mixins(ActionSheetMixin) {
         },
         {
           text: '删除消息',
-          value: '1',
+          value: { item, index },
         },
       ],
       defaultIndex: 0,
@@ -153,16 +165,32 @@ export default class MessageList extends mixins(ActionSheetMixin) {
   }
   private ItemActionsClickHandler(item: any) {
     if (item.text == '查看详情') {
+      AsyncGetSubjectDetail({
+        subjectid: item.value.subjectid,
+      })
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      // if (item.value.type === 2) {
+      //   console.log(111);
+      //   Toast.failed('评论已删除');
+      //   return;
+      // }
+      // this.$router.push({
+      //   path: '/self/history/look/details',
+      //   query: { subjectid: item.value.subjectid },
+      // });
+    }
+    if (item.text == '删除消息') {
       console.log(item);
-
-      if (item.value.type === 2) {
-        console.log(111);
-        Toast.failed('评论已删除');
-        return;
-      }
-      this.$router.push({
-        path: '/self/history/look/details',
-        query: { subjectid: item.value.subjectid },
+      AsyncDeleteMessage({
+        messageid: item.value.item.messageid,
+      }).then(res => {
+        console.log(res);
+        this.list.splice(item.value.index, 1);
       });
     }
   }

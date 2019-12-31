@@ -149,9 +149,11 @@ export const AsyncGetHeader = (data?: any): AxiosPromise => {
  * 获取详情
  *
  * @description 参数说明如下
- *  +-----------------------------------------------------------------------|
- *  | subjectid *     |  朋友圈ID     |  String       |       044....sda
- *  +-----------------------------------------------------------------------|
+ *  +--------------------------------------------------------------------|
+ *  |  userId *    |  用户ID      |  String      |      044....sda
+ *  |--------------------------------------------------------------------|
+ *  |  subjectid   |  查看id      |  String      |       044....sda
+ *  +--------------------------------------------------------------------|
  * @param {*} [data]
  * @returns {AxiosPromise}
  */
@@ -175,7 +177,35 @@ export const AsyncGetSubjectDetail = (data?: any): AxiosPromise => {
  */
 export const AsyncGetUserInfo = (data?: any): AxiosPromise => {
   return request({
-    url: `pyq/userInfo  `,
+    url: `pyq/userInfo`,
+    method: 'post',
+    data,
+  });
+};
+
+/**
+ * 修改个人信息
+ *
+ * @description 参数说明如下
+ *  +--------------------------------------------------------------------|
+ *  |  userId *   |  用户ID    |  String      |      044....sda
+ *  |--------------------------------------------------------------------|
+ *  |  username   |  昵称      |  String      |       044....sda
+ *  |--------------------------------------------------------------------|
+ *  |  sign       |  个性签名   |  String      |     'hello world'
+ *  |--------------------------------------------------------------------|
+ *  |  phone      |  查看的ID   |  String      |     'hello world'
+ *  |--------------------------------------------------------------------|
+ *  |  headJson   |  头像       |  String      |     'hello world'
+ *  |--------------------------------------------------------------------|
+ *  |  backJson   |  背景墙      |  String      |     'hello world'
+ *  +--------------------------------------------------------------------|
+ * @param {*} [data]
+ * @returns {AxiosPromise}
+ */
+export const AsyncUpdateUserInfo = (data?: any): AxiosPromise => {
+  return request({
+    url: `pyq/updateUserInfo`,
     method: 'post',
     data,
   });
@@ -193,7 +223,7 @@ export const AsyncGetUserInfo = (data?: any): AxiosPromise => {
  */
 export const AsyncGetMessageCount = (data?: any): AxiosPromise => {
   return request({
-    url: `pyq/userInfo  `,
+    url: `pyq/getUnreadMessageCount`,
     method: 'post',
     data,
   });
@@ -212,6 +242,42 @@ export const AsyncGetMessageCount = (data?: any): AxiosPromise => {
 export const AsyncClearMessage = (data?: any): AxiosPromise => {
   return request({
     url: `pyq/clearMessage`,
+    method: 'post',
+    data,
+  });
+};
+
+/**
+ * base64图片上传
+ *
+ * @description 参数说明如下
+ *  +-----------------------------------------------------------------------|
+ *  | base64Data *     |  base64    |  String       |       044....sda
+ *  +-----------------------------------------------------------------------|
+ * @param {*} [data]
+ * @returns {AxiosPromise}
+ */
+export const AsyncUploadBase64 = (data?: any): AxiosPromise => {
+  return request({
+    url: `192.168.71.33:50000/file/file/uploadBase64 `,
+    method: 'post',
+    data,
+  });
+};
+
+/**
+ * base64图片上传
+ *
+ * @description 参数说明如下
+ *  +-----------------------------------------------------------------------|
+ *  | file *     |  blob     |  String       |       044....sda
+ *  +-----------------------------------------------------------------------|
+ * @param {*} [data]
+ * @returns {AxiosPromise}
+ */
+export const AsyncUploadFile = (data?: any): AxiosPromise => {
+  return request({
+    url: `192.168.71.33:50000/file/file/uploadFile`,
     method: 'post',
     data,
   });
